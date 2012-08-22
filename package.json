@@ -3,10 +3,13 @@
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
-      "express": "2.5.1"
+      "express": "3.0"
     , "jade": ">= 0.0.1"
 	, "socket.io" : "*"
-	, "mysql" : "*"
+	, "mysql" : "2.0.0-alpha3"
 	, "less-middleware" : "*"
+	, "piler" : ">= 0.4.1"
+	, "connect" : "*"
+	, "cookie"	: "*"
   }
 }

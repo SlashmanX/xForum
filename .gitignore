@@ -1,3 +1,7 @@
 
 node_modules/
 private/
+
+.DS_Store
+
+xForum.tmproj
