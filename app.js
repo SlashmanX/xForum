@@ -1,85 +1,23 @@
 
 /**
- * Module dependencies.
+ * Node.js Login Boilerplate
+ * Author : Stephen Braitsch
+ * More Info : http://bit.ly/LsODY8
  */
 
 var	express			=	require('express');
 var	http			=	require('http');
 var	io				=	require('socket.io');
-var	routes			=	require('./routes');
-var	lessMiddleware	=	require('less-middleware');
-var	mysql			=	require('mysql');
-var	piler			=	require('piler');
 var	connect			=	require('connect');
-var	config			=	require('./private/config.js');
-
-var	dbInfo			=	JSON.parse(config.getDBInfo());
-var	dbTables		=	JSON.parse(config.getDBTables());
-var	connection		=	mysql.createConnection(dbInfo);
-
-var	functions		=	require('./shared/functions.js');
 
 var app				=	express();
-var	clientjs		=	piler.createJSManager();
-//var clientcss		=	piler.createCSSManager();
-
 var	sessionStore	=	new connect.session.MemoryStore();
 
-var	SITE_SECRET		= 'I am not wearing any pants';
+app.root = __dirname;
+global.host = 'localhost';
 
-// Configuration
-
-app.configure(function(){
-	app.set('views', __dirname + '/views');
-	app.set('view engine', 'jade');
-	app.use(express.bodyParser());
-	app.use(express.cookieParser(SITE_SECRET));
-	app.use(express.methodOverride());
-	app.use(app.router);
-
-	clientjs.bind(app);
-	//clientcss.bind(app);
-	
-	//clientcss.addFile(__dirname + "/public/css/style.css");
-
-	clientjs.addUrl("http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.js");
-	
-	clientjs.addFile(__dirname + '/public/js/app.js');
-	clientjs.addFile(__dirname + '/public/js/lib/bootstrap.min.js');
-	
-	clientjs.addFile(__dirname + '/shared/functions.js');
-	//clientjs.addFile('/socket.io/socket.io.js');
-
-	app.use(lessMiddleware({
-        src: __dirname + '/public'
-    }));
-
-	app.use(express.session({
-	    key: 'express.sid'
-	  , store: sessionStore
-	}));
-
-
-	app.use(express.static(__dirname + '/public'));
-});
-
-app.configure('development', function(){
-	app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-	//clientjs.liveUpdate(clientcss);
-});
-
-app.configure('production', function(){
-	app.use(express.errorHandler()); 
-});
-
-// Routes
-
-app.get('/', home, routes.index);
-
-function home(req, res, next){
-	res.locals({js: clientjs.renderTags()});
-	next();
-}
+require('./config')(app, express);
+require('./server/router')(app);
 
 var	server			=	http.createServer(app);
 server.listen(3000);
