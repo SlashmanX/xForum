@@ -28,9 +28,10 @@ socket.set('authorization', function (data, accept) {
     if (data.headers.cookie) {
         // if there is, parse the cookie
         data.cookie = require('cookie').parse(data.headers.cookie);
+		console.log(data.cookie);
         // note that you will need to use the same key to grad the
         // session id, as you specified in the Express setup.
-        data.sessionID = data.cookie['express.sid'].split('.')[0];
+        data.sessionID = data.cookie['connect.sid'].split('.')[0];
     } else {
        // if there isn't, turn down the connection with a message
        // and leave the function.
@@ -39,7 +40,7 @@ socket.set('authorization', function (data, accept) {
     // accept the incoming connection
     accept(null, true);
 });
-
+socket.set('log level', 1);
 socket.sockets.on('connection', function(client){
 	var hs = client.handshake;
 	client.join(hs.sessionID);

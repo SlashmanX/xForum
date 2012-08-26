@@ -1,13 +1,28 @@
 
 var CT = require('./modules/country-list');
 var AM = require('./modules/account-manager');
+var CM = require('./modules/category-manager');
 var EM = require('./modules/email-dispatcher');
 
 module.exports = function(app) {
+	
+	app.use(function(req, res, done){
+		console.log(req.url);
+		if (req.session.user == null && req.url != '/login/' && req.url != '/signup/'){
+			// if user is not logged-in redirect back to login page //
+	        res.redirect('/login/');
+	    }
+		else {
+			res.locals.udata = req.session.user;
+		}
+		
+		done();
 
-// main login page //
+	})
+	
+	// main login page //
 
-	app.get('/', function(req, res){
+	app.get('/login/', function(req, res){
 	console.log('login', req.cookies.user, req.cookies.pass);		
 	// check if the user's credentials are saved in a cookie //
 		if (req.cookies.user == undefined || req.cookies.pass == undefined){
@@ -17,7 +32,7 @@ module.exports = function(app) {
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
 				    req.session.user = o;
-					res.redirect('/home');
+					res.redirect('/');
 				}	else{
 					res.render('login', { title: 'Hello - Please Login To Your Account' });
 				}
@@ -25,7 +40,7 @@ module.exports = function(app) {
 		}
 	});
 	
-	app.post('/login', function(req, res){
+	app.post('/login/', function(req, res){
 		if (req.param('email') != null){
 			AM.getEmail(req.param('email'), function(o){
 				if (o){
@@ -52,22 +67,56 @@ module.exports = function(app) {
 		}
 	});	
 	
-// logged-in user homepage //
+	// logged-in user homepage //
 	
-	app.get('/home', function(req, res) {
-	    if (req.session.user == null){
-	// if user is not logged-in redirect back to login page //
-	        res.redirect('/');
-	    }   else{
-			res.render('home', {
-					title : 'Control Panel',
-					countries : CT,
-					udata : req.session.user
-			});
-	    }
+	app.get('/', function(req, res) {
+		CM.getAllCategories( function(e, categories){
+			res.render('home', { title : 'Home | xForum', categories : categories });
+		})
+		
 	});
 	
-	app.post('/home', function(req, res){
+	app.get('/create/:what/', function(req, res){
+		CM.getAllCategories( function(e, categories){
+			res.render('create', { title : 'Create New Forum | xForum', categories : categories, what: req.param('what')})
+		})
+	})
+	
+	app.post('/create/:what/', function(req, res){
+		if(req.param('what') == 'forum')
+		{
+			CM.addNewForum({
+					parentCat: req.param('category'),
+					forum : {
+						name: req.param('name'),
+						desc: req.param('desc'),
+						threads: []
+					}
+				}, function(o){
+					if(o)
+						res.send('ok', 200);
+			})
+		}
+		else if(req.param('what') == 'category')
+		{
+			CM.addNew({
+				name : req.param('name'),
+				forums : []
+			}, function(o){
+					if(o)
+						res.send('ok', 200);
+			})
+		}
+	})
+	
+	app.get('/profile/', function(req, res) {
+		res.render('profile', {
+				title : 'Update Your Profile',
+				countries : CT
+		});
+	});
+	
+	app.post('/profile/', function(req, res){
 		if (req.param('user') != undefined) {
 			AM.update({
 				user 		: req.param('user'),
@@ -97,11 +146,11 @@ module.exports = function(app) {
 	
 // creating new accounts //	
 	
-	app.get('/signup', function(req, res) {
+	app.get('/signup/', function(req, res) {
 		res.render('signup', { title: 'Signup', countries : CT });
 	});
 	
-	app.post('/signup', function(req, res){
+	app.post('/signup/', function(req, res){
 		AM.signup({
 			name 	: req.param('name'),
 			email 	: req.param('email'),
@@ -119,7 +168,7 @@ module.exports = function(app) {
 
 // password reset //
 
-	app.get('/reset-password', function(req, res) {
+	app.get('/reset-password/', function(req, res) {
 		AM.validateLink(req.query["u"], function(e){
 			if (e != 'ok'){
 				res.redirect('/');
@@ -131,7 +180,7 @@ module.exports = function(app) {
 		})
 	});
 	
-	app.post('/reset-password', function(req, res) {
+	app.post('/reset-password/', function(req, res) {
 		AM.setPassword(req.param('pid'), req.param('pass'), function(o){
 			if (o){
 				res.send('ok', 200);
@@ -144,13 +193,13 @@ module.exports = function(app) {
 	
 // view & delete accounts //
 	
-	app.get('/print', function(req, res) {
+	app.get('/members/', function(req, res) {
 		AM.getAllRecords( function(e, accounts){
-			res.render('print', { title : 'Account List', accts : accounts });
+			res.render('members', { title : 'Account List', accts : accounts });
 		})
 	});	
 	
-	app.post('/delete', function(req, res){
+	app.post('/profile/delete/', function(req, res){
 		AM.delete(req.body.id, function(e, obj){
 			if (!e){
 				res.clearCookie('user');
@@ -164,7 +213,7 @@ module.exports = function(app) {
 	
 	app.get('/reset', function(req, res) {
 		AM.delAllRecords( );
-		res.redirect('/print');
+		res.redirect('/members/');
 	});
 	
 	app.use(function(req, res) { res.render('404', { title: 'Page Not Found'}); });

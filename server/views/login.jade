@@ -2,7 +2,7 @@ extends layout
 
 block content
 	#login-container
-		form( method="post", action = '/login')#login-form.well.span4
+		form( method="post")#login-form.well.span4
 			h1 Hello!
 			p.subheading Please Login To Your Account
 			
@@ -24,7 +24,6 @@ block content
 				a(href='#')#forgot-password Forgot Your Password?
 				a(href='/signup')#create-account Create An Account
 				
-	include modals/alert
 	include modals/lost-password
 block append scripts
 	script(src='/js/views/login.js')

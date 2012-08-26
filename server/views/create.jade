@@ -1,0 +1,50 @@
+extends layout
+
+block content
+	#account-form-container
+		case what
+			when 'category'
+				form( method="post")#create-form.form-horizontal.well.span6
+					h1 New Category
+					p#sub1.subheading Fill in the following fields
+					hr
+					fieldset
+						#name-cg.control-group
+							label.control-label(for='name-tf') Name
+							.controls
+								input#name-tf.input-xlarge(type='text', name='name')
+						.form-actions
+							button(type='button')#account-form-btn1.btn Cancel
+							button(type='submit')#account-form-btn2.btn.btn-primary Create
+			when 'forum'
+				form( method="post")#create-form.form-horizontal.well.span6
+					h1 New Forum
+					p#sub1.subheading Fill in the following fields
+					hr
+					fieldset
+						#name-cg.control-group
+							label.control-label(for='name-tf') Name
+							.controls
+								input#name-tf.input-xlarge(type='text', name='name')
+					
+						#desc-cg.control-group
+							label.control-label(for='desc-tf') Description
+							.controls
+								input#desc-tf.input-xlarge(type='text', name='desc')
+						#catlist-cg.control-group
+							label.control-label(for='cat-list') Location
+							.controls
+								select#cat-list(name='category')
+									each item in categories
+										option= item.name
+						.form-actions
+							button(type='button')#account-form-btn1.btn Cancel
+							button(type='submit')#account-form-btn2.btn.btn-primary Create
+				
+	// display form errors in a custom modal window //
+
+	include modals/form-errors
+	
+block append scripts
+	script(src='/js/views/create.js')
+	script(src='/js/controllers/creationController.js')

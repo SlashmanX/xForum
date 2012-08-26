@@ -1,3 +1,4 @@
+- user = typeof(udata) != 'undefined' ? udata : {}
 !!!
 html
 	head
@@ -8,9 +9,17 @@ html
 			script(src="/js/lib/bootstrap.min.js")
 			script(src="/js/lib/jquery.form.js")
 			script(src="/socket.io/socket.io.js")
+			script(src="/js/app.js")
+			script(src="/js/controllers/appController.js")
 		
 		
 		link(rel='stylesheet', href='/css/style.min.css')
 	body(data-spy="scroll", data-target=".sidebar", data-offset="53")
+		if user.name
+			include navbar
 		.container
-			block content
+			.row
+				block content
+		
+		include modals/alert
+		include modals/confirm

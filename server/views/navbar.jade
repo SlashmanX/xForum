@@ -1,8 +1,14 @@
 div.navbar.navbar-fixed-top
 	div.navbar-inner
-		div.container-fluid
+		.container-fluid
+			a(href='/home').brand xForum
 			ul#global-nav.nav.pull-left
-				a(href='/home').brand xForum
+				li
+					a(href='/') Home
+				li
+					a(href='/members/') Members
+				li
+					a(href='/profile/') Profile
 			button#btn-logout.btn.btn-primary
 				i.icon-lock.icon-white
 				| Sign Out

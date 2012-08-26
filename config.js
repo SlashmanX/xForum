@@ -7,16 +7,14 @@ module.exports = function(app, exp) {
 		app.set('view engine', 'jade');
 		app.set('view options', { doctype : 'html', pretty : true });
 		app.use(exp.bodyParser());
-		app.use(exp.cookieParser());
-		app.use(exp.session({ secret: 'I am not wearing any pants' }));
+		app.use(exp.cookieParser('I am not wearing any pants' ));
+		app.use(exp.session());
 		app.use(exp.methodOverride());
 		app.use(lessMiddleware({
 	        src: app.root + '/public'
 	    }));
 		app.use(exp.static(app.root + '/server'));
 		app.use(exp.static(app.root + '/public'));
-
-		
 	});
 	
 }
