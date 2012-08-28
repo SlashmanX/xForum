@@ -44,13 +44,6 @@ CM.addNewForum = function(newData, callback)
 		CM.categories.save(o); callback(o);
 	});
 }
-CM.addNewSubForum = function(newData, callback)
-{
-	CM.categories.findOne({"forums.name":newData.name}, function(e, o){
-		o.forums.push(newData.forum);
-		CM.categories.save(o); callback(o);
-	});
-}
 CM.update = function(newData, callback) 
 {		
 	CM.categories.findOne({name:newData.name}, function(e, o){

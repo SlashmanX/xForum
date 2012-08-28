@@ -23,7 +23,7 @@ module.exports = function(app) {
 	// main login page //
 
 	app.get('/login/', function(req, res){
-	console.log('login', req.cookies.user, req.cookies.pass);		
+		console.log(req.params.url);
 	// check if the user's credentials are saved in a cookie //
 		if (req.cookies.user == undefined || req.cookies.pass == undefined){
 			res.render('login', { title: 'Hello - Please Login To Your Account' });
@@ -32,6 +32,11 @@ module.exports = function(app) {
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
 				    req.session.user = o;
+					var redirectTo = '/';
+					if(req.params.url) {
+						redirectTo = req.params.url;
+					}
+					
 					res.redirect('/');
 				}	else{
 					res.render('login', { title: 'Hello - Please Login To Your Account' });
@@ -85,17 +90,36 @@ module.exports = function(app) {
 	app.post('/create/:what/', function(req, res){
 		if(req.param('what') == 'forum')
 		{
-			CM.addNewForum({
-					parentCat: req.param('category'),
-					forum : {
-						name: req.param('name'),
-						desc: req.param('desc'),
-						threads: []
-					}
-				}, function(o){
-					if(o)
-						res.send('ok', 200);
-			})
+			console.log('Forum: '+ req.param('forum'))
+			if(req.param('forum') === '') {
+				console.log('here');
+				CM.addNewForum({
+						parentCat: req.param('category'),
+						forum : {
+							name: req.param('name'),
+							desc: req.param('desc'),
+							forums: [],
+							threads: []
+						}
+					}, function(o){
+						if(o)
+							res.send('ok', 200);
+				})
+			}
+			else {
+				console.log('sub');
+				CM.addNewSubForum({
+						parentForum: req.param('forum'),
+						forum : {
+							name: req.param('name'),
+							desc: req.param('desc'),
+							threads: []
+						}
+					}, function(o){
+						if(o)
+							res.send('ok', 200);
+				})
+			}
 		}
 		else if(req.param('what') == 'category')
 		{
@@ -212,8 +236,8 @@ module.exports = function(app) {
 	});
 	
 	app.get('/reset', function(req, res) {
-		AM.delAllRecords( );
-		res.redirect('/members/');
+		CM.delAllRecords( );
+		res.redirect('/');
 	});
 	
 	app.use(function(req, res) { res.render('404', { title: 'Page Not Found'}); });

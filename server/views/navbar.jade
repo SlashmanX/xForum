@@ -9,6 +9,14 @@ div.navbar.navbar-fixed-top
 					a(href='/members/') Members
 				li
 					a(href='/profile/') Profile
+				li.dropdown
+					a.dropdown-toggle(data-toggle='dropdown', href = '#') Create
+						b.caret
+					ul.dropdown-menu
+						li
+							a(href='/create/category/') Category
+						li
+							a(href='/create/forum/') Forum
 			button#btn-logout.btn.btn-primary
 				i.icon-lock.icon-white
 				| Sign Out
