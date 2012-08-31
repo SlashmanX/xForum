@@ -1,13 +1,17 @@
-
-var CT = require('./modules/country-list');
 var AM = require('./modules/account-manager');
 var CM = require('./modules/category-manager');
-var EM = require('./modules/email-dispatcher');
+var FM = require('./modules/forum-manager');
+var TM = require('./modules/topic-manager');
+//var PM = require('./modules/post-manager');
+var CT = require('./modules/country-list');
+var	functions	=	require('../shared/functions.js');
+
+var	mongoose	=	require('mongoose');
+mongoose.connect('localhost', 'xForum');
 
 module.exports = function(app) {
 	
 	app.use(function(req, res, done){
-		console.log(req.url);
 		if (req.session.user == null && req.url != '/login/' && req.url != '/signup/'){
 			// if user is not logged-in redirect back to login page //
 	        res.redirect('/login/');
@@ -23,7 +27,6 @@ module.exports = function(app) {
 	// main login page //
 
 	app.get('/login/', function(req, res){
-		console.log(req.params.url);
 	// check if the user's credentials are saved in a cookie //
 		if (req.cookies.user == undefined || req.cookies.pass == undefined){
 			res.render('login', { title: 'Hello - Please Login To Your Account' });
@@ -75,46 +78,62 @@ module.exports = function(app) {
 	// logged-in user homepage //
 	
 	app.get('/', function(req, res) {
-		CM.getAllCategories( function(e, categories){
+		CM.list( function(e, categories){
+			if(e) {
+				console.error('Error getting categories: '+ e);
+			}
 			res.render('home', { title : 'Home | xForum', categories : categories });
 		})
 		
 	});
 	
 	app.get('/create/:what/', function(req, res){
-		CM.getAllCategories( function(e, categories){
+		CM.list( function(e, categories){
 			res.render('create', { title : 'Create New Forum | xForum', categories : categories, what: req.param('what')})
 		})
 	})
 	
+	app.get('/forum/:slug/', function(req, res) {
+		FM.listBySlug(req.param('slug'), function(e, forum) {
+			if(e) {
+				console.error('Error getting forum '+ slug + ': '+ e);
+			}
+			res.render('forum', {title : 'Viewing Forum: '+ forum.name +' | xForum', forum: forum});
+		});
+	});
+	
+	app.get('/topic/:slug/', function(req, res) {
+		TM.getTopic(req.param('slug'), function(e, topic) {
+			if(e) {
+				console.error('Error getting topic '+ slug + ': '+ e);
+			}
+			res.render('topic', {title : 'Viewing Topic: '+ topic.title +' | xForum', topic: topic});
+		});
+	});
+	
 	app.post('/create/:what/', function(req, res){
 		if(req.param('what') == 'forum')
 		{
-			console.log('Forum: '+ req.param('forum'))
-			if(req.param('forum') === '') {
-				console.log('here');
-				CM.addNewForum({
-						parentCat: req.param('category'),
-						forum : {
-							name: req.param('name'),
-							desc: req.param('desc'),
-							forums: [],
-							threads: []
-						}
+			if(!req.param('forum')) {
+				console.log(req.param('category'));
+				FM.create({
+						category: req.param('category'),
+						name: req.param('name'),
+						slug: functions.slugify(req.param('name')),
+						desc: req.param('desc')
 					}, function(o){
 						if(o)
 							res.send('ok', 200);
 				})
 			}
+			
 			else {
-				console.log('sub');
-				CM.addNewSubForum({
-						parentForum: req.param('forum'),
-						forum : {
-							name: req.param('name'),
-							desc: req.param('desc'),
-							threads: []
-						}
+				FM.createSubForum({
+						category: req.param('category'),
+						parent: req.param('forum'),
+						name: req.param('name'),
+						slug: functions.slugify(req.param('name')),
+						desc: req.param('desc')
 					}, function(o){
 						if(o)
 							res.send('ok', 200);
@@ -123,12 +142,32 @@ module.exports = function(app) {
 		}
 		else if(req.param('what') == 'category')
 		{
-			CM.addNew({
+			CM.create({
 				name : req.param('name'),
-				forums : []
+				desc: req.param('desc'),
+				slug: functions.slugify(req.param('name')),
 			}, function(o){
 					if(o)
+					{
 						res.send('ok', 200);
+					}
+			})
+		}
+		else if(req.param('what') == 'topic')
+		{
+			console.log('Forum: '+ req.param('forum'));
+			TM.create({
+				title : req.param('title'),
+				desc: req.param('desc'),
+				post: req.param('post'),
+				slug: functions.slugify(req.param('title')),
+				forum: req.param('forum'),
+				author: req.session.user._id
+			}, function(o){
+					if(o)
+					{
+						res.send('ok', 200);
+					}
 			})
 		}
 	})
@@ -143,11 +182,11 @@ module.exports = function(app) {
 	app.post('/profile/', function(req, res){
 		if (req.param('user') != undefined) {
 			AM.update({
-				user 		: req.param('user'),
-				name 		: req.param('name'),
+				username 	: req.param('user'),
+				realName 	: req.param('name'),
 				email 		: req.param('email'),
-				country 	: req.param('country'),
-				pass		: req.param('pass')
+				location 	: req.param('country'),
+				password	: req.param('pass')
 			}, function(o){
 				if (o){
 					req.session.user = o;
@@ -176,11 +215,11 @@ module.exports = function(app) {
 	
 	app.post('/signup/', function(req, res){
 		AM.signup({
-			name 	: req.param('name'),
-			email 	: req.param('email'),
-			user 	: req.param('user'),
-			pass	: req.param('pass'),
-			country : req.param('country')
+			realName	: req.param('name'),
+			email		: req.param('email'),
+			username	: req.param('user'),
+			password	: req.param('pass'),
+			location	: req.param('country')
 		}, function(e, o){
 			if (e){
 				res.send(e, 400);
@@ -218,7 +257,7 @@ module.exports = function(app) {
 // view & delete accounts //
 	
 	app.get('/members/', function(req, res) {
-		AM.getAllRecords( function(e, accounts){
+		AM.list( function(e, accounts){
 			res.render('members', { title : 'Account List', accts : accounts });
 		})
 	});	

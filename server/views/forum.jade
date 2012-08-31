@@ -1,0 +1,36 @@
+extends layout
+
+block content
+	.span3.bs-docs-sidebar
+		ul.nav.nav-list.bs-docs-sidenav
+			each topic in forum.topics
+				li
+					a(href="#topic-" + topic.slug)
+						i.icon-chevron-right
+						| !{topic.title}
+	.span9
+		table.table.table-bordered.table-striped
+			thead(id = 'forum-' + forum.slug)
+				tr
+					th(colspan='4')= forum.name
+				tr
+					th Status
+					th Topic
+					th Views
+					th Replies
+					th Last Poster
+			tbody
+				each topic in forum.topics
+					tr(id = 'topic-' + topic.slug)
+						td 
+							i.icon-folder-close
+								&nbsp;
+						td
+							a(href = '/topic/'+topic.slug+'/') #{topic.title}
+						td= topic.views
+						td= topic.replies.length
+						td SlashmanX
+	
+block append scripts
+	script(src='/js/views/home.js')
+	script(src='/js/controllers/homeController.js')

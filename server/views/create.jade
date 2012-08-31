@@ -36,7 +36,46 @@ block content
 							.controls
 								select#cat-list(name='category')
 									each item in categories
-										option= item.name
+										option(value= item.slug) #{item.name}
+										
+						#forumlist-cg.control-group
+							label.control-label(for='forum-list') Forum 
+							.controls
+								select#forum-list(name='forum')
+									each cat in categories
+										each forum in cat.forums
+											option(class = 'sub-'+cat.slug, value = forum.slug) #{forum.name}
+						.form-actions
+							button(type='button')#account-form-btn1.btn Cancel
+							button(type='submit')#account-form-btn2.btn.btn-primary Create
+			when 'topic'
+				form( method="post")#create-form.form-horizontal.well.span6
+					h1 New Topic
+					p#sub1.subheading Fill in the following fields
+					hr
+					fieldset
+						#title-cg.control-group
+							label.control-label(for='title-tf') Title
+							.controls
+								input#title-tf.input-xlarge(type='text', name='title')
+
+						#desc-cg.control-group
+							label.control-label(for='desc-tf') Description
+							.controls
+								input#desc-tf.input-xlarge(type='text', name='desc')
+								
+						#post-cg.control-group
+							label.control-label(for='post-ta') Post:
+							.controls
+								textarea#post-ta(name='post')
+
+						#forumlist-cg.control-group
+							label.control-label(for='forum-list') Forum 
+							.controls
+								select#forum-list(name='forum')
+									each cat in categories
+										each forum in cat.forums
+											option(class = 'sub-'+cat.slug, value = forum.slug) #{forum.name}
 						.form-actions
 							button(type='button')#account-form-btn1.btn Cancel
 							button(type='submit')#account-form-btn2.btn.btn-primary Create

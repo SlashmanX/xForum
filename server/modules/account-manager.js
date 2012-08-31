@@ -1,48 +1,29 @@
-
-var bcrypt = require('bcrypt')
-var Db = require('mongodb').Db;
-var Server = require('mongodb').Server;
-
-var dbPort = 27017;
-var dbHost = global.host;
-var dbName = 'xForum';
-
-// use moment.js for pretty date-stamping //
-var moment = require('moment');
-
-var AM = {}; 
-	AM.db = new Db(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}, {}));
-	AM.db.open(function(e, d){
-		if (e) {
-			console.log(e);
-		}	else{
-			console.log('connected to database :: ' + dbName);
-		}
-	});
-	AM.accounts = AM.db.collection('xForum_users');
+var	User		=	require('../models/User.js');
+var	AM			=	{}; 
+var	bcrypt		=	require('bcrypt');
 
 module.exports = AM;
 
 // logging in //
 
-AM.autoLogin = function(user, pass, callback)
+AM.autoLogin = function(username, password, callback)
 {
-	AM.accounts.findOne({user:user}, function(e, o) {
-		if (o){
-			o.pass == pass ? callback(o) : callback(null);
+	User.findOne({username:username}, function(e, o) {
+		if (o) {
+			(o.password === password) ? callback(o) : callback(null);
 		}	else{
 			callback(null);
 		}
 	});
-}
+};
 
-AM.manualLogin = function(user, pass, callback)
+AM.manualLogin = function(username, password, callback)
 {
-	AM.accounts.findOne({user:user}, function(e, o) {
+	User.findOne({username:username}, function(e, o) {
 		if (o == null){
 			callback('user-not-found');
 		}	else{
-			bcrypt.compare(pass, o.pass, function(err, res) {
+			bcrypt.compare(password, o.password, function(err, res) {
 				if (res){
 					callback(null, o);
 				}	else{
@@ -51,63 +32,45 @@ AM.manualLogin = function(user, pass, callback)
 			});
 		}
 	});
-}
+};
 
 // record insertion, update & deletion methods //
 
 AM.signup = function(newData, callback) 
 {
-	AM.accounts.findOne({user:newData.user}, function(e, o) {	
+	User.findOne({username:newData.username}, function(e, o) {	
 		if (o){
 			callback('username-taken');
 		}	else{
-			AM.accounts.findOne({email:newData.email}, function(e, o) {
+			User.findOne({email:newData.email}, function(e, o) {
 				if (o){
 					callback('email-taken');
 				}	else{
-					AM.saltAndHash(newData.pass, function(hash){
-						newData.pass = hash;
-					// append date stamp when record was created //	
-						newData.date = moment().format('MMMM Do YYYY, h:mm:ss a');
-						AM.accounts.insert(newData, callback(null));
+					AM.saltAndHash(newData.password, function(hash){
+						newData.password = hash;
+						console.log(newData);
+						new User(newData).save(callback(null));
 					});
 				}
 			});
 		}
 	});
-}
+};
 
 AM.update = function(newData, callback) 
 {		
-	AM.accounts.findOne({user:newData.user}, function(e, o){
-		o.name 		= newData.name;
+	User.findOne({username:newData.username}, function(e, o){
+		o.realName 	= newData.realName;
 		o.email 	= newData.email;
-		o.country 	= newData.country;
-		if (newData.pass == ''){
-			AM.accounts.save(o); callback(o);
+		o.location 	= newData.location;
+		if (newData.password === ''){
+			User.save(o); callback(o);
 		}	else{
-			AM.saltAndHash(newData.pass, function(hash){
-				o.pass = hash;
-				AM.accounts.save(o); callback(o);			
+			AM.saltAndHash(newData.password, function(hash){
+				o.password = hash;
+				User.save(o); callback(o);			
 			});
 		}
-	});
-}
-
-AM.setPassword = function(oldp, newp, callback)
-{
-	AM.accounts.findOne({pass:oldp}, function(e, o){
-		AM.saltAndHash(newp, function(hash){
-			o.pass = hash;
-			AM.accounts.save(o); callback(o);
-		});
-	});	
-}
-
-AM.validateLink = function(pid, callback)
-{
-	AM.accounts.findOne({pass:pid}, function(e, o){
-		callback(o ? 'ok' : null);
 	});
 }
 
@@ -122,26 +85,24 @@ AM.saltAndHash = function(pass, callback)
 
 AM.delete = function(id, callback) 
 {
-	AM.accounts.remove({_id: this.getObjectId(id)}, callback);
+	User.remove({_id: this.getObjectId(id)}, callback);
 }
 
 // auxiliary methods //
 
 AM.getEmail = function(email, callback)
 {
-	AM.accounts.findOne({email:email}, function(e, o){ callback(o); });
+	User.findOne({email:email}, function(e, o){ callback(o); });
 }
-
 AM.getObjectId = function(id)
 {
 // this is necessary for id lookups, just passing the id fails for some reason //	
-	return AM.accounts.db.bson_serializer.ObjectID.createFromHexString(id)
+	return User.db.bson_serializer.ObjectID.createFromHexString(id)
 }
 
-AM.getAllRecords = function(callback) 
+AM.list = function(callback) 
 {
-	AM.accounts.find().toArray(
-	    function(e, res) {
+	User.find(function(e, res) {
 		if (e) callback(e)
 		else callback(null, res)
 	});
@@ -149,14 +110,14 @@ AM.getAllRecords = function(callback)
 
 AM.delAllRecords = function(id, callback) 
 {
-	AM.accounts.remove(); // reset accounts collection for testing //
+	User.remove(); // reset accounts collection for testing //
 }
 
 // just for testing - these are not actually being used //
 
 AM.findById = function(id, callback) 
 {
-	AM.accounts.findOne({_id: this.getObjectId(id)}, 
+	User.findOne({_id: this.getObjectId(id)}, 
 		function(e, res) {
 		if (e) callback(e)
 		else callback(null, res)
@@ -167,7 +128,7 @@ AM.findById = function(id, callback)
 AM.findByMultipleFields = function(a, callback)
 {
 // this takes an array of name/val pairs to search against {fieldName : 'value'} //
-	AM.accounts.find( { $or : a } ).toArray(
+	User.find( { $or : a } ).toArray(
 	    function(e, results) {
 		if (e) callback(e)
 		else callback(null, results)

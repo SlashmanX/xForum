@@ -5,21 +5,22 @@ block content
 		ul.nav.nav-list.bs-docs-sidenav
 			each cat in categories
 				li.category
-					a(href="#cat-" + cat.name)
+					a(href="#cat-" + cat.slug)
 						i.icon-chevron-right
 						| !{cat.name}
 				
 				each forum in cat.forums
 					li.forum
-						a(href="#forum-" + forum.name)
+						a(href="#forum-" + forum.slug)
 							i.icon-chevron-right
 							| !{forum.name}
 	.span9
 		- for (var i = 0; i < categories.length; i++)
 			table.table.table-bordered.table-striped
-				thead(id = 'cat-' + categories[i].name)
+				thead(id = 'cat-' + categories[i].slug)
 					tr
-						th(colspan='4')= categories[i].name
+						th(colspan='4')
+							a(href= '/category/'+ categories[i].slug+'/') #{categories[i].name}
 					tr
 						th Status
 						th Forum
@@ -28,13 +29,16 @@ block content
 						th Last Poster
 				tbody
 				each forum in categories[i].forums
-					tr(id = 'forum-' + forum.name)
-						td 
-							i.icon-folder
-						td= forum.name
-						td= forum.threads.length
-						td 143
-						td SlashmanX
+					if forum.parent == null
+						tr(id = 'forum-' + forum.slug)
+							td 
+								i.icon-folder-close
+									&nbsp;
+							td
+								a(href = '/forum/'+forum.slug+'/') #{forum.name}
+							td= forum.topics.length
+							td 143
+							td SlashmanX
 	
 block append scripts
 	script(src='/js/views/home.js')
