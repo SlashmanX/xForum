@@ -52,7 +52,7 @@ FM.list				=	function(callback)
 FM.listBySlug		=	function(slug, callback)
 {
 	Forum.findOne({slug: slug}).populate('topics').populate('parent').populate('children').exec(function(e, res) {
-		console.log(res);
+		console.log(e);
 		if (e) callback(e)
 		else callback(null, res)
 	});

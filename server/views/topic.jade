@@ -1,3 +1,33 @@
 extends layout
 
 block content
+	.span12.topic
+		.row
+			.span12
+				h2 
+					span.topic-title= topic.title
+					span.topic-subtitle= topic.desc
+		each post in topic.posts
+			section.post
+				.row
+					.span9.offset3
+						small
+							abbr.timeago(title=post.postedOn) #{post.postedOn}
+				.row
+					.span3
+						ul.user-details
+							li.user-name= post.author.username
+							li.user-avatar
+								img(src="http://placehold.it/140x140").img-polaroid
+					.span9
+						.post-body= post.body
+				.row
+					.span12.post-actions
+						span.pull-right
+							button.btn(type='button')
+								i.icon-comment
+								| Reply
+	
+block append scripts
+	script(src='/js/views/topic.js')
+	script(src='/js/controllers/topicController.js')

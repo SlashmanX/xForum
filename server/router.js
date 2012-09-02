@@ -11,16 +11,15 @@ mongoose.connect('localhost', 'xForum');
 
 module.exports = function(app) {
 	
-	app.use(function(req, res, done){
+	app.use(function(req, res, next){
 		if (req.session.user == null && req.url != '/login/' && req.url != '/signup/'){
 			// if user is not logged-in redirect back to login page //
 	        res.redirect('/login/');
 	    }
 		else {
 			res.locals.udata = req.session.user;
+			next();
 		}
-		
-		done();
 
 	})
 	
@@ -66,8 +65,8 @@ module.exports = function(app) {
 				}	else{
 				    req.session.user = o;
 					if (req.param('remember-me') == 'true'){
-						res.cookie('user', o.user, { maxAge: 900000 });
-						res.cookie('pass', o.pass, { maxAge: 900000 });
+						res.cookie('user', o.username, { maxAge: 900000 });
+						res.cookie('pass', o.password, { maxAge: 900000 });
 					}			
 					res.send(o, 200);
 				}
@@ -107,6 +106,7 @@ module.exports = function(app) {
 			if(e) {
 				console.error('Error getting topic '+ slug + ': '+ e);
 			}
+			console.log(topic);
 			res.render('topic', {title : 'Viewing Topic: '+ topic.title +' | xForum', topic: topic});
 		});
 	});
@@ -115,7 +115,6 @@ module.exports = function(app) {
 		if(req.param('what') == 'forum')
 		{
 			if(!req.param('forum')) {
-				console.log(req.param('category'));
 				FM.create({
 						category: req.param('category'),
 						name: req.param('name'),
@@ -155,11 +154,10 @@ module.exports = function(app) {
 		}
 		else if(req.param('what') == 'topic')
 		{
-			console.log('Forum: '+ req.param('forum'));
 			TM.create({
 				title : req.param('title'),
 				desc: req.param('desc'),
-				post: req.param('post'),
+				body: req.param('post'),
 				slug: functions.slugify(req.param('title')),
 				forum: req.param('forum'),
 				author: req.session.user._id
