@@ -2,52 +2,58 @@ var AM = require('./modules/account-manager');
 var CM = require('./modules/category-manager');
 var FM = require('./modules/forum-manager');
 var TM = require('./modules/topic-manager');
-//var PM = require('./modules/post-manager');
+var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
-var	functions	=	require('../shared/functions.js');
 
+
+var	functions	=	require('../shared/functions.js');
+var	moment		=	require('moment');
 var	mongoose	=	require('mongoose');
+var	async		=	require('async');
 mongoose.connect('localhost', 'xForum');
 
-module.exports = function(app) {
+module.exports = function(app, socket) {
 	
-	app.use(function(req, res, next){
-		if (req.session.user == null && req.url != '/login/' && req.url != '/signup/'){
-			// if user is not logged-in redirect back to login page //
-	        res.redirect('/login/');
-	    }
-		else {
-			res.locals.udata = req.session.user;
+	// First middleware
+
+	var checkUser = function(req, res, next){
+	   if (req.cookies.username == undefined || req.cookies.pass == undefined){
+	      return res.render('login', { title: 'Hello - Please Login To Your Account' });
+	   }
+
+	   next();
+	};
+
+	// Second Middleware
+
+	var getUser = function (req, res, next) {
+
+		var username = req.cookies.username || req.params.username;
+		var pass = req.cookies.pass || req.params.pass;
+
+		AM.autoLogin(username, pass, function(o){
+			res.locals.udata = o;
 			next();
+		});
+
+	}
+
+	// Third middleware
+
+	var loginUser = function (req, res, next) {
+		var user = res.locals.udata;
+
+		if (user != null) {
+		   req.session.user = user;
+			next();
+		} else {
+		   res.render('login', { title: 'Hello - Please Login To Your Account' });
 		}
 
-	})
-	
-	// main login page //
-
-	app.get('/login/', function(req, res){
-	// check if the user's credentials are saved in a cookie //
-		if (req.cookies.user == undefined || req.cookies.pass == undefined){
-			res.render('login', { title: 'Hello - Please Login To Your Account' });
-		}	else{
-	// attempt automatic login //
-			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
-				if (o != null){
-				    req.session.user = o;
-					var redirectTo = '/';
-					if(req.params.url) {
-						redirectTo = req.params.url;
-					}
-					
-					res.redirect('/');
-				}	else{
-					res.render('login', { title: 'Hello - Please Login To Your Account' });
-				}
-			});
-		}
-	});
+	};
 	
 	app.post('/login/', function(req, res){
+		console.log('here');
 		if (req.param('email') != null){
 			AM.getEmail(req.param('email'), function(o){
 				if (o){
@@ -65,9 +71,9 @@ module.exports = function(app) {
 				}	else{
 				    req.session.user = o;
 					if (req.param('remember-me') == 'true'){
-						res.cookie('user', o.username, { maxAge: 900000 });
+						res.cookie('username', o.username, { maxAge: 900000 });
 						res.cookie('pass', o.password, { maxAge: 900000 });
-					}			
+					}
 					res.send(o, 200);
 				}
 			});
@@ -76,7 +82,7 @@ module.exports = function(app) {
 	
 	// logged-in user homepage //
 	
-	app.get('/', function(req, res) {
+	app.get('/', checkUser, getUser, loginUser, function(req, res) {
 		CM.list( function(e, categories){
 			if(e) {
 				console.error('Error getting categories: '+ e);
@@ -86,32 +92,59 @@ module.exports = function(app) {
 		
 	});
 	
-	app.get('/create/:what/', function(req, res){
+	app.get('/create/:what/', checkUser, getUser, loginUser, function(req, res){
 		CM.list( function(e, categories){
-			res.render('create', { title : 'Create New Forum | xForum', categories : categories, what: req.param('what')})
+			res.render('create', { title : 'Create New Forum | xForum', categories : categories, what: req.param('what'), parent: req.param('pid')})
 		})
 	})
 	
-	app.get('/forum/:slug/', function(req, res) {
+	app.get('/forum/:slug/', checkUser, getUser, loginUser, function(req, res) {
 		FM.listBySlug(req.param('slug'), function(e, forum) {
 			if(e) {
 				console.error('Error getting forum '+ slug + ': '+ e);
 			}
-			res.render('forum', {title : 'Viewing Forum: '+ forum.name +' | xForum', forum: forum});
+			var tLength = forum.topics.length;
+			var count = 0;
+			async.whilst(
+				function () { return count < tLength;}, 
+				function(cb) {
+					TM.checkRead(req.session.user._id, forum.topics[count]._id, function(read){
+						forum.topics[count].isRead = read;
+						count++;
+						cb();
+				});
+			}, 
+			function(err) {
+				res.render('forum', {title : 'Viewing Forum: '+ forum.name +' | xForum', forum: forum});
+			})
+			
 		});
 	});
 	
-	app.get('/topic/:slug/', function(req, res) {
+	app.get('/topic/:slug/', checkUser, getUser, loginUser, function(req, res) {
 		TM.getTopic(req.param('slug'), function(e, topic) {
 			if(e) {
 				console.error('Error getting topic '+ slug + ': '+ e);
 			}
-			console.log(topic);
 			res.render('topic', {title : 'Viewing Topic: '+ topic.title +' | xForum', topic: topic});
 		});
 	});
 	
-	app.post('/create/:what/', function(req, res){
+	app.post('/topic/:slug/', checkUser, getUser, loginUser, function(req, res) {
+		PM.create({
+			author: req.session.user._id,
+			topic: req.param('topic'),
+			body: req.param('body'),
+			postedOn: moment().format()
+		}, function(o){
+				if(o) {
+					res.send(o._id, 200);
+					socket.sockets.emit('newPost', o);
+				}
+			});
+	});
+	
+	app.post('/create/:what/', checkUser, getUser, loginUser, function(req, res){
 		if(req.param('what') == 'forum')
 		{
 			if(!req.param('forum')) {
@@ -154,13 +187,15 @@ module.exports = function(app) {
 		}
 		else if(req.param('what') == 'topic')
 		{
+			console.log(req.param('forum'));
 			TM.create({
 				title : req.param('title'),
 				desc: req.param('desc'),
 				body: req.param('post'),
 				slug: functions.slugify(req.param('title')),
 				forum: req.param('forum'),
-				author: req.session.user._id
+				author: req.session.user._id,
+				createdOn: moment().format()
 			}, function(o){
 					if(o)
 					{
@@ -170,14 +205,18 @@ module.exports = function(app) {
 		}
 	})
 	
-	app.get('/profile/', function(req, res) {
+	app.post('/leaving/:topicid/', checkUser, getUser, loginUser, function(req, res){
+		console.log(req.session.user.username + ' has left '+ req.param('topicid') +' at '+ moment().format());
+	})
+	
+	app.get('/profile/',checkUser, getUser, loginUser, function(req, res) {
 		res.render('profile', {
 				title : 'Update Your Profile',
 				countries : CT
 		});
 	});
 	
-	app.post('/profile/', function(req, res){
+	app.post('/profile/', checkUser, getUser, loginUser, function(req, res){
 		if (req.param('user') != undefined) {
 			AM.update({
 				username 	: req.param('user'),
@@ -254,13 +293,13 @@ module.exports = function(app) {
 	
 // view & delete accounts //
 	
-	app.get('/members/', function(req, res) {
+	app.get('/members/', checkUser, getUser, loginUser, function(req, res) {
 		AM.list( function(e, accounts){
 			res.render('members', { title : 'Account List', accts : accounts });
 		})
 	});	
 	
-	app.post('/profile/delete/', function(req, res){
+	app.post('/profile/delete/', checkUser, getUser, loginUser, function(req, res){
 		AM.delete(req.body.id, function(e, obj){
 			if (!e){
 				res.clearCookie('user');
@@ -272,7 +311,7 @@ module.exports = function(app) {
 	    });
 	});
 	
-	app.get('/reset', function(req, res) {
+	app.get('/reset/', function(req, res) {
 		CM.delAllRecords( );
 		res.redirect('/');
 	});

@@ -6,6 +6,7 @@ var	CM			=	require('./category-manager.js');
 var	FM			=	require('./forum-manager.js');
 var	TM			=	require('./topic-manager.js');
 var	mongoose	=	require('mongoose');
+var	moment		=	require('moment');
 var	ObjectId	=	mongoose.Types.ObjectId;
 
 var	PM			=	{};
@@ -15,7 +16,14 @@ module.exports	=	PM;
 
 PM.create			=	function(newData, callback) 
 {
-	
+	p = new Post(newData);
+	p.save(function(err, thepost) {
+		Topic.findByIdAndUpdate(newData.topic, {lastPost: moment().format(), $push : { replies : thepost._id }}, function(err, t) {
+			Post.findById(p._id).populate('author').populate('topic').exec(function (err, cbPost) {
+				callback(cbPost);
+			});
+		});
+	});
 };
 
 PM.getTopic			=	function(tid, callback)

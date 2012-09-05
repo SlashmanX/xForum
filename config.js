@@ -3,7 +3,7 @@ var connect = require('connect')
   , Db = require('mongodb').Db
   , Server = require('mongodb').Server
   , server_config = new Server('localhost', 27017, {auto_reconnect: true, native_parser: true})
-  , db = new Db('express_sessions', server_config, {})
+  , db = new Db('xForum', server_config, {})
   , MongoStore = require('connect-mongodb');
 
 
@@ -18,6 +18,7 @@ module.exports = function(app, exp) {
 			cookie: {
 				maxAge: 120000
 				},
+			key: 'sid',
 			store: new MongoStore({db: db})
 			}));
 		app.use(exp.methodOverride());

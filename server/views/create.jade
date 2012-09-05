@@ -68,14 +68,8 @@ block content
 							label.control-label(for='post') Post:
 							.controls
 								textarea#post(name='post')
-
-						#forumlist-cg.control-group
-							label.control-label(for='forum-list') Forum 
-							.controls
-								select#forum-list(name='forum')
-									each cat in categories
-										each forum in cat.forums
-											option(class = 'sub-'+cat.slug, value = forum.slug) #{forum.name}
+								
+						input(type='hidden', value = parent, name = 'forum')
 						.form-actions
 							button(type='button')#account-form-btn1.btn Cancel
 							button(type='submit')#account-form-btn2.btn.btn-primary Create
