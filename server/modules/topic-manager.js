@@ -75,3 +75,8 @@ TM.getIDFromSlug	=	function(slug, callback)
 		if(t) callback(t._id)
 	})
 }
+
+TM.delAllRecords = function() 
+{
+	Topic.remove({}, function() {}); // reset accounts collection for testing //
+}

@@ -30,7 +30,10 @@ block content
 							.row.home-category-forum(id = 'forum-' + forum.slug)
 								.span9
 									.span1 
-										i.icon-folder-close
+										if forum.isRead
+											i.icon-folder-open
+										else
+											i.icon-folder-close
 									.span4
 										a(href = '/forum/'+forum.slug+'/') #{forum.name}
 									.span1.home-category-num-topics= forum.topics.length

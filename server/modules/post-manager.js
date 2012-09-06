@@ -40,3 +40,8 @@ PM.getIDFromSlug	=	function(slug, callback)
 		if(p) callback(p._id)
 	})
 }
+
+PM.delAllRecords = function() 
+{
+	Post.remove({}, function() {}); // reset accounts collection for testing //
+}

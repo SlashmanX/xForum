@@ -83,7 +83,7 @@ module.exports = function(app, socket) {
 	// logged-in user homepage //
 	
 	app.get('/', checkUser, getUser, loginUser, function(req, res) {
-		CM.list( function(e, categories){
+		CM.listHomePage(req.session.user._id, function(e, categories){
 			if(e) {
 				console.error('Error getting categories: '+ e);
 			}
@@ -311,6 +311,9 @@ module.exports = function(app, socket) {
 	
 	app.get('/reset/', function(req, res) {
 		CM.delAllRecords( );
+		TM.delAllRecords( );
+		PM.delAllRecords( );
+		FM.delAllRecords( );
 		res.redirect('/');
 	});
 	

@@ -64,3 +64,8 @@ FM.getIDFromSlug	=	function(slug, callback)
 		if(f) callback(f._id)
 	})
 }
+
+FM.delAllRecords = function() 
+{
+	Forum.remove({}, function() {}); // reset accounts collection for testing //
+}
