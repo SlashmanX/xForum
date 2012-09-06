@@ -5,3 +5,7 @@ private/
 .DS_Store
 
 xForum.tmproj
+
+logs/mongodb.log
+
+public/css/style.min.css

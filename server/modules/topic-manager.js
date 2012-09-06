@@ -28,7 +28,7 @@ TM.create			=	function(newData, callback)
 				topic.save(function(err, thetopic) {
 					Forum.findByIdAndUpdate(fid, {$push : { topics : thetopic._id }}, function(err, f) {
 						console.log(err);
-						callback('ok');
+						callback(thetopic);
 					});
 				});
 			});
@@ -45,7 +45,6 @@ TM.checkRead		=	function(uid, tid, callback)
 		else {
 			var lastPost = moment(o.topic.lastPost);
 			var lastRead = moment(o.lastAccessed);
-			console.log(lastPost.diff(lastRead))
 			if(lastPost.diff(lastRead) < 0) {
 				callback(true);
 			}

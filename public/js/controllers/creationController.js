@@ -2,26 +2,24 @@
 function CreationController()
 {	
 	var subForumList = [];
-	 $('#forumList option').each(function () {
+	 $('#forum-list option').each(function () {
 		var cat = $(this).attr('class').replace('sub-', '');
 		
 		if(!subForumList[cat])
 			subForumList[cat]= [];
 			
-		console.log($(this).text());
-			
 		subForumList[cat].push({slug: $(this).val(), text: $(this).text()});
 	});
 	
-	$('#catList').on('change', function() {
+	$('#cat-list').on('change', function() {
 		var cat = $(this).val();
-		$('#forumList').html('').append('<option></option>');
+		$('#forum-list').html('').append('<option></option>');
 		$.each(subForumList[cat], function() {
-			$('#forumList').append('<option value = "'+ this.slug+'">'+ this.text +'</option>');
+			$('#forum-list').append('<option value = "'+ this.slug+'">'+ this.text +'</option>');
 		})
 	});
 	
-	$('#catList').trigger('change');
+	$('#cat-list').trigger('change');
 // bind event listeners to button clicks //
 	var that = this;	
 }

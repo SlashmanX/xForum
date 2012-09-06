@@ -15,13 +15,57 @@ body {
 	padding:20px;
 }
 
+.home-categories {
+	.well;
+	
+	.home-category {
+		margin-bottom: 20px;
+	}
+	
+	.category-head {
+		a {
+			text-shadow: 0 1px 0 rgba(0,0,0,.15);
+			font-weight: bold;
+			color: @white;
+		}
+		.buttonBackground(lighten(@btnPrimaryBackground, 20%), lighten(@btnPrimaryBackgroundHighlight, 20%));
+		border: 1px solid @gray;
+		.border-radius(5px);
+		.border-bottom-radius(0px);
+		
+	}
+	
+	.row {
+		padding: 15px;
+		margin: 0px;
+		border: 1px solid @grayLighter;
+		border-top: none;
+	}
+	
+	.home-category-forum {
+		background-color: @tableBackground;
+		
+		
+		&:nth-child(odd) {
+			background-color: @tableBackgroundAccent;
+		}
+		
+		&:last-child {
+			.border-bottom-radius(5px);
+		}
+	}
+	
+	.home-category-headings {
+		font-weight: bold;
+		background-color: @white;
+	}
+}
 .forum {
 	.well;
 	
 	.row {
 		padding: 15px;
 		margin: 0px;
-		.border-radius(5px);
 		border: 1px solid @grayLighter;
 		border-top: none;
 	}

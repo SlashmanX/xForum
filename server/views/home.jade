@@ -14,27 +14,26 @@ block content
 						a(href="#forum-" + forum.slug)
 							i.icon-chevron-right
 							| !{forum.name}
-	.span9
-		- for (var i = 0; i < categories.length; i++)
-			table.table.table-bordered.table-striped
-				thead(id = 'cat-' + categories[i].slug)
-					tr
-						th(colspan='4')
-							a(href= '/category/'+ categories[i].slug+'/') #{categories[i].name}
-					tr
-						th Status
-						th Forum
-						th Topics
-				tbody
-				each forum in categories[i].forums
-					if forum.parent == null
-						tr(id = 'forum-' + forum.slug)
-							td 
-								i.icon-folder-close
-									&nbsp;
-							td
-								a(href = '/forum/'+forum.slug+'/') #{forum.name}
-							td= forum.topics.length
+	.span9.home-categories
+		for cat in categories
+			.home-category
+				.row(id = 'cat-' + cat.slug).category-head
+					a(href= '/category/'+ cat.slug+'/').home-category-title #{cat.name}
+				.row.home-category-headings
+					.span9
+						.span1 Status
+						.span4 Forum
+						.span1 Topics
+				section.home-category-forums
+					each forum in cat.forums
+						if forum.parent == null
+							.row.home-category-forum(id = 'forum-' + forum.slug)
+								.span9
+									.span1 
+										i.icon-folder-close
+									.span4
+										a(href = '/forum/'+forum.slug+'/') #{forum.name}
+									.span1.home-category-num-topics= forum.topics.length
 	
 block append scripts
 	script(src='/js/views/home.js')

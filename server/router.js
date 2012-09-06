@@ -94,7 +94,7 @@ module.exports = function(app, socket) {
 	
 	app.get('/create/:what/', checkUser, getUser, loginUser, function(req, res){
 		CM.list( function(e, categories){
-			res.render('create', { title : 'Create New Forum | xForum', categories : categories, what: req.param('what'), parent: req.param('pid')})
+			res.render('create', { title : 'Create New Thing | xForum', categories : categories, what: req.param('what'), parent: req.param('pid')})
 		})
 	})
 	
@@ -195,18 +195,16 @@ module.exports = function(app, socket) {
 				slug: functions.slugify(req.param('title')),
 				forum: req.param('forum'),
 				author: req.session.user._id,
-				createdOn: moment().format()
+				createdOn: moment().format(),
+				lastPost: moment().format()
 			}, function(o){
 					if(o)
 					{
-						res.send('ok', 200);
+						res.send(o._id, 200);
+						socket.sockets.emit('newTopic', o);
 					}
 			})
 		}
-	})
-	
-	app.post('/leaving/:topicid/', checkUser, getUser, loginUser, function(req, res){
-		console.log(req.session.user.username + ' has left '+ req.param('topicid') +' at '+ moment().format());
 	})
 	
 	app.get('/profile/',checkUser, getUser, loginUser, function(req, res) {
