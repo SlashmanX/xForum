@@ -17,19 +17,15 @@ module.exports	=	TM;
 
 TM.create			=	function(newData, callback) 
 {
-	Forum.findOne({_id : newData.forum}).exec(function(e, fid){
-		newData.forum = fid;
-		newData.post = null;
-		t = new Topic(newData);
-		p = new Post({author: newData.author, topic: t._id, body: newData.body});
-		p.save(function(err, thepost) {
-			t.save(function (e, topic) {
-				topic.post = new ObjectId(thepost._id + '');
-				topic.save(function(err, thetopic) {
-					Forum.findByIdAndUpdate(fid, {$push : { topics : thetopic._id }}, function(err, f) {
-						console.log(err);
-						callback(thetopic);
-					});
+	newData.post = null;
+	t = new Topic(newData);
+	p = new Post({author: newData.author, topic: t._id, body: newData.body});
+	p.save(function(err, thepost) {
+		t.save(function (e, topic) {
+			topic.post = new ObjectId(thepost._id + '');
+			topic.save(function(err, thetopic) {
+				Forum.findByIdAndUpdate(newData.forum, {$push : { topics : thetopic._id }}, function(err, f) {
+					callback(thetopic);
 				});
 			});
 		});

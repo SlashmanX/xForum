@@ -10,38 +10,38 @@ block content
 					a(href="/topic/" + topic.slug + "/")
 						i.icon-chevron-right
 						| !{topic.title}
-	.span9.forum
-		.row.forum-head
-			.span6
-				h2 
-					span.forum-topic-title= forum.name
-					span.forum-topic-subtitle= forum.desc
-			.span3
-				span.pull-right
-					a.btn(href='/create/topic/?pid='+forum._id) Create Topic
-					a.btn(href='/create/forum/?pid='+forum._id) Create Forum
-		.row.forum-headings
-			.span9
-				.span1 Status
-				.span3 Topic
-				.span1 Views
-				.span1 Replies
-				.span2 Last Poster
-		section.forum-topics		
-			each topic in forum.topics
-				.row(id = 'topic-' + topic.slug).forum-topic
-					.span9
-						.span1.topic-status
-							if topic.isRead
-								i.icon-folder-open
-							else
-								i.icon-folder-close
-						.span3 
-							a(href = '/topic/'+topic.slug+'/') #{topic.title}
-							p.help-block.forum-topic-subtitle= topic.desc
-						.span1= topic.views
-						.span1.topic-replies= topic.replies.length
-						.span2.topic-last-poster SlashmanX
+						
+	.span9.forum.xforum
+		.forum-table
+			.row.action-buttons
+				.span9
+					a(href='/create/topic/?pid='+ forum._id).btn.action-button New Topic
+			.row(id = 'forum-' + forum.slug).display-head
+				a(href= '/forum/'+ forum.slug+'/').display-title= forum.name
+				span.display-desc= forum.desc
+			.row.display-headings
+				.span9
+					.span1 Status
+					.span3 Topic
+					.span1 Views
+					.span1 Replies
+					.span2 Last Poster
+			section.forum-topics
+				each topic in forum.topics
+					.row.display-row(id = 'topic-' + topic.slug)
+						.span9
+							.span1 
+								if forum.isRead
+									i.icon-folder-open
+								else
+									i.icon-folder-close
+							.span3 
+								a(href = '/topic/'+topic.slug+'/') #{topic.title}
+								p.help-block.display-subtitle= topic.desc
+							.span1= topic.views
+							.span1.topic-replies= topic.replies.length
+							.span2.topic-last-poster SlashmanX
+
 		input(type='hidden', value=forum._id)#forumid
 	
 block append scripts

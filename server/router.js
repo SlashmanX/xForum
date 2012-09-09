@@ -93,7 +93,7 @@ module.exports = function(app, socket) {
 	});
 	
 	app.get('/create/:what/', checkUser, getUser, loginUser, function(req, res){
-		CM.list( function(e, categories){
+		CM.listAll( function(e, categories){
 			res.render('create', { title : 'Create New Thing | xForum', categories : categories, what: req.param('what'), parent: req.param('pid')})
 		})
 	})

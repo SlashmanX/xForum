@@ -1,25 +1,26 @@
 
 function CreationController()
 {	
-	var subForumList = [];
+	// Uncomment when subforum spport has been added
+	/*var subForumList = [];
 	 $('#forum-list option').each(function () {
 		var cat = $(this).attr('class').replace('sub-', '');
 		
 		if(!subForumList[cat])
 			subForumList[cat]= [];
 			
-		subForumList[cat].push({slug: $(this).val(), text: $(this).text()});
+		subForumList[cat].push({id: $(this).val(), text: $(this).text()});
 	});
 	
 	$('#cat-list').on('change', function() {
 		var cat = $(this).val();
 		$('#forum-list').html('').append('<option></option>');
 		$.each(subForumList[cat], function() {
-			$('#forum-list').append('<option value = "'+ this.slug+'">'+ this.text +'</option>');
+			$('#forum-list').append('<option value = "'+ this.id+'">'+ this.text +'</option>');
 		})
 	});
 	
-	$('#cat-list').trigger('change');
+	$('#cat-list').trigger('change');*/
 // bind event listeners to button clicks //
 	var that = this;	
 }

@@ -5,21 +5,22 @@ block content
 		ul.nav.nav-list.bs-docs-sidenav
 			each cat in categories
 				li.category-nav
-					a(href="#cat-" + cat.slug)
+					a(href="/category/" + cat.slug+"/")
 						i.icon-chevron-right
 						| !{cat.name}
 				
 				each forum in cat.forums
 					li.forum-nav
-						a(href="#forum-" + forum.slug)
+						a(href="/forum/" + forum.slug+"/")
 							i.icon-chevron-right
 							| !{forum.name}
-	.span9.home-categories
+							span.sidenav-badge= forum.unRead
+	.span9.home-categories.xforum
 		for cat in categories
 			.home-category
-				.row(id = 'cat-' + cat.slug).category-head
-					a(href= '/category/'+ cat.slug+'/').home-category-title #{cat.name}
-				.row.home-category-headings
+				.row(id = 'cat-' + cat.slug).display-head
+					a(href= '/category/'+ cat.slug+'/').display-title #{cat.name}
+				.row.display-headings
 					.span9
 						.span1 Status
 						.span4 Forum
@@ -27,7 +28,7 @@ block content
 				section.home-category-forums
 					each forum in cat.forums
 						if forum.parent == null
-							.row.home-category-forum(id = 'forum-' + forum.slug)
+							.row.display-row(id = 'forum-' + forum.slug)
 								.span9
 									.span1 
 										if forum.isRead
@@ -36,6 +37,7 @@ block content
 											i.icon-folder-close
 									.span4
 										a(href = '/forum/'+forum.slug+'/') #{forum.name}
+										p.help-block.display-subtitle= forum.desc
 									.span1.home-category-num-topics= forum.topics.length
 	
 block append scripts

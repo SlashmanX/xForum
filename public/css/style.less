@@ -15,96 +15,83 @@ body {
 	padding:20px;
 }
 
+.display-head {
+	a {
+		text-shadow: 0 1px 0 rgba(0,0,0,.15);
+		font-weight: bold;
+		color: @white;
+	}
+	.buttonBackground(lighten(@btnPrimaryBackground, 20%), lighten(@btnPrimaryBackgroundHighlight, 20%));
+	border: 1px solid @gray;
+	.border-radius(5px);
+	.border-bottom-radius(0px);
+	
+	.display-desc {
+		margin-left: 10px;
+		font-size: 0.9em;
+	}
+	
+}
+.display-headings {
+	font-weight: bold;
+	background-color: @white;
+}
+.xforum {
+	.row {
+		padding: 15px;
+		margin: 0px;
+		border: 1px solid @grayLighter;
+		border-top: none;
+	}
+	
+	.action-buttons {
+		.span9 {
+			margin-left: -15px;
+		}
+		border: none;
+		.action-button {
+			.pull-right;
+		}	
+	}	
+}
+
+.sidenav-badge {
+	.badge;
+	.pull-right;
+	padding-left: 0px;
+	margin-top: 2px;
+	text-indent: 10px;
+}
+
+.display-row {
+	background-color: @tableBackground;
+	
+	
+	&:nth-child(odd) {
+		background-color: @tableBackgroundAccent;
+	}
+	
+	&:last-child {
+		.border-bottom-radius(5px);
+	}
+}
+
+.display-subtitle {
+	font-size: 0.8em;
+	margin-bottom: -10px;
+}
+
 .home-categories {
 	.well;
 	
 	.home-category {
 		margin-bottom: 20px;
 	}
-	
-	.category-head {
-		a {
-			text-shadow: 0 1px 0 rgba(0,0,0,.15);
-			font-weight: bold;
-			color: @white;
-		}
-		.buttonBackground(lighten(@btnPrimaryBackground, 20%), lighten(@btnPrimaryBackgroundHighlight, 20%));
-		border: 1px solid @gray;
-		.border-radius(5px);
-		.border-bottom-radius(0px);
-		
-	}
-	
-	.row {
-		padding: 15px;
-		margin: 0px;
-		border: 1px solid @grayLighter;
-		border-top: none;
-	}
-	
-	.home-category-forum {
-		background-color: @tableBackground;
-		
-		
-		&:nth-child(odd) {
-			background-color: @tableBackgroundAccent;
-		}
-		
-		&:last-child {
-			.border-bottom-radius(5px);
-		}
-	}
-	
-	.home-category-headings {
-		font-weight: bold;
-		background-color: @white;
-	}
+
+
 }
 .forum {
 	.well;
-	
-	.row {
-		padding: 15px;
-		margin: 0px;
-		border: 1px solid @grayLighter;
-		border-top: none;
-	}
-	
-	.forum-topic-subtitle {
-		font-size: 0.8em;
-		margin-bottom: -10px;
-	}
-	
-	.forum-head{
-		border: none;
-		margin-left: -30px;
-		margin-bottom: -20px;
-		.span6 {
-			margin-left: 0px;
-		}
-		a {
-			margin-bottom: -35px;
-		}	
-	}
-	
-	.forum-topic {
-		background-color: @tableBackground;
-		
-		
-		&:nth-child(odd) {
-			background-color: @tableBackgroundAccent;
-		}
-	}
-	
-	i {
-		text-align: center;
-	}
-	
-	.forum-headings {
-		font-weight: bold;
-		border-top: 1px solid @grayLighter;
-		background-color: @white;
-	}
 }
 .topic {
 	.well;

@@ -11,32 +11,23 @@ module.exports	=	FM;
 
 FM.create			=	function(newData, callback) 
 {
-	CM.getIDFromSlug(newData.category, function(id){
-		newData.category = id;
-		f = new Forum(newData);
-		f.save(function () {
-			Category.findByIdAndUpdate(id, {$push : { forums : f._id }}, function(err, c) {
-				callback('ok');
-			});
+	console.log(newData.category)
+	f = new Forum(newData);
+	f.save(function () {
+		Category.findByIdAndUpdate(newData.category, {$push : { forums : f._id }}, function(err, c) {
+			callback('ok');
 		});
 	});
 };
 FM.createSubForum	=	function(newData, callback) 
 {
-	CM.getIDFromSlug(newData.category, function(id){
-		newData.category = id;
-		FM.getIDFromSlug(newData.parent, function(fid) {
-			newData.parent = fid;
-			f = new Forum(newData);
-			f.save(function () {
-				Category.findByIdAndUpdate(id, {$push : { forums : f._id }}, function(err, c) {
-					Forum.findByIdAndUpdate(fid, {$push : {children : f._id}}, function(err, f) {
-						callback('ok');
-					});
-				});
+	f = new Forum(newData);
+	f.save(function () {
+		Category.findByIdAndUpdate(id, {$push : { forums : f._id }}, function(err, c) {
+			Forum.findByIdAndUpdate(fid, {$push : {children : f._id}}, function(err, f) {
+				callback('ok');
 			});
-		})
-		
+		});
 	});
 };
 

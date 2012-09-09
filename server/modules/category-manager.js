@@ -52,6 +52,7 @@ CM.listHomePage		=	function(user_id, callback)
 								},
 								function(err) {
 									categories[cCount].forums[fCount].isRead = (numTopics == topicsRead);
+									categories[cCount].forums[fCount].unRead = numTopics - topicsRead;
 									fCount++;
 									cbForum();
 								})
@@ -70,7 +71,7 @@ CM.listHomePage		=	function(user_id, callback)
 
 CM.listAll	=	function(callback)
 {
-	Category.find().exec(function(e, res) {
+	Category.find().populate('forums').exec(function(e, res) {
 		if (e) callback(e)
 		else callback(null, res)
 	});
