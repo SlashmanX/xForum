@@ -64,11 +64,11 @@ AM.update = function(newData, callback)
 		o.email 	= newData.email;
 		o.location 	= newData.location;
 		if (newData.password === ''){
-			User.save(o); callback(o);
+			new User(o).save(callback(o));
 		}	else{
 			AM.saltAndHash(newData.password, function(hash){
 				o.password = hash;
-				User.save(o); callback(o);			
+				new User(o).save(callback(o));
 			});
 		}
 	});

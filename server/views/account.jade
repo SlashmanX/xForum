@@ -12,7 +12,7 @@ input(type='hidden', value= user._id)#userId
 			#name-cg.control-group
 				label.control-label(for='name-tf') Name
 				.controls
-					input#name-tf.input-xlarge(type='text', name='name', value= user.name)
+					input#name-tf.input-xlarge(type='text', name='name', value= user.realName)
 					
 			#email-cg.control-group
 				label.control-label(for='email-tf') Email
@@ -24,14 +24,14 @@ input(type='hidden', value= user._id)#userId
 				.controls
 					select#country-list(name='country')
 						each item in countries
-							option(selected=item.name == user.country)= item.name
+							option(selected=item.name == user.location)= item.name
 							
 			hr
 			p#sub2.subheading
 			#user-cg.control-group
 				label.control-label(for='user-tf') Username
 				.controls
-					input#user-tf.input-xlarge.disabled(type='text', name='user', value= user.user)
+					input#user-tf.input-xlarge.disabled(type='text', name='user', value= user.username)
 					
 			#pass-cg.control-group
 				label.control-label(for='pass-tf') Password
