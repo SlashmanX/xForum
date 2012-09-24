@@ -5,6 +5,8 @@ XForum
 
 A real-time forum system created using Node.js, Socket.io and MongoDB
 
+Up-to-date demo at xforum.slashmanx.com
+
 ### WORK IN PROGRESS!
 
 Features So Far (v0.0.1)
