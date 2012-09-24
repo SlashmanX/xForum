@@ -1,6 +1,9 @@
 
 node_modules/
+
 private/
+
+.foreverignore
 
 .DS_Store
 
