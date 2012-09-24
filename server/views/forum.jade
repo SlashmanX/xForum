@@ -13,13 +13,13 @@ block content
 						
 	.span9.forum.xforum
 		.forum-table
-			.row.action-buttons
+			.row-fluid.action-buttons
 				.span9
 					a(href='/create/topic/?pid='+ forum._id).btn.action-button New Topic
-			.row(id = 'forum-' + forum.slug).display-head
+			.row-fluid(id = 'forum-' + forum.slug).display-head
 				a(href= '/forum/'+ forum.slug+'/').display-title= forum.name
 				span.display-desc= forum.desc
-			.row.display-headings
+			.row-fluid.display-headings
 				.span9
 					.span1 Status
 					.span3 Topic
@@ -28,7 +28,7 @@ block content
 					.span2 Last Poster
 			section.forum-topics
 				each topic in forum.topics
-					.row.display-row(id = 'topic-' + topic.slug)
+					.row-fluid.display-row(id = 'topic-' + topic.slug)
 						.span9
 							.span1 
 								if forum.isRead

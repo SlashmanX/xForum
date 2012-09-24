@@ -2,7 +2,7 @@ extends layout
 
 block content
 	.span12.topic
-		.row
+		.row-fluid
 			.span12
 				h2 
 					span.topic-title= topic.title
@@ -10,25 +10,25 @@ block content
 		section.posts
 			each post in topic.posts
 				section.post(id = 'post-'+ post._id)
-					.row
-						.span9.offset3
+					.row-fluid
+						.span10.offset2
 							small Posted 
 								abbr.timeago(title=post.postedOn) #{post.postedOn}
-					.row
-						.span3
+					.row-fluid
+						.span2
 							ul.user-details
 								li.user-name= post.author.username
 								li.user-avatar
 									img(src="http://placehold.it/140x140").img-polaroid
-						.span9
+						.span10
 							.post-body= post.body
-					.row
+					.row-fluid
 						.span12.post-actions
 							span.pull-right
 								button.btn(type='button')
 									i.icon-comment
 									| Reply
-		.row
+		.row-fluid
 			.span12.reply-to-post
 				h3 Add Reply
 				form( method="post")#reply-form
