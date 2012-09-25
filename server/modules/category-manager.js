@@ -14,7 +14,7 @@ CM.create	=	function(newData, callback)
 
 CM.listHomePage		=	function(user_id, callback)
 {
-	Category.find().populate('forums').exec(function(e, categories) {
+	Category.find().populate('forums').populate('forums.topics').exec(function(e, categories) {
 		if (e) {
 			callback(e);
 		}
@@ -44,6 +44,7 @@ CM.listHomePage		=	function(user_id, callback)
 							async.whilst(
 								function() { return tCount < tLength },
 								function(cbTopic) {
+									console.log(categories[cCount].forums[fCount].topics[tCount])
 									TM.checkRead(user_id, categories[cCount].forums[fCount].topics[tCount], function(read){
 										if(read) topicsRead++;
 										tCount++;
@@ -65,6 +66,53 @@ CM.listHomePage		=	function(user_id, callback)
 				function(err) {
 					callback(null, categories);
 				});
+		}
+	});
+}
+
+CM.listOne		=	function(slug, user_id, callback)
+{
+	Category.findOne({slug: slug}).populate('forums').populate('forums.topics').exec(function(e, category) {
+		if (e) {
+			callback(e);
+		}
+		else {
+			
+			//Getting readStatus of each forum
+			var fLength = category.forums.length;
+			var fCount = 0;
+					
+			async.whilst(
+				function() { return fCount < fLength; },
+				function(cbForum) {
+					
+					var numTopics = 0;
+					var topicsRead = 0;
+					category.forums[fCount].unRead = 0;
+					var tLength = category.forums[fCount].topics.length;
+					numTopics += tLength;
+					var tCount = 0;
+					
+					async.whilst(
+						function() { return tCount < tLength },
+						function(cbTopic) {
+							TM.checkRead(user_id, category.forums[fCount].topics[tCount], function(read){
+								if(read) topicsRead++;
+								tCount++;
+								cbTopic();
+							})
+						},
+						function(err) {
+							category.forums[fCount].isRead = (numTopics == topicsRead);
+							category.forums[fCount].unRead = numTopics - topicsRead;
+							fCount++;
+							cbForum();
+						})
+				},
+			function(err) {
+				console.log(category);
+				callback(null, category);
+			});
 		}
 	});
 }

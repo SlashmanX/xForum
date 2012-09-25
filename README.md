@@ -1,11 +1,11 @@
 XForum
 ======
-
-## Current Version: v0.0.1 (Released 24th Sep 2012)
-
 A real-time forum system created using Node.js, Socket.io and MongoDB
 
-Up-to-date demo at xforum.slashmanx.com
+Up-to-date demo at http://xforum.slashmanx.com
+
+Current Version: v0.0.1 (Released 24th Sep 2012)
+================================================
 
 ### WORK IN PROGRESS!
 

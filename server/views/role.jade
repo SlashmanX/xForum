@@ -1,0 +1,16 @@
+extends layout
+
+block content
+	.row
+			form.form-horizontal.span12(method='POST')#create-form
+				fieldset
+					legend Add New Role
+					!{form}
+					
+					.form-actions
+						button(type='button')#account-form-btn1.btn Cancel
+						button(type='submit')#account-form-btn2.btn.btn-primary Create
+						
+block append scripts
+	script(src='/js/views/role.js')
+	script(src='/js/controllers/roleController.js')

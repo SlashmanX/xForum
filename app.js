@@ -46,7 +46,6 @@ socket.sockets.on('connection', function(client){
 	client.join(hs.sessionID);
 
 	client.on('leavingTopic', function(data){
-		console.log('left topic: '+ data.topic);
 		/* Insert function to access the express_session table for hs.sessionID to get user ID */
 		SM.getUserIDFromSession(hs.sessionID.slice(2), function(e, a) {
 			if(a) {

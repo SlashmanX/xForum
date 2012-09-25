@@ -4,6 +4,7 @@ var FM = require('./modules/forum-manager');
 var TM = require('./modules/topic-manager');
 var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
+var RM = require('./modules/role-manager');
 
 
 var	functions	=	require('../shared/functions.js');
@@ -53,12 +54,11 @@ module.exports = function(app, socket) {
 	};
 	
 	app.post('/login/', function(req, res){
-		console.log('here');
 		if (req.param('email') != null){
 			AM.getEmail(req.param('email'), function(o){
 				if (o){
 					res.send('ok', 200);
-					EM.send(o, function(e, m){ console.log('error : '+e, 'msg : '+m)});	
+					//EM.send(o, function(e, m){ console.log('error : '+e, 'msg : '+m)});	
 				}	else{
 					res.send('email-not-found', 400);
 				}
@@ -92,9 +92,18 @@ module.exports = function(app, socket) {
 		
 	});
 	
+	app.get('/category/:slug/', checkUser, getUser, loginUser, function(req, res) {
+		CM.listOne(req.param('slug'), req.session.user._id, function(e, category){
+			if(e) {
+				console.error('Error getting category: '+ e);
+			}
+			res.render('category', { title : category.name +' | xForum', category : category });
+		})
+	})
+	
 	app.get('/create/:what/', checkUser, getUser, loginUser, function(req, res){
 		CM.listAll( function(e, categories){
-			res.render('create', { title : 'Create New Thing | xForum', categories : categories, what: req.param('what'), parent: req.param('pid')})
+			res.render('create', { title : 'Create New '+ req.param('what').capitalize() +' | xForum', categories : categories, what: req.param('what'), parent: req.param('pid')})
 		})
 	})
 	
@@ -144,6 +153,28 @@ module.exports = function(app, socket) {
 			});
 	});
 	
+	app.get('/admin/roles/add/', checkUser, getUser, loginUser, function(req, res){
+		RM.getNewRoleForm(function(form) {
+			res.render('role', {title : 'Add New Role | xForum', form: form});
+		})
+	})
+	
+	app.post('/admin/roles/add/', checkUser, getUser, loginUser, function(req, res){
+		
+		// Converting 'on' from the checkboxes to 'true'
+		var tmp = req.body;
+		for (var key in tmp) {
+		   var obj = tmp[key];
+		   if(obj == 'on')
+				tmp[key] = true;
+		}
+		
+		RM.create(tmp, function(o){
+			if(o)
+				res.send('', 200);
+		});
+	});
+	
 	app.post('/create/:what/', checkUser, getUser, loginUser, function(req, res){
 		if(req.param('what') == 'forum')
 		{
@@ -155,7 +186,7 @@ module.exports = function(app, socket) {
 						desc: req.param('desc')
 					}, function(o){
 						if(o)
-							res.send('ok', 200);
+							res.send('/forum/'+o.slug+'/', 200);
 				})
 			}
 			
@@ -181,13 +212,12 @@ module.exports = function(app, socket) {
 			}, function(o){
 					if(o)
 					{
-						res.send('ok', 200);
+						res.send('/category/'+o.slug+'/', 200);
 					}
 			})
 		}
 		else if(req.param('what') == 'topic')
 		{
-			console.log(req.param('forum'));
 			TM.create({
 				title : req.param('title'),
 				desc: req.param('desc'),
@@ -200,8 +230,8 @@ module.exports = function(app, socket) {
 			}, function(o){
 					if(o)
 					{
-						res.send(o._id, 200);
 						socket.sockets.emit('newTopic', o);
+						res.send('/topic/'+o.slug+'/', 200);
 					}
 			})
 		}

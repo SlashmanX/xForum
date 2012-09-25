@@ -1,13 +1,12 @@
 
 $(document).ready(function(){
 
-	var cc = new CreationController();
+	var rc = new RoleController();
 	
 	$('#create-form').ajaxForm({
 		success	: function(responseText, status, xhr, $form){
-			if (status == 'success') cc.onUpdateSuccess(responseText);
+			if (status == 'success') rc.onUpdateSuccess();
 		}
 	});
-	$('#name-tf').focus();
 
 })

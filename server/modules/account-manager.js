@@ -8,7 +8,7 @@ module.exports = AM;
 
 AM.autoLogin = function(username, password, callback)
 {
-	User.findOne({username:username}, function(e, o) {
+	User.findOne({username:username}).populate('role').exec(function(e, o) {
 		if (o) {
 			(o.password === password) ? callback(o) : callback(null);
 		}	else{
@@ -19,7 +19,7 @@ AM.autoLogin = function(username, password, callback)
 
 AM.manualLogin = function(username, password, callback)
 {
-	User.findOne({username:username}, function(e, o) {
+	User.findOne({username:username}).populate('role').exec(function(e, o) {
 		if (o == null){
 			callback('user-not-found');
 		}	else{

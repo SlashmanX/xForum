@@ -18,9 +18,9 @@ block content
 	.span9.home-categories.xforum
 		for cat in categories
 			.home-category
-				.row-fluid(id = 'cat-' + cat.slug).display-head
+				.row(id = 'cat-' + cat.slug).display-head
 					a(href= '/category/'+ cat.slug+'/').display-title #{cat.name}
-				.row-fluid.display-headings
+				.row.display-headings
 					.span9
 						.span1 Status
 						.span4 Forum
@@ -28,7 +28,7 @@ block content
 				section.home-category-forums
 					each forum in cat.forums
 						if forum.parent == null
-							.row-fluid.display-row(id = 'forum-' + forum.slug)
+							.row.display-row(id = 'forum-' + forum.slug)
 								.span9
 									.span1 
 										if forum.isRead
