@@ -1,8 +1,24 @@
 
 function RoleController()
 {	
-// bind event listeners to button clicks //
-// redirect to homepage on new account creation, add short delay so user can read alert window //	
+	$('#applicAreas').select2({});
+	$('#default').select2({});
+	$('a[rel="tooltip"]').tooltip();
+	
+	$('#checkAll').on('click', function (e) {
+		e.preventDefault();
+		$('input[type="checkbox"]').each(function() {
+			$(this).attr('checked', 'checked');
+		});
+	});
+	
+	$('#uncheckAll').on('click', function (e) {
+		e.preventDefault();
+		$('input[type="checkbox"]').each(function() {
+			$(this).removeAttr('checked');
+		});
+	});
+	// bind event listeners to button clicks //	
 	var that = this;	
 }
 RoleController.prototype.onUpdateSuccess = function()

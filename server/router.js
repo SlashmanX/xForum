@@ -155,6 +155,7 @@ module.exports = function(app, socket) {
 	
 	app.get('/admin/roles/add/', checkUser, getUser, loginUser, function(req, res){
 		RM.getNewRoleForm(function(form) {
+			console.log(form);
 			res.render('role', {title : 'Add New Role | xForum', form: form});
 		})
 	})
@@ -168,7 +169,7 @@ module.exports = function(app, socket) {
 		   if(obj == 'on')
 				tmp[key] = true;
 		}
-		
+		console.log(tmp);
 		RM.create(tmp, function(o){
 			if(o)
 				res.send('', 200);

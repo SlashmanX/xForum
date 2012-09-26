@@ -1,6 +1,6 @@
 @import './less/lib/bootstrap.less';
 @import './less/lib/responsive.less';
-
+@import './less/lib/select2.less';
 .raiseText() {
 	color: grey;
 	text-shadow: -1px 1px 0 white;
@@ -52,8 +52,53 @@ body {
 		.action-button {
 			.pull-right;
 		}	
-	}	
+	}
+	
 }
+form.admin-form {
+	
+	background: @white;
+	padding: 30px;
+	padding-bottom: 0px;
+	border: 1px solid @grayLighter;
+	
+	a[rel='tooltip'] {
+		font-size: 0.8em;
+		margin-left: 2px;
+		font-weight: bold;
+	}
+	
+	.border-radius(5px);
+	
+	.select2-container{
+		margin-left:0px;
+	}
+	.form-actions { 
+		margin-left: 30px;
+	}
+	.form-action-btn {
+		margin-right: 5px;
+		.pull-right();
+	}
+	
+	.checkboxes {
+		.field {
+			display: inline-block;
+			margin-top: 10px;
+		}
+		label {
+			cursor: pointer;
+		}
+		.control-group {
+			display: inline-block;
+			
+			.controls {
+				margin-left: 5px;
+			}
+		}
+	}
+}
+
 
 .sidenav-badge {
 	.badge;
@@ -223,7 +268,7 @@ body {
 	margin-left: 0;
 	border: 1px solid #CCC;
 }
-.form-horizontal .control-label{
+/*.form-horizontal .control-label{
 	width: 80px;
 }
 .form-horizontal .controls {
@@ -231,7 +276,7 @@ body {
 }
 .form-horizontal .form-actions {
 	padding: 17px 0 0 270px;
-}
+}*/
 label {
 	.raiseText();
 }
