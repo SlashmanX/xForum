@@ -20,7 +20,7 @@ $(document).mouseup(function (e)
 $(document).ready(function(){
 
 	// Auto hide more button if sidebar is not full
-	$('#btn-more').hide();
+	$('#showMoreBtn').hide();
 
 	// Apply bootstrap button plugin
 	$('.btn').button();
@@ -30,7 +30,6 @@ $(document).ready(function(){
 		e.preventDefault();
 		
 		var n_sidebar = '#'+$(this).parent('li').attr('id') + '-links';
-		console.log(n_sidebar);
 		var _this = $(this);
 
 		if($(n_sidebar +' .nav li').length == 0) {
@@ -57,12 +56,11 @@ $(document).ready(function(){
 	_windowInnerHeight = $(window).innerHeight();
 
 	$(window).bind('resize', function(e){
-
 		$('#sidebar-more-links').fadeOut();
 		$('.btn-more').data({isShow: false});
 		
 		if($(window).innerWidth() <= 768) {
-			pushSideBarItem($(n_sidebar +' .nav li').length);
+			pushSideBarItem($('#sidebar-more-links .nav li').length);
 			return false;
 		}
 
@@ -89,10 +87,10 @@ $(document).ready(function(){
 			pushSideBarItem(_itemsCount - _currSideBarLength);
 		}
 
-		$('.btn-more').toggle($('#sidebar-more-links .nav li').length > 0);
+		$('#showMoreBtn').toggle($('#sidebar-more-links .nav li').length > 0);
 		
-		if($('.btn-more').css('display') == 'inline')
-			$('.btn-more').css('display', 'block');
+		if($('#showMoreBtn').css('display') == 'inline')
+			$('#showMoreBtn').css('display', 'block');
 
 		if(_currSideBarLength == _itemsCount) {
 			return false;
@@ -109,10 +107,10 @@ $(document).ready(function(){
 	}
 
 	function pushSideBarItem(items) {
-		_collapseSideBar = $('.m-sidebar-collapsed .nav li');
+		_collapseSideBar = $('#sidebar-more-links .nav li');
 
 		for(var i = 0, iCount = 0; iCount < items; i++, iCount++) {
-			$('#sidebar-more').parents('li').before(_collapseSideBar[i]);
+			$('#showMoreBtn').parents('li').before(_collapseSideBar[i]);
 		}
 	}
 });
