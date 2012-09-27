@@ -9,7 +9,7 @@ module.exports	=	RM;
 RM.getNewRoleForm = function(callback) {
 	Role.find({}, 'id name').exec(function (e, roles) {
 		Category.find({}, 'id name forums').populate('forums', 'id name parent').exec(function (err, forums) {
-			var perms = forms.create(Role);
+			var perms = forms.create(Role, {}, 'edit');
 			callback({roles: roles, perms: perms.toHTML(), forums: forums});
 		});
 	});	

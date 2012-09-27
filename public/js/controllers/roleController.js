@@ -18,6 +18,8 @@ function RoleController()
 			$(this).removeAttr('checked');
 		});
 	});
+	
+	$('#sidebar-roles').addClass('active');
 	// bind event listeners to button clicks //	
 	var that = this;	
 }

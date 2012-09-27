@@ -156,7 +156,7 @@ module.exports = function(app, socket) {
 	app.get('/admin/roles/add/', checkUser, getUser, loginUser, function(req, res){
 		RM.getNewRoleForm(function(form) {
 			console.log(form);
-			res.render('role', {title : 'Add New Role | xForum', form: form});
+			res.render('admin/role', {title : 'Add New Role | xForum', form: form});
 		})
 	})
 	

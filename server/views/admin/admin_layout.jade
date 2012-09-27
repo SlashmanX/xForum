@@ -1,0 +1,145 @@
+- user = typeof(udata) != 'undefined' ? udata : {}
+!!!
+html
+	head
+		title= title
+		
+		block scripts
+			script(src="/js/lib/jquery-1.8.0.min.js")
+			script(src="/js/lib/jquery-ui-1.8.23.custom.min.js")
+			script(src="/js/lib/bootstrap.min.js")
+			script(src="/js/lib/jquery.form.js")
+			script(src="/js/lib/jquery.timeago.js")
+			script(src="/js/lib/select2.js")
+			script(src="/socket.io/socket.io.js")
+			script(src="/js/admin/admin.js")
+			script(src="/js/controllers/admin/adminController.js")
+		
+		
+		link(rel='stylesheet', href='/css/admin.min.css')
+	body
+		.navbar.navbar-fixed-top.m-header
+			.navbar-inner.m-inner
+				.container-fluid
+					a.brand.m-brand(href='./index.html') Admin
+					button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
+						span.icon-bar
+						span.icon-bar
+						span.icon-bar
+					.nav-collapse.collapse
+						.btn-group.pull-right
+							a.btn.dropdown-toggle(data-toggle='dropdown', href='#')
+								i.icon-user
+								| !{user.username}
+								b.caret
+							ul.dropdown-menu
+								li
+									a(href='#')
+										i.icon-user
+										| Profile
+								li
+									a(href='#')
+										i.icon-cog
+										| Settings
+								li.divider
+								li
+									a(href='login.html')
+										i.icon-off
+										| Logout
+		.m-top
+		aside.sidebar
+			ul.nav.nav-tabs.nav-stacked
+				li#sidebar-home
+					a(href='/admin/')
+						span.badge.badge-important.m-badge-notification 6
+						i.icon-home
+						| Home
+						
+						.arrow
+							.bubble-arrow-border
+							.bubble-arrow
+							
+				li#sidebar-roles
+					a(href='/roles/').btn-more
+						i.icon-group
+						| Roles
+								
+						.arrow
+							.bubble-arrow-border
+							.bubble-arrow
+							
+				li#sidebar-categories
+					a(href='/categories/')
+						i.icon-list-alt
+						| Categories
+
+						.arrow
+							.bubble-arrow-border
+							.bubble-arrow
+							
+				li#sidebar-users
+					a(href='/users/')
+						i.icon-user
+						| Users
+
+						.arrow
+							.bubble-arrow-border
+							.bubble-arrow
+							
+				li#sidebar-settings
+					a(href='/settings/')
+						i.icon-cogs
+						| Settings
+
+						.arrow
+							.bubble-arrow-border
+							.bubble-arrow
+							
+				li#sidebar-more
+					a(href='#').btn-more
+						i.icon-th-large
+						| More
+							
+		.m-sidebar-collapsed#sidebar-more-links
+			ul.nav.nav-pills
+			
+			.arrow-border
+				.arrow-inner
+				
+		.m-sidebar-collapsed#sidebar-roles-links
+			ul.nav.nav-pills
+				li#sidebar-roles-add
+					a(href='/admin/roles/add/')
+						i.icon-plus
+						| Add
+						
+						.arrow
+							.bubble-arrow-header
+							.bubble-arrow
+				li#sidebar-roles-edit
+					a(href='/admin/roles/edit/')
+						i.icon-pencil
+						| Edit
+
+						.arrow
+							.bubble-arrow-header
+							.bubble-arrow
+			.arrow-border
+				.arrow-inner
+				
+		.main-container
+			.container
+				section
+					.page-header
+						h1
+							block header
+								| Dashboard
+					.span11	
+						.row
+							block content
+
+		
+												
+		
+		include ../modals/alert
+		include ../modals/confirm
