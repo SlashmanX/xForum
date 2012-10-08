@@ -11,6 +11,7 @@ var	io				=	require('socket.io');
 var	connect			=	require('connect');
 var SM 				=	require('./server/modules/socket-manager');
 var CM 				=	require('./server/modules/category-manager');
+var FM 				=	require('./server/modules/forum-manager');
 var	jsdom			=	require('jsdom');
 var	func			=	require('./server/controllers/func.js');
 
@@ -70,6 +71,13 @@ socket.sockets.on('connection', function(client){
 			callback(cat);
 		})
 	})
+	
+	client.on('getForumDetails', function(data, callback) {
+		FM.getDetails(data.id, function(e, forum) {
+			callback(forum);
+		})
+	})
+	
 	client.on('disconnect', function(){
 		client.leave(hs.sessionID);
 	});

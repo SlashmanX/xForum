@@ -43,7 +43,6 @@ $(document).ready(function(){
 		}
 		else
 		{
-			console.log('here');
 			$('li#'+ $('#catId').val()).text($(this).val());
 		}
 	})

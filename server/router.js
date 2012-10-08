@@ -176,7 +176,6 @@ module.exports = function(app, socket) {
 		   if(obj == 'on')
 				tmp[key] = true;
 		}
-		console.log(tmp);
 		RM.create(tmp, function(o){
 			if(o)
 				res.send('', 200);
@@ -209,21 +208,65 @@ module.exports = function(app, socket) {
 			}
 		}
 		else { //updating existing category
-			console.log('updating');
 			CM.update({
 				id: req.param('catId'),
 				name: req.param('name'),
 				desc: req.param('desc'),
 				visibleTo: req.param('visibleTo')
 			}, function(err, o) {
-				console.log(err);
-				console.log(o);
 				if(!err)
 					res.send('ok', 200);
 			})
 		}
 		if(req.param('orderChanged')) {
 			CM.reorder(JSON.parse(req.param('order')), function(e) {
+				if(!e)
+					res.send('ok', 200);
+			});
+		}
+	})
+	
+	app.get('/admin/forums/', checkUser, getUser, loginUser, function(req, res){
+		RM.getRoles(function(roles) {
+			CM.listAll(function(e, cats) {
+				FM.listAll(function(e, forums) {
+					res.render('admin/forum', {title: 'Forums | xForum', roles: roles, forums: forums, categories: cats});
+				});
+			})
+		});
+	})
+	
+	app.post('/admin/forums/', checkUser, getUser, loginUser, function(req, res){
+		if(req.param('fId') == '') { // Not updating
+			if(req.param('name')) {
+				FM.create({
+					name: req.param('name'),
+					desc: req.param('desc'),
+					slug: functions.slugify(req.param('name')),
+					visibleTo: req.param('visibleTo'),
+					order: req.param('fOrder'),
+					category: req.param('category')
+				}, function(err, o) {
+					FM.reorder(JSON.parse(req.param('order')), function(e) {
+						if(!e)
+							res.send(o._id, 200);
+					})
+				});
+			}
+		}
+		else { //updating existing category
+			FM.update({
+				id: req.param('fId'),
+				name: req.param('name'),
+				desc: req.param('desc'),
+				visibleTo: req.param('visibleTo')
+			}, function(err, o) {
+				if(!err)
+					res.send('ok', 200);
+			})
+		}
+		if(req.param('orderChanged')) {
+			FM.reorder(JSON.parse(req.param('order')), function(e) {
 				if(!e)
 					res.send('ok', 200);
 			});

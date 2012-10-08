@@ -1,20 +1,19 @@
-
-function CategoryController()
+function ForumController()
 {	
 	$('#visibleTo').select2({});
-	$('#categoryOrder').sortable();
-	$('#sidebar-categories').addClass('active');
+	$('.sortableList').sortable({items: ':not(.catHeader)'});
+	$('#sidebar-forums').addClass('active');
 // bind event listeners to button clicks //	
 	var that = this;	
 }
-CategoryController.prototype.onUpdateSuccess = function(id)
+ForumController.prototype.onUpdateSuccess = function(id)
 {
 	if(id != 'ok')
-		$('li#tbdCategory').attr('id', id).addClass('existingCategory');
+		$('li#tbdForum').attr('id', id).addClass('existingForum');
 	$('#visibleTo').select2('val', '');
 	$('.modal-alert').modal({ show : false, keyboard : true, backdrop : true });				
 	$('.modal-alert .modal-header h3').text('Success!');
-	$('.modal-alert .modal-body p').html('Your category has been added.'); 				
+	$('.modal-alert .modal-body p').html('Your forum has been added.'); 				
 	$('.modal-alert').modal('show');
 	$('.modal-alert button').off('click');
 }

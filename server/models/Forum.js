@@ -11,7 +11,8 @@ var	forumSchema = new Schema({
 	parent: {type: ObjectId, ref: 'Forum', default: null},
 	children: [{type: ObjectId, ref: 'Forum', default: null}],
 	topics: [{type: ObjectId, ref: 'Topic'}],
-	order: {type: Number, default: 99}
+	order: {type: Number, default: 99},
+	visibleTo: [{type: ObjectId, ref: 'Role'}],
 });
 
 module.exports = mongoose.model('Forum', forumSchema);
