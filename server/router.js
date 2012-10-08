@@ -192,18 +192,42 @@ module.exports = function(app, socket) {
 	})
 	
 	app.post('/admin/categories/', checkUser, getUser, loginUser, function(req, res){
-		CM.create({
-			name: req.param('name'),
-			desc: req.param('desc'),
-			slug: functions.slugify(req.param('name')),
-			visibleTo: req.param('visibleTo'),
-			order: req.param('catOrder')
-		}, function(err, o) {
+		if(req.param('catId') == '') { // Not updating
+			if(req.param('name')) {
+				CM.create({
+					name: req.param('name'),
+					desc: req.param('desc'),
+					slug: functions.slugify(req.param('name')),
+					visibleTo: req.param('visibleTo'),
+					order: req.param('catOrder')
+				}, function(err, o) {
+					CM.reorder(JSON.parse(req.param('order')), function(e) {
+						if(!e)
+							res.send(o._id, 200);
+					})
+				});
+			}
+		}
+		else { //updating existing category
+			console.log('updating');
+			CM.update({
+				id: req.param('catId'),
+				name: req.param('name'),
+				desc: req.param('desc'),
+				visibleTo: req.param('visibleTo')
+			}, function(err, o) {
+				console.log(err);
+				console.log(o);
+				if(!err)
+					res.send('ok', 200);
+			})
+		}
+		if(req.param('orderChanged')) {
 			CM.reorder(JSON.parse(req.param('order')), function(e) {
 				if(!e)
-					res.send(o._id, 200);
-			})
-		});
+					res.send('ok', 200);
+			});
+		}
 	})
 	
 	app.post('/create/:what/', checkUser, getUser, loginUser, function(req, res){

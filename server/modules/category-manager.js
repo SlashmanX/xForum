@@ -12,6 +12,12 @@ CM.create	=	function(newData, callback)
 	new Category(newData).save(callback);
 };
 
+CM.update	=	function(newData, callback) 
+{
+	console.log(newData.id);
+	Category.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc}}, callback);
+};
+
 CM.listHomePage		=	function(user_id, callback)
 {
 	Category.find().populate('forums', null, null, {sort: [['order', 'ascending'], '_id', 'ascending']}).populate('forums.topics').sort({order: 1, _id: 1}).exec(function(e, categories) {

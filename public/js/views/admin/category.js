@@ -5,7 +5,8 @@ $(document).ready(function(){
 	
 	$('ul#categoryOrder').on('sortupdate', function() {
 		$('#orderChanged').val('true');
-		$('button[type="submit"]').text('Update');
+		var text = $('#catId').val() != '' ? 'Update Category & Order' : 'Update Order';
+		$('button[type="submit"]').text(text);
 	})
 	
 	$('a#newCategory').on('click', function(e) {
@@ -13,31 +14,37 @@ $(document).ready(function(){
 		$('#addCategory').clearForm();
 		$('#visibleTo').select2('val', '');
 		$('#catId').val('');
-		var text = $('#orderChanged').val() == 'true' ? 'Create & Update' : 'Create';
+		var text = $('#orderChanged').val() == 'true' ? 'Create & Update Order' : 'Create';
 		$('button[type="submit"]').text(text);
 		$(this).addClass('hide');
 	})
 	
 	$('#name').on('keyup change', function(e) {
 		
-		if($(this).val().length > 0 && $('#catId').val == '')
+		if($(this).val().length > 0 && $('#catId').val() == '')
 		{
-			console.log('Here');
-			var text = $('#orderChanged').val() == 'true' ? 'Create & Update' : 'Create';
+			var text = $('#orderChanged').val() == 'true' ? 'Create & Update Order' : 'Create';
 			$('button[type="submit"]').text(text);
 		}
-		if($('li#tbdCategory').length) {
-			if($(this).val())
-				$('li#tbdCategory').text($(this).val());
-			else
-				$('li#tbdCategory').remove();
-		}
-		else {
-			if($(this).val()) {
-				$('ul#categoryOrder').append('<li id = "tbdCategory">'+ $(this).val() + '</li>');
-				$('ul#categoryOrder').sortable('destroy');
-				$('ul#categoryOrder').sortable();
+		if($('#catId').val() == '') {
+			if($('li#tbdCategory').length) {
+				if($(this).val())
+					$('li#tbdCategory').text($(this).val());
+				else
+					$('li#tbdCategory').remove();
 			}
+			else {
+				if($(this).val()) {
+					$('ul#categoryOrder').append('<li id = "tbdCategory">'+ $(this).val() + '</li>');
+					$('ul#categoryOrder').sortable('destroy');
+					$('ul#categoryOrder').sortable();
+				}
+			}
+		}
+		else
+		{
+			console.log('here');
+			$('li#'+ $('#catId').val()).text($(this).val());
 		}
 	})
 	
@@ -48,7 +55,9 @@ $(document).ready(function(){
 			$('#catId').val(details._id);
 			$('#visibleTo').select2('val', details.visibleTo);
 			$('#newCategory').removeClass('hide');
-			$('button[type="submit"]').text('Update');
+			$('li#tbdCategory').remove();
+			var text = $('#orderChanged').val() == 'true' ? 'Update Category & Order' : 'Update Category';
+			$('button[type="submit"]').text(text);
 		})
 	})
 	
@@ -62,6 +71,8 @@ $(document).ready(function(){
 			var catOrder = $('li#tbdCategory').index();
 			arr.push({name: 'catOrder', value: catOrder});
 			arr.push({name: 'order', value: JSON.stringify(order)});
+			arr.push({name: 'catId', value: $('#catId').val()});
+			arr.push({name: 'orderChanged', value: $('#orderChanged').val()});
 			return true;
 		},
 		success	: function(responseText, status, xhr, $form){
