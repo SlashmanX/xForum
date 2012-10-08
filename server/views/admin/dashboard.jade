@@ -1,5 +1,19 @@
 extends admin_layout
-
+block header
+	| Dashboard
 block content
-	.hero-unit
-		h1 Welcome to your dashboard
+	.span6.admin-widget
+		.widget-header
+			h3 Stats
+		.widget-body
+			.stats
+				each stat in stats
+					.stat.span2
+						span.stat-value= stat.count
+						| !{stat.name}
+		
+	.span5.admin-widget
+		.widget-header
+			h3 Notifications
+		.widget-body
+			span None

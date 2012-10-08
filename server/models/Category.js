@@ -9,7 +9,8 @@ var	categorySchema = new Schema({
 	desc: {type: String, forms: { all : {} } },
 	slug: {type: String, forms: { all : {} } },
 	forums: [{type: ObjectId, ref: 'Forum'}],
-	visibleTo: [{type: ObjectId, ref: 'Role'}]
+	visibleTo: [{type: ObjectId, ref: 'Role'}],
+	order: {type: Number, default: 99}
 });
 
 module.exports = mongoose.model('Category', categorySchema);

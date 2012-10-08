@@ -5,4 +5,4 @@
 * FontAwesome now used
 * Adding new roles implemented
 * Select2 library implemented
-
+* Admin template added

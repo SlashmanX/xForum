@@ -9,12 +9,12 @@ module.exports	=	CM;
 
 CM.create	=	function(newData, callback) 
 {
-	new Category(newData).save(callback('ok'));
+	new Category(newData).save(callback);
 };
 
 CM.listHomePage		=	function(user_id, callback)
 {
-	Category.find().populate('forums').populate('forums.topics').exec(function(e, categories) {
+	Category.find().populate('forums', null, null, {sort: [['order', 'ascending'], '_id', 'ascending']}).populate('forums.topics').sort({order: 1, _id: 1}).exec(function(e, categories) {
 		if (e) {
 			callback(e);
 		}
@@ -119,10 +119,43 @@ CM.listOne		=	function(slug, user_id, callback)
 
 CM.listAll	=	function(callback)
 {
-	Category.find().populate('forums').exec(function(e, res) {
+	Category.find().populate('forums').sort({order: 1, _id: 1}).exec(function(e, res) {
 		if (e) callback(e)
 		else callback(null, res)
 	});
+}
+
+CM.getDetails	=	function(id, callback)
+{
+	Category.findById(id).populate('forums').exec(function(e, res) {
+		if (e) callback(e)
+		else callback(null, res)
+	});
+}
+
+CM.reorder	=	function(newOrder, callback) {
+	var oLength = newOrder.length;
+	var oCount = 0;
+	
+	async.whilst(
+		function() { return oCount < oLength },
+		function(cb) {
+			var id = newOrder[oCount].id;
+			var order = newOrder[oCount].order
+			if(id != 'tbdCategory') {
+				Category.findByIdAndUpdate(id, {$set: {order: order}}, function() {
+					oCount++;
+					cb();
+				});
+			}
+			else {
+				oCount++;
+				cb();
+			}
+		},
+		function(err) {
+			callback(err);
+		})
 }
 
 CM.getIDFromSlug	=	function(slug, callback)

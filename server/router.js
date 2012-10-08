@@ -6,6 +6,8 @@ var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
 var RM = require('./modules/role-manager');
 
+var ADMIN = require('./modules/admin-manager');
+
 
 var	functions	=	require('../shared/functions.js');
 var	moment		=	require('moment');
@@ -153,9 +155,14 @@ module.exports = function(app, socket) {
 			});
 	});
 	
+	app.get('/admin/', checkUser, getUser, loginUser, function(req, res){
+		ADMIN.getDashboardStats(function (stats) {
+			res.render('admin/dashboard', {title : 'Dashboard | xForum', stats: stats});
+		})
+	})
+	
 	app.get('/admin/roles/add/', checkUser, getUser, loginUser, function(req, res){
 		RM.getNewRoleForm(function(form) {
-			console.log(form);
 			res.render('admin/role', {title : 'Add New Role | xForum', form: form});
 		})
 	})
@@ -175,6 +182,29 @@ module.exports = function(app, socket) {
 				res.send('', 200);
 		});
 	});
+	
+	app.get('/admin/categories/', checkUser, getUser, loginUser, function(req, res){
+		RM.getRoles(function(roles) {
+			CM.listAll(function(e, cats) {
+				res.render('admin/category', {title: 'Categories | xForum', roles: roles, categories: cats})
+			});
+		});
+	})
+	
+	app.post('/admin/categories/', checkUser, getUser, loginUser, function(req, res){
+		CM.create({
+			name: req.param('name'),
+			desc: req.param('desc'),
+			slug: functions.slugify(req.param('name')),
+			visibleTo: req.param('visibleTo'),
+			order: req.param('catOrder')
+		}, function(err, o) {
+			CM.reorder(JSON.parse(req.param('order')), function(e) {
+				if(!e)
+					res.send(o._id, 200);
+			})
+		});
+	})
 	
 	app.post('/create/:what/', checkUser, getUser, loginUser, function(req, res){
 		if(req.param('what') == 'forum')

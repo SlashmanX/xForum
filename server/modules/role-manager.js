@@ -14,7 +14,11 @@ RM.getNewRoleForm = function(callback) {
 		});
 	});	
 }
-
+RM.getRoles = function(callback) {
+	Role.find({}, 'id name').exec(function(err, roles) {
+		callback(roles);
+	})
+}
 RM.create = function(data, callback) {
 	new Role(data).save(callback('ok'));
 }

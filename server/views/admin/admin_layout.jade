@@ -10,10 +10,11 @@ html
 			script(src="/js/lib/bootstrap.min.js")
 			script(src="/js/lib/jquery.form.js")
 			script(src="/js/lib/jquery.timeago.js")
+			script(src="/js/lib/jquery.sortable.min.js")
 			script(src="/js/lib/select2.js")
 			script(src="/socket.io/socket.io.js")
-			script(src="/js/admin/admin.js")
 			script(src="/js/controllers/admin/adminController.js")
+			script(src="/js/admin/admin.js")
 		
 		
 		link(rel='stylesheet', href='/css/admin.min.css')
@@ -27,7 +28,8 @@ html
 						span.icon-bar
 						span.icon-bar
 					.nav-collapse.collapse
-						.btn-group.pull-right
+						.pull-right.btn-group
+							a.btn.btn-danger.admin-notification 6
 							a.btn.dropdown-toggle(data-toggle='dropdown', href='#')
 								i.icon-user
 								| !{user.username}
