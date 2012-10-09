@@ -2,7 +2,7 @@ extends admin_layout
 block header
 	| Forums
 block content
-	form.form-horizontal#addForum(method= 'POST')
+	form.form-horizontal#addForum.admin-form(method= 'POST')
 		fieldset
 			legend Manage Forums
 			
@@ -38,12 +38,13 @@ block content
 				.control-group
 					label.control-label(for='order') Order
 					.controls
-						ul.span4#forumOrder
+						ul.span4.sublists#forumOrder
 							each cat in categories
-									span.catHeader= cat.name
-										ul(id='catList-'+cat._id).sortableList
-											each forum in cat.forums
-												li.existingForum(id=forum._id)= forum.name
+									li.catHeader= cat.name
+										li
+											ul(id='catList-'+cat._id).sortableList
+												each forum in cat.forums
+													li.existingForum(id=forum._id)= forum.name
 								
 		.row.span11.no-margin			
 			.form-actions

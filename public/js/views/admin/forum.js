@@ -58,7 +58,7 @@ $(document).ready(function(){
 		}
 	})
 	
-	$('li.existingForum').on('click', function(e) {
+	$('li').on('click', '.existingForum', function(e) {
 		socket.emit('getForumDetails', {id: $(this).attr('id')}, function(details) {
 			$('#name').val(details.name)
 			$('#desc').val(details.desc)

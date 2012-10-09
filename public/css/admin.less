@@ -1,7 +1,11 @@
 @import './less/lib/bootstrap.less';
 @import './less/lib/responsive.less';
 @import './less/lib/select2.less';
-
+@import './less/lib/jbar.less';
+.raiseText() {
+	color: grey;
+	text-shadow: -1px 1px 0 white;
+}
 body{
 	background-color: #F1F1F1;	
 }
@@ -140,6 +144,10 @@ form.admin-form {
 	background: @white;
 	padding-bottom: 0px;
 	
+	label {
+		.raiseText();
+	}
+	
 	a[rel='tooltip'] {
 		font-size: 0.8em;
 		margin-left: 2px;
@@ -181,7 +189,7 @@ form.admin-form {
 	list-style-type: none;
 	li {
 		padding: 5px;
-		cursor: pointer;
+		cursor: move;
 		background: @grayLighter;
 		margin: 5px;
 		border: 1px solid @gray;
@@ -191,6 +199,18 @@ form.admin-form {
 		border: 1px dashed #CCC;
 		background: none;
 	}
+}
+li.catHeader {
+	font-weight: bold;
+	text-shadow: -1px 1px 0 white;
+	border: 1px solid @gray;
+	.border-radius(4px);
+	.buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px rgba(255,255,255,.75));
+	margin: 5px;
+	padding: 5px;
+}
+.sublists {
+	list-style-type: none;
 }
 .main-container{
 	background-color: white;

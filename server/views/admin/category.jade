@@ -2,7 +2,7 @@ extends admin_layout
 block header
 	| Categories
 block content
-	form.form-horizontal#addCategory(method= 'POST')
+	form.form-horizontal#addCategory.admin-form(method= 'POST')
 		fieldset
 			legend Manage Categories
 			
@@ -33,7 +33,7 @@ block content
 					.controls
 						ul.span4#categoryOrder.sortableList
 							each cat in categories
-								li.existingCategory(id=cat._id)= cat.name
+								li.existingCategory.catHeader(id=cat._id)= cat.name
 								
 		.row.span11.no-margin			
 			.form-actions

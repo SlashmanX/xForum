@@ -167,13 +167,13 @@ module.exports = function(app, socket) {
 	
 	app.get('/admin/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		ADMIN.getDashboardStats(function (stats) {
-			res.render('admin/dashboard', {title : 'Dashboard | xForum', stats: stats});
+			res.render('admin/dashboard', {title : 'Dashboard | xForum Admin', stats: stats});
 		})
 	})
 	
 	app.get('/admin/roles/add/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		RM.getNewRoleForm(function(form) {
-			res.render('admin/role', {title : 'Add New Role | xForum', form: form});
+			res.render('admin/role', {title : 'Add New Role | xForum Admin', form: form});
 		})
 	})
 	
@@ -195,7 +195,7 @@ module.exports = function(app, socket) {
 	app.get('/admin/categories/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		RM.getRoles(function(roles) {
 			CM.listAll(function(e, cats) {
-				res.render('admin/category', {title: 'Categories | xForum', roles: roles, categories: cats})
+				res.render('admin/category', {title: 'Categories | xForum Admin', roles: roles, categories: cats})
 			});
 		});
 	})
@@ -240,7 +240,7 @@ module.exports = function(app, socket) {
 		RM.getRoles(function(roles) {
 			CM.listAll(function(e, cats) {
 				FM.listAll(function(e, forums) {
-					res.render('admin/forum', {title: 'Forums | xForum', roles: roles, forums: forums, categories: cats});
+					res.render('admin/forum', {title: 'Forums | xForum Admin', roles: roles, forums: forums, categories: cats});
 				});
 			})
 		});

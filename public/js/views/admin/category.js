@@ -35,7 +35,7 @@ $(document).ready(function(){
 			}
 			else {
 				if($(this).val()) {
-					$('ul#categoryOrder').append('<li id = "tbdCategory">'+ $(this).val() + '</li>');
+					$('ul#categoryOrder').append('<li class = "catHeader" id = "tbdCategory">'+ $(this).val() + '</li>');
 					$('ul#categoryOrder').sortable('destroy');
 					$('ul#categoryOrder').sortable();
 				}
