@@ -13,11 +13,12 @@ block content
 						
 	.span9.forum.xforum
 		.forum-table
-			.row.action-buttons
-				.span9
-					a(href='/create/topic/?pid='+ forum._id).btn.action-button
-						i.icon-comments-alt
-						| New Topic
+			if(user.role && user.role.permissions.CAN_CREATE_TOPIC)
+				.row.action-buttons
+					.span9
+						a(href='/create/topic/?pid='+ forum._id).btn.action-button
+							i.icon-comments-alt
+							| New Topic
 			.row(id = 'forum-' + forum.slug).display-head
 				a(href= '/forum/'+ forum.slug+'/').display-title= forum.name
 				span.display-desc= forum.desc

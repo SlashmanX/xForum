@@ -16,11 +16,12 @@ block content
 						span.sidenav-badge= forum.unRead
 	.span9.home-categories.xforum
 		.home-category
-			.row.action-buttons
-				.span9
-					a(href='/create/forum/?pid='+ category._id).btn.action-button
-						i.icon-inbox
-						| New Forum
+			if(user.role && user.role.permissions.CAN_CREATE_FORUM)
+				.row.action-buttons
+					.span9
+						a(href='/create/forum/?pid='+ category._id).btn.action-button
+							i.icon-inbox
+							| New Forum
 			.row(id = 'cat-' + category.slug).display-head
 				a(href= '/category/'+ category.slug+'/').display-title #{category.name}
 			.row.display-headings

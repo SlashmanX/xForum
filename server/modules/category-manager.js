@@ -76,7 +76,7 @@ CM.listHomePage		=	function(user_id, callback)
 
 CM.listOne		=	function(slug, user_id, callback)
 {
-	Category.findOne({slug: slug}).populate('forums').populate('forums.topics').exec(function(e, category) {
+	Category.findOne({slug: slug}).populate('forums', null, null, {sort: [['order', 'ascending'], '_id', 'ascending']}).populate('forums.topics').exec(function(e, category) {
 		if (e) {
 			callback(e);
 		}

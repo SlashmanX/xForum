@@ -19,6 +19,11 @@ $(document).ready(function(){
 		$(this).addClass('hide');
 	})
 	
+	$('select#category').on('change', function() {
+		$('li#tbdForum').remove();
+		$('#name').trigger('change');
+	})
+	
 	$('#name').on('keyup change', function(e) {
 		if($(this).val().length > 0 && $('#fId').val() == '')
 		{

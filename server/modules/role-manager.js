@@ -1,6 +1,7 @@
 var	Role		=	require('../models/Role.js');
 var	Forum		=	require('../models/Forum.js');
 var	Category	=	require('../models/Category.js');
+var	User		=	require('../models/User.js');
 var	forms		=	require('forms-mongoose')
 var	RM		=	{};
 

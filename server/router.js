@@ -55,6 +55,16 @@ module.exports = function(app, socket) {
 
 	};
 	
+	var checkAdmin = function(req, res, next) {
+		var user = res.locals.udata;
+		
+		if(user.role && user.role.permissions.CAN_ACCESS_CONTROL_PANEL)
+			next();
+		else
+			res.render('404', { title: 'Page Not Found'});
+			
+	}
+	
 	app.post('/login/', function(req, res){
 		if (req.param('email') != null){
 			AM.getEmail(req.param('email'), function(o){
@@ -155,19 +165,19 @@ module.exports = function(app, socket) {
 			});
 	});
 	
-	app.get('/admin/', checkUser, getUser, loginUser, function(req, res){
+	app.get('/admin/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		ADMIN.getDashboardStats(function (stats) {
 			res.render('admin/dashboard', {title : 'Dashboard | xForum', stats: stats});
 		})
 	})
 	
-	app.get('/admin/roles/add/', checkUser, getUser, loginUser, function(req, res){
+	app.get('/admin/roles/add/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		RM.getNewRoleForm(function(form) {
 			res.render('admin/role', {title : 'Add New Role | xForum', form: form});
 		})
 	})
 	
-	app.post('/admin/roles/add/', checkUser, getUser, loginUser, function(req, res){
+	app.post('/admin/roles/add/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		
 		// Converting 'on' from the checkboxes to 'true'
 		var tmp = req.body;
@@ -182,7 +192,7 @@ module.exports = function(app, socket) {
 		});
 	});
 	
-	app.get('/admin/categories/', checkUser, getUser, loginUser, function(req, res){
+	app.get('/admin/categories/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		RM.getRoles(function(roles) {
 			CM.listAll(function(e, cats) {
 				res.render('admin/category', {title: 'Categories | xForum', roles: roles, categories: cats})
@@ -190,7 +200,7 @@ module.exports = function(app, socket) {
 		});
 	})
 	
-	app.post('/admin/categories/', checkUser, getUser, loginUser, function(req, res){
+	app.post('/admin/categories/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		if(req.param('catId') == '') { // Not updating
 			if(req.param('name')) {
 				CM.create({
@@ -226,7 +236,7 @@ module.exports = function(app, socket) {
 		}
 	})
 	
-	app.get('/admin/forums/', checkUser, getUser, loginUser, function(req, res){
+	app.get('/admin/forums/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		RM.getRoles(function(roles) {
 			CM.listAll(function(e, cats) {
 				FM.listAll(function(e, forums) {
@@ -236,7 +246,7 @@ module.exports = function(app, socket) {
 		});
 	})
 	
-	app.post('/admin/forums/', checkUser, getUser, loginUser, function(req, res){
+	app.post('/admin/forums/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		if(req.param('fId') == '') { // Not updating
 			if(req.param('name')) {
 				FM.create({

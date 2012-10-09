@@ -28,16 +28,17 @@ block content
 								button.btn(type='button')
 									i.icon-comment
 									| Reply
-		.row
-			.span12.reply-to-post
-				h3 Add Reply
-				form( method="post")#reply-form
-					input.topicid(type='hidden', name = 'topic', value = topic._id)
+		if(user.role && user.role.permissions.CAN_POST)
+			.row
+				.span12.reply-to-post
+					h3 Add Reply
+					form( method="post")#reply-form
+						input.topicid(type='hidden', name = 'topic', value = topic._id)
 					
-					textarea(name = 'body').span12
+						textarea(name = 'body').span12
 					
-					span.pull-right
-						button.btn.btn-primary(type='submit') Post
+						span.pull-right
+							button.btn.btn-primary(type='submit') Post
 				
 	
 block append scripts
