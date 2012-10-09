@@ -58,7 +58,11 @@ FM.getIDFromSlug	=	function(slug, callback)
 
 FM.update	=	function(newData, callback) 
 {
-	Forum.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc, category: newData.category}}, callback);
+	Forum.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc, category: newData.category}}, {new: false}, function(err, f) {
+		Category.findByIdAndUpdate(f.category, {$pull : {forums: f._id}}, function(err, c){
+			Category.findByIdAndUpdate(newData.category, {$push : {forums: newData.id}}, callback);
+		});
+	});
 };
 
 FM.reorder	=	function(newOrder, callback) {

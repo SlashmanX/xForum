@@ -269,6 +269,7 @@ module.exports = function(app, socket) {
 				id: req.param('fId'),
 				name: req.param('name'),
 				desc: req.param('desc'),
+				category: req.param('category'),
 				visibleTo: req.param('visibleTo')
 			}, function(err, o) {
 				if(!err)

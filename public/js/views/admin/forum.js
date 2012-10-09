@@ -21,6 +21,13 @@ $(document).ready(function(){
 	
 	$('select#category').on('change', function() {
 		$('li#tbdForum').remove();
+		if($('#fId').val() != '') {
+			var tmp = $('li#'+ $('#fId').val());
+			tmp.remove();
+			$('ul#catList-'+ $(this).val()).append(tmp);
+		}
+		$('.sortableList').sortable('destroy');
+		$('.sortableList').sortable({items: ':not(.catHeader)'});
 		$('#name').trigger('change');
 	})
 	
@@ -39,7 +46,6 @@ $(document).ready(function(){
 			}
 			else {
 				if($(this).val()) {
-					console.log($('#category').val());
 					$('ul#catList-'+ $('#category').val()).append('<li id = "tbdForum">'+ $(this).val() + '</li>');
 					$('.sortableList').sortable('destroy');
 					$('.sortableList').sortable({items: ':not(.catHeader)'});
@@ -57,7 +63,7 @@ $(document).ready(function(){
 			$('#name').val(details.name)
 			$('#desc').val(details.desc)
 			$('#fId').val(details._id);
-			$('#category option[value="'+details.category+'"]').attr('selected', 'selected');
+			$('#category option[value="'+details.category._id+'"]').attr('selected', 'selected');
 			$('#visibleTo').select2('val', details.visibleTo);
 			$('#newForum').removeClass('hide');
 			$('li#tbdforum').remove();
