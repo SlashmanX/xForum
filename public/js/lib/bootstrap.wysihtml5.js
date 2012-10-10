@@ -4,7 +4,7 @@
     var templates = {
         "font-styles": "<li class='dropdown'>" +
                            "<a class='btn dropdown-toggle' data-toggle='dropdown' href='#'>" +
-                               "<i class='icon-font'></i>&nbsp;<span class='current-font'>Normal text</span>&nbsp;<b class='caret'></b>" +
+                               "<i class='icon-font toolbar-icon'></i>&nbsp;<span class='current-font'>Normal text</span>&nbsp;<b class='caret'></b>" +
                            "</a>" +
                            "<ul class='dropdown-menu'>" +
                                "<li><a data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='div'>Normal text</a></li>" +
@@ -14,20 +14,45 @@
                        "</li>",
         "emphasis":    "<li>" +
                            "<div class='btn-group'>" +
-                               "<a class='btn' data-wysihtml5-command='bold' title='CTRL+B'><i class ='icon-bold'></i></a>" +
-                               "<a class='btn' data-wysihtml5-command='italic' title='CTRL+I'><i class ='icon-italic'></i></a>" +
-                               "<a class='btn' data-wysihtml5-command='underline' title='CTRL+U'><i class ='icon-underline'></i></a>" +
+                               "<a class='btn' data-wysihtml5-command='bold' title='CTRL+B'><i class ='icon-bold toolbar-icon'></i></a>" +
+                               "<a class='btn' data-wysihtml5-command='italic' title='CTRL+I'><i class ='icon-italic toolbar-icon'></i></a>" +
+                               "<a class='btn' data-wysihtml5-command='underline' title='CTRL+U'><i class ='icon-underline toolbar-icon'></i></a>" +
+                           "</div>" +
+                       "</li>",
+
+		"extras": 	"<div class='bootstrap-wysihtml5-insert-media-modal modal hide fade'>" +
+                          "<div class='modal-header'>" +
+                              "<a class='close' data-dismiss='modal'>&times;</a>" +
+                              "<h3>Insert Media</h3>" +
+                          "</div>" +
+                          "<div class='modal-body'>" +
+							   "<form class = 'form-horizontal'>" + 
+								   "<div class = 'control-group'>" +
+									   "<label class = 'control-label' for = 'insertMedia_URL'>Link:</label>" +
+									   "<div class = 'controls'>" +
+                              	   		   "<input id = 'insertMedia_URL' value='http://' type = 'url' class='bootstrap-wysihtml5-insert-media-url input-xlarge'>" +
+										"</div>" +
+									"</div>" +
+							   "</form>" +
+                          "</div>" +
+                          "<div class='modal-footer'>" +
+                              "<a class='btn' data-dismiss='modal'>Cancel</a>" +
+                              "<a class='btn btn-primary'>Insert Media</a>" +
+                          "</div>" +
+                      "</div>" +
+					"<li>" +
+						"<div class='btn-group'>" +
+								"<a class='btn' data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='blockquote' title='Quote'><i class ='icon-comment toolbar-icon'></i></a>" +
+								"<a class='btn' data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='pre' title='Code'><i class ='icon-file toolbar-icon'></i></a>" +
+								"<a class='btn' id = 'mediaLink' data-wysihtml5-command='insertMedia' title='Media'><i class ='icon-film toolbar-icon'></i></a>" +
                            "</div>" +
                        "</li>",
         "lists":       "<li>" +
                            "<div class='btn-group'>" +
-                               "<a class='btn' data-wysihtml5-command='insertUnorderedList' title='Unordered List'><i class='icon-list'></i></a>" +
-                               "<a class='btn' data-wysihtml5-command='insertOrderedList' title='Ordered List'><i class='icon-th-list'></i></a>" +
-                               "<a class='btn' data-wysihtml5-command='Outdent' title='Outdent'><i class='icon-indent-right'></i></a>" +
-                               "<a class='btn' data-wysihtml5-command='Indent' title='Indent'><i class='icon-indent-left'></i></a>" +
-							   "<a class='btn' data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='blockquote' title='Quote'><i class ='icon-comments'></i></a>" +
-                           "</div>" +
-                       "</li>",
+                               "<a class='btn' data-wysihtml5-command='insertUnorderedList' title='Unordered List'><i class='icon-list-ul toolbar-icon'></i></a>" +
+                               "<a class='btn' data-wysihtml5-command='insertOrderedList' title='Ordered List'><i class='icon-list-ol toolbar-icon'></i></a>" +
+                               "<a class='btn' data-wysihtml5-command='Outdent' title='Outdent'><i class='icon-indent-right toolbar-icon'></i></a>" +
+                               "<a class='btn' data-wysihtml5-command='Indent' title='Indent'><i class='icon-indent-left toolbar-icon'></i></a>",
         "link":        "<li>" +
                            "<div class='bootstrap-wysihtml5-insert-link-modal modal hide fade'>" +
                                "<div class='modal-header'>" +
@@ -55,29 +80,36 @@
                                    "<a href='#' class='btn btn-primary' data-dismiss='modal'>Insert link</a>" +
                                "</div>" +
                            "</div>" +
-                           "<a class='btn' data-wysihtml5-command='createLink' title='Link'><i class='icon-share'></i></a>" +
+                           "<a class='btn' data-wysihtml5-command='createLink' title='Link'><i class='icon-share toolbar-icon'></i></a>" +
                        "</li>",
         "image":       "<li>" +
                            "<div class='bootstrap-wysihtml5-insert-image-modal modal hide fade'>" +
                                "<div class='modal-header'>" +
                                    "<a class='close' data-dismiss='modal'>&times;</a>" +
-                                   "<h3>Insert Image</h3>" +
+                                   "<h3>Insert An Image</h3>" +
                                "</div>" +
                                "<div class='modal-body'>" +
-                                   "<input value='http://' class='bootstrap-wysihtml5-insert-image-url input-xlarge'>" +
+									"<form class = 'form-horizontal'>" + 
+									   "<div class = 'control-group'>" +
+										   "<label class = 'control-label' for = 'insertImage_URL'>Link:</label>" +
+										   "<div class = 'controls'>" +
+                                   				"<input type = 'url' id = 'insertImage_URL' value='http://' class='bootstrap-wysihtml5-insert-image-url input-xlarge'>" +
+											"</div>" +
+										"</div>" +
+					   				"</form>" +
                                "</div>" +
                                "<div class='modal-footer'>" +
                                    "<a href='#' class='btn' data-dismiss='modal'>Cancel</a>" +
                                    "<a href='#' class='btn btn-primary' data-dismiss='modal'>Insert image</a>" +
                                "</div>" +
                            "</div>" +
-                           "<a class='btn' data-wysihtml5-command='insertImage' title='Insert image'><i class='icon-picture'></i></a>" +
+                           "<a class='btn' data-wysihtml5-command='insertImage' title='Insert image'><i class='icon-picture toolbar-icon'></i></a>" +
                        "</li>",
 
         "html":
                        "<li>" +
                            "<div class='btn-group'>" +
-                               "<a class='btn' data-wysihtml5-action='change_view' title='Edit HTML'><i class='icon-pencil'></i></a>" +
+                               "<a class='btn' data-wysihtml5-action='change_view' title='Edit HTML'><i class='icon-pencil toolbar-icon'></i></a>" +
                            "</div>" +
                        "</li>"
     };
@@ -89,6 +121,7 @@
         "html": false,
         "link": true,
         "image": true,
+		"extras": true,
         events: {},
         parserRules: {
             tags: {
@@ -193,6 +226,10 @@
                     if(key === "image") {
                         this.initInsertImage(toolbar);
                     }
+
+					if(key === 'extras') {
+						this.initInsertMedia(toolbar);
+					}
                 }
             }
 
@@ -202,7 +239,7 @@
                 }
             }
 
-            toolbar.find("a[data-wysihtml5-command='formatBlock']:not(a[data-wysihtml5-command-value='blockquote'])").click(function(e) {
+            toolbar.find("a[data-wysihtml5-command='formatBlock']:not(a[data-wysihtml5-command-value='blockquote']):not(a[data-wysihtml5-command-value='pre'])").click(function(e) {
                 var el = $(e.srcElement);
                 self.toolbar.find('.current-font').text(el.html());
             });
@@ -312,9 +349,54 @@
 				});
                 return false;
             });
+        },
+		initInsertMedia: function(toolbar) {
+            var self = this;
+            var insertMediaModal = toolbar.find('.bootstrap-wysihtml5-insert-media-modal');
+			console.log(insertMediaModal);
+            var urlInput = insertMediaModal.find('.bootstrap-wysihtml5-insert-media-url');
+            var insertButton = insertMediaModal.find('a.btn-primary');
+            var initialValue = urlInput.val();
 
+            var insertMedia = function() {
+				console.log('here');
+                var url = urlInput.val();
+				socket.emit('getEmbedCode', url, function(err, result){
+					if(!err) {
+						urlInput.val(initialValue);
+		                self.editor.composer.commands.exec("insertHTML", result.html);
+		                insertMediaModal.modal('hide');
+					}
+				});
+                
+            };
 
-        }
+            urlInput.keypress(function(e) {
+                if(e.which == 13) {
+                    insertMedia();
+                }
+            });
+
+            insertButton.click(insertMedia);
+
+            insertMediaModal.on('shown', function() {
+                urlInput.focus();
+            });
+
+            insertMediaModal.on('hide', function() {
+                self.editor.currentView.element.focus();
+            });
+
+            toolbar.find('a[data-wysihtml5-command=insertMedia]').click(function() {
+				console.log('clicked');
+                insertMediaModal.modal('show');
+                insertMediaModal.on('click.dismiss.modal', '[data-dismiss="modal"]', function(e) {
+					e.stopPropagation();
+				});
+                return false;
+            });
+        },
+
     };
 
     $.fn.wysihtml5 = function (options) {

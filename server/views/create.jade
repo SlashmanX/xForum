@@ -11,7 +11,7 @@ block content
 					#title-cg.control-group
 						label.control-label(for='title-tf') Title
 						.controls
-							input#title-tf.input-xlarge(type='text', name='title')
+							input#title-tf.input-xlarge(type='text', name='title', required)
 
 					#desc-cg.control-group
 						label.control-label(for='desc-tf') Description
@@ -25,8 +25,8 @@ block content
 				
 					input(type='hidden', value = parent, name = 'forum')#forum
 					.form-actions
-						button(type='button')#account-form-btn1.btn Cancel
-						button(type='submit')#account-form-btn2.btn.btn-primary Create
+						button(type='button').btn Cancel
+						button(type='submit').btn.btn-primary Create
 				
 	// display form errors in a custom modal window //
 

@@ -36,7 +36,7 @@ block content
 					form( method="post")#reply-form
 						input.topicid(type='hidden', name = 'topic', value = topic._id)
 					
-						textarea(name = 'body').span12
+						textarea#reply-post(name = 'body').span12
 					
 						span.pull-right
 							button.btn.btn-primary(type='submit') Post

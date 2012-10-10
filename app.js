@@ -7,6 +7,7 @@ var CM 				=	require('./server/modules/category-manager');
 var FM 				=	require('./server/modules/forum-manager');
 var	jsdom			=	require('jsdom');
 var	func			=	require('./server/controllers/func.js');
+var oembed			=	require('oembed');
 
 var app				=	express();
 
@@ -54,9 +55,17 @@ socket.sockets.on('connection', function(client){
 	})
 	
 	client.on('getTitleFromURL', function(url, callback) {
-			func.getTitleFromURL(url, function(title) {
-				callback(title);
-			})
+		func.getTitleFromURL(url, function(title) {
+			callback(title);
+		})
+	})
+	
+	client.on('getEmbedCode', function(url, callback) {
+		console.log('called:' +url)
+		func.getEmbedCode(url, function(err, result) {
+			console.log(result);
+			callback(err, result);
+		})
 	})
 	
 	client.on('getCategoryDetails', function(data, callback) {
