@@ -1,7 +1,10 @@
 jQuery(document).ready(function() {
 	var tc = new TopicController();
 	$('#reply-post').one('focus', function(){
-		$(this).wysihtml5({stylesheets: ['/css/editor.min.css']});
+		$(this).wysihtml5({
+			stylesheets: ['/css/editor.min.css'],
+			scripts: 'http://platform.twitter.com/widgets.js'
+		});
 	});
 	
 	

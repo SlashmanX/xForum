@@ -44,7 +44,7 @@
 						"<div class='btn-group'>" +
 								"<a class='btn' data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='blockquote' title='Quote'><i class ='icon-comment toolbar-icon'></i></a>" +
 								"<a class='btn' data-wysihtml5-command='formatBlock' data-wysihtml5-command-value='pre' title='Code'><i class ='icon-file toolbar-icon'></i></a>" +
-								"<a class='btn' id = 'mediaLink' data-wysihtml5-command='insertMedia' title='Media'><i class ='icon-film toolbar-icon'></i></a>" +
+								"<a class='btn' id = 'mediaLink' data-wysihtml5-command='insertMedia' data-loading-text='Please Wait...' title='Media'><i class ='icon-film toolbar-icon'></i></a>" +
                            "</div>" +
                        "</li>",
         "lists":       "<li>" +
@@ -359,12 +359,13 @@
             var initialValue = urlInput.val();
 
             var insertMedia = function() {
-				console.log('here');
                 var url = urlInput.val();
+				insertButton.button('loading')
 				socket.emit('getEmbedCode', url, function(err, result){
 					if(!err) {
 						urlInput.val(initialValue);
 		                self.editor.composer.commands.exec("insertHTML", result.html);
+						insertButton.button('reset')
 		                insertMediaModal.modal('hide');
 					}
 				});

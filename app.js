@@ -61,7 +61,6 @@ socket.sockets.on('connection', function(client){
 	})
 	
 	client.on('getEmbedCode', function(url, callback) {
-		console.log('called:' +url)
 		func.getEmbedCode(url, function(err, result) {
 			console.log(result);
 			callback(err, result);

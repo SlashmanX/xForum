@@ -5448,7 +5448,8 @@ wysihtml5.dom.replaceWithChildNodes = function(node) {
           charset        = doc.characterSet || doc.charset || "utf-8",
           sandboxHtml    = this._getHtml({
             charset:      charset,
-            stylesheets:  this.config.stylesheets
+            stylesheets:  this.config.stylesheets,
+			scripts: 	  this.config.scripts
           });
 
       // Create the basic dom tree including proper DOCTYPE and charset
@@ -5496,10 +5497,14 @@ wysihtml5.dom.replaceWithChildNodes = function(node) {
 
     _getHtml: function(templateVars) {
       var stylesheets = templateVars.stylesheets,
+		  scripts	  =	templateVars.scripts,
           html        = "",
+		  thtml		  = "",
           i           = 0,
+		  j			  = 0,
           length;
       stylesheets = typeof(stylesheets) === "string" ? [stylesheets] : stylesheets;
+	  scripts = typeof(scripts) === "string" ? [scripts] : scripts;
       if (stylesheets) {
         length = stylesheets.length;
         for (; i<length; i++) {
@@ -5508,9 +5513,17 @@ wysihtml5.dom.replaceWithChildNodes = function(node) {
       }
       templateVars.stylesheets = html;
 
+	if (scripts) {
+        length = scripts.length;
+        for (; j<length; j++) {
+          thtml += '<script type = "text/javascript" src="' + scripts[j] + '"></script>';
+        }
+      }
+      templateVars.scripts = thtml;
+
       return wysihtml5.lang.string(
         '<!DOCTYPE html><html><head>'
-        + '<meta charset="#{charset}">#{stylesheets}</head>'
+        + '<meta charset="#{charset}">#{scripts} #{stylesheets}</head>'
         + '<body></body></html>'
       ).interpolate(templateVars);
     },
@@ -7355,6 +7368,7 @@ wysihtml5.Commands = Base.extend(
       } else {
         composer.selection.insertHTML(html);
       }
+		composer.iframe.contentWindow.twttr.widgets.load();
     },
 
     state: function() {
@@ -8033,7 +8047,8 @@ wysihtml5.views.View = Base.extend(
       this.sandbox = new dom.Sandbox(function() {
         that._create();
       }, {
-        stylesheets:  this.config.stylesheets
+        stylesheets:  this.config.stylesheets,
+		scripts:  this.config.scripts
       });
       this.iframe  = this.sandbox.getIframe();
 
@@ -8067,6 +8082,8 @@ wysihtml5.views.View = Base.extend(
       dom.copyAttributes([
         "className", "spellcheck", "title", "lang", "dir", "accessKey"
       ]).from(this.textarea.element).to(this.element);
+
+		//this.element.setAttribute("data-twttr-rendered", "true");
       
       dom.addClass(this.element, this.config.composerClassName);
 
@@ -9394,6 +9411,8 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
     bodyClassName:        "wysihtml5-supported",
     // Array (or single string) of stylesheet urls to be loaded in the editor's iframe
     stylesheets:          [],
+	// Array (or single string) of script urls to be loaded in the editor's iframe
+    scripts:          [],
     // Placeholder text to use, defaults to the placeholder attribute on the textarea element
     placeholderText:      undef,
     // Whether the composer should allow the user to manually resize images, tables etc.

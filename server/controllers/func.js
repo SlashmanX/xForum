@@ -11,7 +11,7 @@ oembed.EMBEDLY_KEY = '3e6e71ce9fcb46179b1b4ecec4de9072';
 	}
 	
 	exports.getEmbedCode = function(url, callback) {
-		oembed.fetch(url, {  }, function(error, result) {
+		oembed.fetch(url, {omit_script: 'true' }, function(error, result) {
 		    if (error)
 		        callback(error)
 		    else
