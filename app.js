@@ -1,10 +1,3 @@
-
-/**
- * Node.js Login Boilerplate
- * Author : Stephen Braitsch
- * More Info : http://bit.ly/LsODY8
- */
-
 var	express			=	require('express');
 var	http			=	require('http');
 var	io				=	require('socket.io');

@@ -21,12 +21,11 @@ TM.create			=	function(newData, callback)
 	t = new Topic(newData);
 	p = new Post({author: newData.author, topic: t._id, body: newData.body});
 	p.save(function(err, thepost) {
+		t.post = thepost._id
+		t.markModified('post');
 		t.save(function (e, topic) {
-			topic.post = new ObjectId(thepost._id + '');
-			topic.save(function(err, thetopic) {
-				Forum.findByIdAndUpdate(newData.forum, {$push : { topics : thetopic._id }}, function(err, f) {
-					callback(thetopic);
-				});
+			Forum.findByIdAndUpdate(new ObjectId(newData.forum + ''), {$push : { topics : topic._id }}, function(err, f) {
+				callback(topic);
 			});
 		});
 	});
