@@ -114,8 +114,25 @@ i.toolbar-icon {
 .forum {
 	.well;
 }
-.topic {
-	.well;
+.topic-view {
+	.display-head {
+		border: 1px solid @grayLight;
+	}
+	
+	section.topic-post:first-child {
+		border-top: 0px;
+	}
+}
+.topic-post {
+	background: white;
+	margin-bottom: 5px;
+	border: 1px solid @grayLight;
+	.post-details {
+		padding-top:5px;
+		padding-bottom:5px;
+		background: @grayLighter;
+		border-bottom: 1px solid @grayLight;
+	}
 	
 	.post {
 		margin-top: 5px;
@@ -147,11 +164,11 @@ i.toolbar-icon {
 	}
 	
 	.post-actions {
-		border-top: 1px groove #EEE;
+		//border-top: 1px groove #EEE;
 		padding: 10px;
 		padding-left: 0;
 		padding-right: 10px;
-		background-color: @grayLighter;
+		//background-color: @grayLighter;
 	}
 }
 

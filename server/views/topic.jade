@@ -1,16 +1,13 @@
 extends layout
 
 block content
-	.span12.topic
-		.row
-			.span12
-				h2 
-					span.topic-title= topic.title
-					span.topic-subtitle= topic.desc
+	.span12.topic-view.xforum
+		.row.display-head
+				span.display-title #{topic.title}
 		section.posts
 			each post in topic.posts
-				section.post(id = 'post-'+ post._id)
-					.row-fluid
+				section.topic-post(id = 'post-'+ post._id)
+					.row.post-details
 						.span10.offset2
 							small Posted 
 								abbr.timeago(title=post.postedOn) #{post.postedOn}
@@ -20,15 +17,14 @@ block content
 								li.user-name= post.author.username
 								li.user-avatar
 									img(src="http://placehold.it/140x140").img-polaroid
-						.span10
+						.span9
 							.post-body.
 								!{post.body}
-					.row
-						.span12.post-actions
-							span.pull-right
-								button.btn(type='button')
-									i.icon-comment
-									| Reply
+					.row.post-actions
+						span.pull-right
+							button.btn(type='button')
+								i.icon-comment
+								| Reply
 		if(user.role && user.role.permissions.CAN_POST)
 			.row
 				.span12.reply-to-post
@@ -36,7 +32,7 @@ block content
 					form( method="post")#reply-form
 						input.topicid(type='hidden', name = 'topic', value = topic._id)
 					
-						textarea#reply-post(name = 'body').span12
+						textarea#reply-post(name = 'body', rows='10').span12
 					
 						span.pull-right
 							button.btn.btn-primary(type='submit') Post
