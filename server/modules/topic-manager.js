@@ -15,7 +15,7 @@ TM.create			=	function(newData, callback)
 {
 	newData.post = null;
 	t = new Topic(newData);
-	p = new Post({author: newData.author, topic: t._id, body: newData.body});
+	p = new Post({author: newData.author, postedOn: newData.createdOn, topic: t._id, body: newData.body});
 	p.save(function(err, thepost) {
 		t.post = thepost._id;
 		t.markModified('post');
@@ -48,7 +48,7 @@ TM.checkRead		=	function(uid, tid, callback)
 
 TM.getTopic			=	function(slug, callback)
 {
-	var	PM			=	require('./post-manager.js');
+	var	PM			=	new require('./post-manager.js');
 	Topic.findOne({slug: slug}).populate('forum').populate('post').populate('replies').exec(function(e, topic) {
 		PM.getTopic(topic._id, function(err, p) {
 			if (err) callback(err)
