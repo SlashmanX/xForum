@@ -28,7 +28,7 @@ PM.create			=	function(newData, callback)
 
 PM.getTopic			=	function(tid, callback)
 {
-	Post.find({topic: tid}).populate('author').exec(function(e, posts) {
+	Post.find({topic: tid}).populate('author').sort({postedOn: 1}).exec(function(e, posts) {
 		if (e) callback(e)
 		else callback(null, posts)
 	});

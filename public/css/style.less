@@ -117,60 +117,94 @@ i.toolbar-icon {
 .topic-view {
 	.display-head {
 		border: 1px solid @grayLight;
+		
+		.display-title {
+			font-size: 20px;
+			margin-right: 15px;
+		}
+		
+		.display-subtitle {
+			font-size: 14px;
+		}
+	}
+	
+	section.topic-post-reply {
+		background: white;
+		border: 1px solid @grayLight;
+		border-top: 0px;
+		margin-bottom: 10px;
 	}
 	
 	section.topic-post:first-child {
 		border-top: 0px;
 	}
-}
-.topic-post {
-	background: white;
-	margin-bottom: 5px;
-	border: 1px solid @grayLight;
-	.post-details {
-		padding-top:5px;
-		padding-bottom:5px;
-		background: @grayLighter;
-		border-bottom: 1px solid @grayLight;
+	
+	section.topic-post:last-child {
+		margin-bottom: 15px;
 	}
 	
-	.post {
-		margin-top: 5px;
-	}
-	
-	ul.user-details {
-		list-style: none;
-		text-align: center;
-		
-		li {
-			padding: 5px;
-		}
-		
-		li.user-name {
-			font-weight: bold;
-		}
-	}
-	.post-body {
-		border-left: 1px solid #E5E5E5;
-		padding: 10px;
+	.topic-post {
+		background: white;
 		margin-bottom: 5px;
-		min-height: 200px;
-	}
-	
-	.topic-subtitle {
-		margin-left: 10px;
-		font-size: 0.6em;
-		font-weight: normal;
-	}
-	
-	.post-actions {
-		//border-top: 1px groove #EEE;
-		padding: 10px;
-		padding-left: 0;
-		padding-right: 10px;
-		//background-color: @grayLighter;
+		border: 1px solid @grayLight;
+		.post-details {
+			padding-top:5px;
+			padding-bottom:5px;
+			background: @grayLighter;
+			border-bottom: 1px solid @grayLight;
+		}
+
+		.row {
+			padding-left: 10px;
+			padding-right: 0px;
+		}
+
+		.post {
+			margin-top: 5px;
+		}
+
+		ul.user-details {
+			list-style: none;
+			text-align: center;
+
+			li {
+				padding: 5px;
+			}
+
+			li.user-name {
+				font-weight: bold;
+			}
+		}
+		.post-body {
+			border-left: 1px solid #E5E5E5;
+			padding: 10px;
+			margin-bottom: 5px;
+			min-height: 200px;
+		}
+
+		.topic-subtitle {
+			margin-left: 10px;
+			font-size: 0.6em;
+			font-weight: normal;
+		}
+
+		.post-actions {
+			//border-top: 1px groove #EEE;
+			padding: 10px;
+			padding-left: 0;
+			padding-right: 10px;
+			//background-color: @grayLighter;
+			.btn {
+				margin-left: 5px;
+			}
+
+			.topic-post-actions {
+				.pull-right;
+			}
+		}
 	}
 }
+
 
 #account-form-container{
 	width: 460px;
@@ -203,6 +237,7 @@ i.toolbar-icon {
 		float:left;
 		margin-left:10px;
 	}
+	
 }
 #country-list{
 	width: 280px;

@@ -1,41 +1,64 @@
 extends layout
 
 block content
-	.span12.topic-view.xforum
+	.topic-view.xforum
 		.row.display-head
 				span.display-title #{topic.title}
+				span.display-subtitle= topic.desc
 		section.posts
 			each post in topic.posts
 				section.topic-post(id = 'post-'+ post._id)
 					.row.post-details
-						.span10.offset2
+						.span2.no-margin
+							i.icon-user
+							span.post-username= post.author.username
+						.span10
 							small Posted 
 								abbr.timeago(title=post.postedOn) #{post.postedOn}
 					.row
-						.span2
+						.span2.no-margin
 							ul.user-details
-								li.user-name= post.author.username
 								li.user-avatar
 									img(src="http://placehold.it/140x140").img-polaroid
-						.span9
+						.span10
 							.post-body.
 								!{post.body}
 					.row.post-actions
-						span.pull-right
-							button.btn(type='button')
-								i.icon-comment
-								| Reply
+						.span2.no-margin.topic-user-actions
+							button.btn.btn-info(type='button')
+								i.icon-envelope
+								| PM
+						.span10
+							span.topic-post-actions
+								button.btn(type='button')
+									i.icon-comment
+									| Reply
+								button.btn(type='button')
+									i.icon-comments
+									| Multi-Quote
+									
+								button.btn.btn-warning(type='button')
+									i.icon-legal
+									| Report
+									
+								button.btn(type='button')
+									i.icon-edit
+									| Edit
+									
+								button.btn.btn-danger(type='button')
+									i.icon-trash
+									| Delete
 		if(user.role && user.role.permissions.CAN_POST)
-			.row
-				.span12.reply-to-post
-					h3 Add Reply
-					form( method="post")#reply-form
-						input.topicid(type='hidden', name = 'topic', value = topic._id)
-					
-						textarea#reply-post(name = 'body', rows='10').span12
-					
-						span.pull-right
-							button.btn.btn-primary(type='submit') Post
+			.row.display-head
+				span.display-title Add Reply
+			section.row.topic-post-reply
+				form( method="post")#reply-form
+					input.topicid(type='hidden', name = 'topic', value = topic._id)
+			
+					textarea#reply-post(name = 'body', rows='10').span12
+			
+					span.pull-right
+						button.btn.btn-primary(type='submit') Post
 				
 	
 block append scripts

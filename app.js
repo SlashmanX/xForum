@@ -46,12 +46,14 @@ socket.sockets.on('connection', function(client){
 	client.join(hs.sessionID);
 
 	client.on('leavingTopic', function(data){
-		SM.getUserIDFromSession(hs.sessionID.slice(2), function(e, a) {
-			if(a) {
-				SM.setLastReadTime(JSON.parse(a.session).user._id, data.topic, function(e, o) {
-				});
-			}
-		});
+		if(hs.sessionID){
+			SM.getUserIDFromSession(hs.sessionID.slice(2), function(e, a) {
+				if(a) {
+					SM.setLastReadTime(JSON.parse(a.session).user._id, data.topic, function(e, o) {
+					});
+				}
+			});
+		}
 	})
 	
 	client.on('getTitleFromURL', function(url, callback) {
