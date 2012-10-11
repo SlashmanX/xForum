@@ -120,7 +120,7 @@ module.exports = function(app, socket) {
 	})
 	
 	app.get('/forum/:slug/', checkUser, getUser, loginUser, function(req, res) {
-		FM.listBySlug(req.param('slug'), function(e, forum) {
+		FM.listBySlug({slug: req.param('slug'), user_id: req.session.user._id}, function(e, forum) {
 			if(e) {
 				console.error('Error getting forum '+ slug + ': '+ e);
 			}

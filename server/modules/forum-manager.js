@@ -1,9 +1,8 @@
 var	Topic		=	require('../models/Topic.js');
 var	Forum		=	require('../models/Forum.js');
 var	Category	=	require('../models/Category.js');
-var	CM			=	require('./category-manager.js');
 var	async		=	require('async');
-
+var	TM			=	require('./topic-manager.js');
 var	FM			=	{};
 
 module.exports	=	FM;
@@ -40,12 +39,28 @@ FM.list				=	function(callback)
 	});
 }
 
-FM.listBySlug		=	function(slug, callback)
+FM.listBySlug		=	function(data, callback)
 {
-	Forum.findOne({slug: slug}).populate('topics', null, null, {sort: [['_id', 'desc']] } ).populate('parent').populate('children').exec(function(e, res) {
-		console.log(e);
+	Forum.findOne({slug: data.slug}).populate('topics', null, null, {sort: [['_id', 'desc']] } ).populate('parent').populate('children').exec(function(e, forum) {
 		if (e) callback(e)
-		else callback(null, res.toObject())
+		else {
+			forum = forum.toObject();
+			var tLength = forum.topics.length;
+			var tCount = 0;
+			
+			async.whilst(
+				function() { return tCount < tLength },
+				function(cbTopic) {
+					TM.checkRead(data.user_id, forum.topics[tCount], function(read){
+						if(read) forum.topics[tCount].isRead = true;
+						tCount++;
+						cbTopic();
+					})
+				},
+				function(err) {
+					callback(null, forum);
+				})
+		}
 	});
 }
 

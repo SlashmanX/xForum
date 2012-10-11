@@ -3,15 +3,11 @@ var	Forum		=	require('../models/Forum.js');
 var	Post		=	require('../models/Post.js');
 var	Category	=	require('../models/Category.js');
 var	UTF			=	require('../models/UserTopicRead.js');
-var	CM			=	require('./category-manager.js');
-var	FM			=	require('./forum-manager.js');
-var	PM			=	require('./post-manager.js');
 var	mongoose	=	require('mongoose');
 var	moment		=	require('moment');
 var	ObjectId	=	mongoose.Types.ObjectId;
 
 var	TM			=	{};
-module.exports	=	TM;
 
 // record insertion, update & deletion methods //
 
@@ -21,7 +17,7 @@ TM.create			=	function(newData, callback)
 	t = new Topic(newData);
 	p = new Post({author: newData.author, topic: t._id, body: newData.body});
 	p.save(function(err, thepost) {
-		t.post = thepost._id
+		t.post = thepost._id;
 		t.markModified('post');
 		t.save(function (e, topic) {
 			Forum.findByIdAndUpdate(new ObjectId(newData.forum + ''), {$push : { topics : topic._id }}, function(err, f) {
@@ -52,6 +48,7 @@ TM.checkRead		=	function(uid, tid, callback)
 
 TM.getTopic			=	function(slug, callback)
 {
+	var	PM			=	require('./post-manager.js');
 	Topic.findOne({slug: slug}).populate('forum').populate('post').populate('replies').exec(function(e, topic) {
 		PM.getTopic(topic._id, function(err, p) {
 			if (err) callback(err)
@@ -75,3 +72,5 @@ TM.delAllRecords = function()
 {
 	Topic.remove({}, function() {}); // reset accounts collection for testing //
 }
+
+module.exports	=	TM;
