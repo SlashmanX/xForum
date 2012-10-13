@@ -10,6 +10,13 @@ jQuery(document).ready(function() {
 		}
 	});
 	
+	$('.forum-topics-jpages').jPages({
+		containerID: 'forum-topics-paginate',
+		perPage : 5,
+		previous : 'Previous',
+		next : 'Next'
+	})
+	
 	socket.on('newTopic', function(topic) {
 		
 		if(topic.forum == $('#forumid').val())

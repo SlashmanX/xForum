@@ -1,11 +1,22 @@
 extends layout
 
 block content
+	mixin actions
+		.row.actions
+			.span9.no-margin.pagination
+				ul.topic-posts-jpages
+	
+			.span3.no-margin.action-buttons
+				if(user.role && user.role.permissions.CAN_POST)
+					a(href='#').btn.action-button
+						i.icon-comments-alt
+						| Add Reply
 	.topic-view.xforum
+		mixin actions
 		.row.display-head
 				span.display-title #{topic.title}
 				span.display-subtitle= topic.desc
-		section.posts
+		section.posts#topic-posts
 			each post in topic.posts
 				section.topic-post(id = 'post-'+ post._id)
 					.row.post-details
@@ -48,6 +59,8 @@ block content
 								button.btn.btn-danger(type='button')
 									i.icon-trash
 									| Delete
+									
+		mixin actions
 		if(user.role && user.role.permissions.CAN_POST)
 			.row.display-head
 				span.display-title Add Reply

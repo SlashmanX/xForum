@@ -13,6 +13,13 @@ jQuery(document).ready(function() {
 			if (status == 'success') tc.onPostSuccess(responseText);
 		}
 	});
+	
+	$('.topic-posts-jpages').jPages({
+		containerID: 'topic-posts',
+		perPage : 3,
+		previous : 'Previous',
+		next : 'Next'
+	})
 	$('abbr.timeago').timeago();
 	
 	socket.on('newPost', function(post) {

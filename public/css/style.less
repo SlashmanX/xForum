@@ -15,7 +15,9 @@ body {
 #four04 {
 	padding:20px;
 }
-
+.pagination {
+	margin: 0px;
+}
 blockquote {
 	border-left: 3px solid lightBlue;
 	padding-left: 5px;
@@ -51,15 +53,25 @@ i.toolbar-icon {
 		border: 1px solid @grayLighter;
 		border-top: none;
 	}
-	
-	.action-buttons {
+	.actions {
+		border-radius: 5px;
+		border: 1px solid #CCC;
+		background: #EEE;
+		padding: 5px;
+		margin-bottom: 15px;
 		.span9 {
 			margin-left: -15px;
 		}
-		border: none;
+		.action-buttons {
+			margin-top: 5px;
+		}
 		.action-button {
 			.pull-right;
-		}	
+		}
+	}
+	
+	.actions:last-child {
+		margin-top: 15px;
 	}
 	
 }
@@ -112,13 +124,6 @@ i.toolbar-icon {
 
 }
 .forum {
-	.action-buttons {
-		border-radius: 5px;
-		border: 1px solid #CCC;
-		background: #EEE;
-		padding: 5px;
-		margin-bottom: 15px;
-	}
 }
 .topic-view {
 	.display-head {
