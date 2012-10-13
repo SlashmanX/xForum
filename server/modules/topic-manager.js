@@ -3,6 +3,7 @@ var	Forum		=	require('../models/Forum.js');
 var	Post		=	require('../models/Post.js');
 var	Category	=	require('../models/Category.js');
 var	UTF			=	require('../models/UserTopicRead.js');
+var SM			=	require('../modules/socket-manager.js');
 var	mongoose	=	require('mongoose');
 var	moment		=	require('moment');
 var	ObjectId	=	mongoose.Types.ObjectId;
@@ -21,7 +22,9 @@ TM.create			=	function(newData, callback)
 		t.markModified('post');
 		t.save(function (e, topic) {
 			Forum.findByIdAndUpdate(new ObjectId(newData.forum + ''), {$push : { topics : topic._id }}, function(err, f) {
-				callback(topic);
+				SM.setLastReadTime(newData.author, topic._id, function(e, o) {
+					callback(topic);
+				});
 			});
 		});
 	});
