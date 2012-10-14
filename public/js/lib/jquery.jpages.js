@@ -32,7 +32,7 @@
             direction    : "forward", // backwards || auto || random ||
             animation    : "", // http://daneden.me/animate/ - any entrance animations
             fallback     : 400,
-            minHeight    : true,
+            minHeight    : false,
             callback     : undefined // function( pages, items ) { }
         };
 
@@ -99,7 +99,7 @@
     Plugin.prototype.init = function () {
         this.setStyles();
         this.setNav();
-        this.paginate( this._currentPageNum );
+        this.paginate( this._currentPageNum, false );
         this.setMinHeight();
     };
 
@@ -211,7 +211,7 @@
             var newPage = this.getNewPage( nav, $(evt.target).parent('li') );
             if ( this.validNewPage( newPage ) ) {
                 this._clicked = true;
-                this.paginate( newPage );
+                this.paginate( newPage, true );
             }
             evt.preventDefault();
         }, this ) );
@@ -221,7 +221,7 @@
             this._first.bind( "click", this.bind( function() {
                 if ( this.validNewPage( 1 ) ) {
                     this._clicked = true;
-                    this.paginate( 1 );
+                    this.paginate( 1, true );
                 }
             }, this ) );
         }
@@ -232,7 +232,7 @@
                 var newPage = this._currentPageNum - 1;
                 if ( this.validNewPage( newPage ) ) {
                     this._clicked = true;
-                    this.paginate( newPage );
+                    this.paginate( newPage, true );
                 }
             }, this ) );
         }
@@ -243,7 +243,7 @@
                 var newPage = this._currentPageNum + 1;
                 if ( this.validNewPage( newPage ) ) {
                     this._clicked = true;
-                    this.paginate( newPage );
+                    this.paginate( newPage, true );
                 }
             }, this ) );
         }
@@ -253,7 +253,7 @@
             this._last.bind( "click", this.bind( function() {
                 if ( this.validNewPage( this._numPages ) ) {
                     this._clicked = true;
-                    this.paginate( this._numPages );
+                    this.paginate( this._numPages, true );
                 }
             }, this ) );
         }
@@ -285,7 +285,7 @@
 
                 if ( this.validNewPage( newPage ) ) {
                     this._clicked = true;
-                    this.paginate( newPage );
+                    this.paginate( newPage, true );
                 }
             }
         }, this ) );
@@ -317,7 +317,7 @@
 
             if ( this.validNewPage( newPage ) ) {
                 this._clicked = true;
-                this.paginate( newPage );
+                this.paginate( newPage, true );
             }
             
             evt.preventDefault();
@@ -343,22 +343,22 @@
             true : false;
     };
 
-    Plugin.prototype.paginate = function ( page ) {
+    Plugin.prototype.paginate = function ( page, execCallback ) {
         var itemRange, pageInterval;
 
-        itemRange = this.updateItems( page );
+        itemRange = this.updateItems( page, !execCallback );
         pageInterval = this.updatePages( page );
 
         this._currentPageNum = page;
         
-        if ( $.isFunction( this.options.callback ) ) {
+        if ( $.isFunction( this.options.callback ) && execCallback) {
             this.callback( page, itemRange, pageInterval );
         }
         
         this.updatePause();
     };
 
-    Plugin.prototype.updateItems = function ( page ) {
+    Plugin.prototype.updateItems = function ( page, init ) {
         var range = this.getItemRange( page );
 
         this._itemsHiding = this._itemsShowing;
@@ -367,7 +367,7 @@
         if ( this._cssAnimSupport && this.options.animation.length ) { 
             this.cssAnimations( page );
         } else {
-            this.jQAnimations( page );
+            this.jQAnimations( page, init );
         }
 
         return range;
@@ -417,11 +417,20 @@
     };
 
 
-    Plugin.prototype.jQAnimations = function ( page ) {
+    Plugin.prototype.jQAnimations = function ( page, init ) {
         clearInterval( this._delay );
 
+		var tmp = 0;
+		if(init) tmp = 1
+		
+		var delay = this.options.delay;
+		if(init) delay = 0;
+		
+		var fallback = this.options.fallback;
+		if(init) fallback = 0;
+
         this._itemsHiding.addClass("jp-hidden");
-        this._itemsShowing.fadeTo(0, 0).removeClass("jp-hidden");
+        this._itemsShowing.fadeTo(0, tmp).removeClass("jp-hidden");
 
         this._itemsOriented = this.getDirectedItems( page );
         this._index = 0;
@@ -433,12 +442,12 @@
             } else {
                 this._itemsOriented
                     .eq(this._index)
-                    .fadeTo(this.options.fallback, 1);
+                    .fadeTo(fallback, 1);
             }
 
             this._index = this._index + 1;
 
-        }, this ), this.options.delay );
+        }, this ), delay );
     };
 
     Plugin.prototype.getDirectedItems = function ( page ) {
@@ -495,22 +504,26 @@
 
     Plugin.prototype.updateBtns = function ( nav, page ) {
         
-        if ( page === 1 ) {
+		console.log('btns')
+		console.log(page);
+		console.log(this._numPages);
+        if ( page == 1 ) {
             nav.first.addClass("disabled");
             nav.previous.addClass("disabled");
         }
 
-        if ( page === this._numPages ) {
+        if ( page == this._numPages ) {
+			console.log('here');
             nav.next.addClass("disabled");
             nav.last.addClass("disabled");
         }
 
-        if ( this._currentPageNum === 1 && page > 1 ) {
+        if ( this._currentPageNum == 1 && page > 1 ) {
             nav.first.removeClass("disabled");
             nav.previous.removeClass("disabled");
         }
 
-        if ( this._currentPageNum === this._numPages && page < this._numPages ) {
+        if ( this._currentPageNum == this._numPages && page < this._numPages ) {
             nav.next.removeClass("disabled");
             nav.last.removeClass("disabled");
         }
@@ -576,7 +589,7 @@
                 return;
             } else {
                 this._pause = setTimeout( this.bind( function() {
-                    this.paginate( this._currentPageNum !== this._numPages ? this._currentPageNum + 1 : 1 );
+                    this.paginate( this._currentPageNum !== this._numPages ? this._currentPageNum + 1 : 1 , true);
                 }, this ), this.options.pause );
             }
         }
@@ -640,7 +653,7 @@
 
         if ( type === 'number' && arg % 1 === 0 ) {
             if ( instance.validNewPage( arg ) ) {
-                instance.paginate( arg );
+                instance.paginate( arg, true );
             }
             return this;
         }

@@ -7,6 +7,33 @@ jQuery(document).ready(function() {
 		});
 	});
 	
+	var pageUrl = document.location.pathname;
+	var curPage = 1;
+	var matches = pageUrl.match(/\/page\/(.*)\/$/);
+	if (matches) {
+	    curPage = matches[1];
+	}
+	
+	pageUrl = pageUrl.replace(/\/page\/(.*)\/$/, '/');
+	
+	var jPagesOptions = {
+		containerID: 'topic-posts',
+		perPage : 10,
+		startPage: curPage,
+		first: '«',
+		last: '»',
+		previous : '‹',
+		next : '›',
+		minHeight: 'true',
+		callback    : function( pages, items ){
+			$('html').animate({scrollTop:0}, 'slow');//IE, FF
+			$('body').animate({scrollTop:0}, 'slow');//WebKit
+			curPage = pages.current;
+			$('#topic-posts').css('min-height', '');
+			window.history.pushState(null, 'Page', pageUrl +'page/'+ pages.current+'/');
+		}
+	};
+	
 	
 	$('#reply-form').ajaxForm({
 		success	: function(responseText, status, xhr, $form){
@@ -14,18 +41,34 @@ jQuery(document).ready(function() {
 		}
 	});
 	
-	$('.topic-posts-jpages').jPages({
-		containerID: 'topic-posts',
-		perPage : 3,
-		previous : 'Previous',
-		next : 'Next'
-	})
+	$('.topic-posts-jpages').jPages(jPagesOptions)
 	$('abbr.timeago').timeago();
 	
 	socket.on('newPost', function(post) {
 		if(post.topic._id == $('.topicid').val())
 		{
-			$('section.posts').append("<section class = 'topic-post' id = 'post-"+ post._id+"'><div class = 'row post-details'><div class = 'span10 offset2'><small>Posted <abbr id = 'timestamp-"+ post._id+"'  class = 'timeago' title = '"+post.postedOn +"'>" +post.postedOn +"</abbr></small></div></div><div class = 'row'><div class = 'span2'><ul class = 'user-details'><li class = 'user-name'>"+ post.author.username + "</li><li class = 'user-avatar'><img src = 'http://placehold.it/140x140' class = 'img-polaroid'></li></ul></div><div class = 'span9'><div class = 'post-body'>"+ post.body +"</div></div></div><div class = 'row post-actions'><span class = 'pull-right'><button class = 'btn' type='button'><i class = 'icon-comment'></i> Reply</button></div></section>").children('section#post-'+post._id).effect('highlight', {}, 1000);
+			var canEdit = ((me.username == post.author.username) && (me.role && me.role.permissions.CAN_EDIT_OWN_POSTS)) || (me.role && me.role.permissions.CAN_EDIT_OTHER_POSTS) 
+			var canDelete = ((me.username == post.author.username) && (me.role && me.role.permissions.CAN_DELETE_OWN_POSTS)) || (me.role && me.role.permissions.CAN_DELETE_OTHER_POSTS)
+			var canReport = (me.username != post.author.username)
+			
+			var postHTML = "<section class = 'topic-post' id = 'post-"+ post._id+"'><div class = 'row post-details'><div class = 'span2 no-margin'><i class = 'icon-user'></i><span class = 'post-username'>"+ post.author.username + "</span></div><div class = 'span10'><small>Posted <abbr id = 'timestamp-"+ post._id+"'  class = 'timeago' title = '"+post.postedOn +"'>" +post.postedOn +"</abbr></small></div></div><div class = 'row'><div class = 'span2 no-margin'><ul class = 'user-details'><li class = 'user-name'>"+ post.author.username + "</li><li class = 'user-avatar'><img src = 'http://placehold.it/140x140' class = 'img-polaroid'></li></ul></div><div class = 'span10'><div class = 'post-body'>"+ post.body +"</div></div></div><div class = 'row post-actions'><div class = 'span2 no-margin topic-user-actions'><button class = 'btn btn-info' type='button'><i class = 'icon-envelope'></i>PM</button></div><div class = 'span10'><span class = 'topic-post-actions'><button class = 'btn reply-post' type='button'><i class = 'icon-comment'></i>Reply</button><button class = 'btn multi-quote-post' type='button'><i class = 'icon-comments'></i>Multi-Quote</button>";
+			
+			
+			if (canEdit)
+				postHTML += "<button class = 'btn edit-post' type='button'><i class = 'icon-edit'></i>Edit</button>"
+				
+			if (canReport)
+				postHTML += "<button class = 'btn btn-warning report-post' type='button'><i class = 'icon-legal'></i>Report</button>";
+				
+			if (canDelete)
+				postHTML += "<button class = 'btn btn-danger delete-post' type='button'><i class = 'icon-trash'></i>Delete</button>"
+				
+			postHTML += "</span></div></section>";
+			
+			$(postHTML).appendTo($('section.posts')).hide();
+			$('#post-'+ post._id).fadeIn('slow');
+			$('.topic-posts-jpages').jPages('destroy');
+			$('.topic-posts-jpages').jPages(jPagesOptions);
 			$('abbr#timestamp-'+ post._id).timeago();
 		}
 	});

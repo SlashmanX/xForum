@@ -12,7 +12,7 @@ jQuery(document).ready(function() {
 	
 	$('.forum-topics-jpages').jPages({
 		containerID: 'forum-topics-paginate',
-		perPage : 5,
+		perPage : 10,
 		previous : 'Previous',
 		next : 'Next'
 	})

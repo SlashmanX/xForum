@@ -142,7 +142,7 @@ module.exports = function(app, socket) {
 		});
 	});
 	
-	app.get('/topic/:slug/', checkUser, getUser, loginUser, function(req, res) {
+	app.get('/topic/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
 		TM.getTopic(req.param('slug'), function(e, topic) {
 			if(e) {
 				console.error('Error getting topic '+ slug + ': '+ e);
@@ -151,7 +151,7 @@ module.exports = function(app, socket) {
 		});
 	});
 	
-	app.post('/topic/:slug/', checkUser, getUser, loginUser, function(req, res) {
+	app.post('/topic/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
 		PM.create({
 			author: req.session.user._id,
 			topic: req.param('topic'),

@@ -6,10 +6,10 @@ block content
 			.span9.no-margin.pagination
 				ul.topic-posts-jpages
 	
-			.span3.no-margin.action-buttons
+			.span3.action-buttons
 				if(user.role && user.role.permissions.CAN_POST)
-					a(href='#').btn.action-button
-						i.icon-comments-alt
+					a(href='#').btn.btn-primary.action-button
+						i.icon-comment-alt
 						| Add Reply
 	.topic-view.xforum
 		mixin actions
@@ -36,29 +36,29 @@ block content
 								!{post.body}
 					.row.post-actions
 						.span2.no-margin.topic-user-actions
-							button.btn.btn-info(type='button')
+							button.btn.btn-info.pm-user(type='button')
 								i.icon-envelope
 								| PM
 						.span10
 							span.topic-post-actions
-								button.btn(type='button')
+								button.btn.reply-post(type='button')
 									i.icon-comment
 									| Reply
-								button.btn(type='button')
+								button.btn.multi-quote-post(type='button')
 									i.icon-comments
 									| Multi-Quote
-									
-								button.btn.btn-warning(type='button')
-									i.icon-legal
-									| Report
-									
-								button.btn(type='button')
-									i.icon-edit
-									| Edit
-									
-								button.btn.btn-danger(type='button')
-									i.icon-trash
-									| Delete
+								if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_EDIT_OWN_POSTS)) || (user.role && user.role.permissions.CAN_EDIT_OTHER_POSTS) 	
+									button.btn.edit-post(type='button')
+										i.icon-edit
+										| Edit
+								if user.username != post.author.username
+									button.btn.btn-warning.report-post(type='button')
+										i.icon-legal
+										| Report
+								if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_DELETE_OWN_POSTS)) || (user.role && user.role.permissions.CAN_DELETE_OTHER_POSTS) 	
+									button.btn.btn-danger.delete-post(type='button')
+										i.icon-trash
+										| Delete
 									
 		mixin actions
 		if(user.role && user.role.permissions.CAN_POST)
@@ -75,5 +75,7 @@ block content
 				
 	
 block append scripts
+	script
+		var me = !{JSON.stringify(user)}
 	script(src='/js/views/topic.js')
 	script(src='/js/controllers/topicController.js')
