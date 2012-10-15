@@ -151,6 +151,19 @@ module.exports = function(app, socket) {
 		});
 	});
 	
+	app.post('/post/edit/:postid/', checkUser, getUser, loginUser, function(req, res) {
+		/*TODO: Check if user has permission to edit this post*/
+		PM.update({
+			id: req.param('postid'),
+			post: req.param('edited-text')
+		}, function(p){
+			if(p) {
+				res.send(p, 200);
+				socket.sockets.emit('editedPost', p);
+			}
+		})
+	})
+	
 	app.post('/topic/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
 		PM.create({
 			author: req.session.user._id,

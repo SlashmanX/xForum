@@ -5523,8 +5523,8 @@ wysihtml5.dom.replaceWithChildNodes = function(node) {
 
       return wysihtml5.lang.string(
         '<!DOCTYPE html><html><head>'
-        + '<meta charset="#{charset}">#{scripts} #{stylesheets}</head>'
-        + '<body></body></html>'
+        + '<meta charset="#{charset}">#{stylesheets}</head>'
+        + '<body>#{scripts}</body></html>'
       ).interpolate(templateVars);
     },
 

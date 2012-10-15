@@ -25,7 +25,14 @@ PM.create			=	function(newData, callback)
 		});
 	});
 };
-
+PM.update			=	function(data, callback) {
+	Post.findByIdAndUpdate(data.id, {body: data.post}).exec(function(err, post) {
+		if(err)
+			console.log(err);
+		else
+			callback(post);
+	})
+}
 PM.getTopic			=	function(tid, callback)
 {
 	Post.find({topic: tid}).populate('author').sort({postedOn: 1}).exec(function(e, posts) {

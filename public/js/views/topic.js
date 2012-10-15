@@ -7,6 +7,38 @@ jQuery(document).ready(function() {
 		});
 	});
 	
+	$('.edit-post').on('click', function(e) {
+		e.preventDefault();
+		$('.cancel-edit').trigger('click');
+		var postID = $(this).parentsUntil('section').parent().attr('id').replace('post-', '');
+	    var theDiv = $(this).parentsUntil('section').parent().find('.post-body');
+	    var editableText = $("<div class = 'editing-post'><form method = 'post' action = '/post/edit/"+postID+"/' id = 'edit-post-form'><textarea style = 'width: "+ theDiv.width() +"px; height: "+ theDiv.height()+"px' name = 'edited-text'>"+ theDiv.html() +"</textarea><div class = 'topic-post-actions'><button class = 'btn btn-danger cancel-edit'>Cancel</button><button class = 'btn btn-primary save-edit' type = 'submit'>Save</button></div></form>");
+		theDiv.after("<div class = 'hide before-post-edit'>"+theDiv.html()+"</div>");
+	    editableText.val(theDiv.html());
+	    $(theDiv).replaceWith(editableText);
+		editableText.after("");
+	    editableText.focus();
+		editableText.find('textarea').wysihtml5({
+			stylesheets: ['/css/editor.min.css'],
+			scripts: 'http://platform.twitter.com/widgets.js'
+		});
+	});
+	
+	$('body').on('click', '.cancel-edit', function(e) {
+		e.preventDefault();
+		var oldPost = $(this).parentsUntil('section').parent().find('.before-post-edit').html();
+		$(this).parentsUntil('section').parent().find("iframe.wysihtml5-sandbox, input[name='_wysihtml5_mode']").remove();
+		$(this).parentsUntil('section').parent().find('.editing-post').replaceWith("<div class = 'post-body'>"+oldPost +"</div>");
+	});
+
+	/*function editableTextBlurred() {
+	    var html = $(this).val();
+	    var viewableText = $("<div>");
+	    viewableText.html(html);
+	    $(this).replaceWith(viewableText);
+	    // setup the click event for this new div
+	    viewableText.click(divClicked);
+	}*/
 	var pageUrl = document.location.pathname;
 	var curPage = 1;
 	var matches = pageUrl.match(/\/page\/(.*)\/$/);
@@ -39,6 +71,21 @@ jQuery(document).ready(function() {
 		success	: function(responseText, status, xhr, $form){
 			if (status == 'success') tc.onPostSuccess(responseText);
 		}
+	});
+	
+	$('body').on('submit', '#edit-post-form', function(e){
+		e.preventDefault();
+		$.ajax({
+		     type: "POST",
+		     url: $(this).attr('action'),
+		     data: $(this).serialize(),
+		     success: function() {
+				var newHTML = $('textarea[name="edited-text"]').val();
+				$('#edit-post-form').parentsUntil('section').parent().find('.before-post-edit').remove();
+				$('#edit-post-form').parentsUntil('section').parent().find("iframe.wysihtml5-sandbox, input[name='_wysihtml5_mode']").remove();
+				$('#edit-post-form').parentsUntil('section').parent().find('.editing-post').replaceWith("<div class = 'post-body'>"+newHTML +"</div>");
+		     }
+		});
 	});
 	
 	$('.topic-posts-jpages').jPages(jPagesOptions)
