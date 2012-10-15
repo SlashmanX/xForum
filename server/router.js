@@ -284,66 +284,25 @@ module.exports = function(app, socket) {
 		}
 	})
 	
-	app.post('/create/:what/', checkUser, getUser, loginUser, function(req, res){
-		if(req.param('what') == 'forum')
-		{
-			if(!req.param('forum')) {
-				FM.create({
-						category: req.param('category'),
-						name: req.param('name'),
-						slug: functions.slugify(req.param('name')),
-						desc: req.param('desc')
-					}, function(o){
-						if(o)
-							res.send('/forum/'+o.slug+'/', 200);
-				})
-			}
-			
-			else {
-				FM.createSubForum({
-						category: req.param('category'),
-						parent: req.param('forum'),
-						name: req.param('name'),
-						slug: functions.slugify(req.param('name')),
-						desc: req.param('desc')
-					}, function(o){
-						if(o)
-							res.send('ok', 200);
-				})
-			}
-		}
-		else if(req.param('what') == 'category')
-		{
-			CM.create({
-				name : req.param('name'),
-				desc: req.param('desc'),
-				slug: functions.slugify(req.param('name')),
-			}, function(o){
-					if(o)
-					{
-						res.send('/category/'+o.slug+'/', 200);
-					}
-			})
-		}
-		else if(req.param('what') == 'topic')
-		{
-			TM.create({
-				title : req.param('title'),
-				desc: req.param('desc'),
-				body: req.param('post'),
-				slug: functions.slugify(req.param('title')),
-				forum: req.param('forum'),
-				author: req.session.user._id,
-				createdOn: moment().format(),
-				lastPost: moment().format()
-			}, function(o){
-					if(o)
-					{
-						socket.sockets.emit('newTopic', o);
-						res.send('/topic/'+o.slug+'/', 200);
-					}
-			})
-		}
+	app.post('/create/topic/', checkUser, getUser, loginUser, function(req, res){
+		
+		/* TODO: Check if user has permission to create topic here */
+		TM.create({
+			title : req.param('title'),
+			desc: req.param('desc'),
+			body: req.param('post'),
+			slug: functions.slugify(req.param('title')),
+			forum: req.param('forum'),
+			author: req.session.user._id,
+			createdOn: moment().format(),
+			lastPost: moment().format()
+		}, function(o){
+				if(o)
+				{
+					socket.sockets.emit('newTopic', o);
+					res.send('/topic/'+o.slug+'/', 200);
+				}
+		})
 	})
 	
 	app.get('/profile/',checkUser, getUser, loginUser, function(req, res) {
@@ -431,9 +390,9 @@ module.exports = function(app, socket) {
 // view & delete accounts //
 	
 	app.get('/members/', checkUser, getUser, loginUser, function(req, res) {
-		AM.list( function(e, accounts){
-			res.render('members', { title : 'Account List', accts : accounts });
-		})
+		AM.list(function(e, accounts) {
+			return res.render('members', { title : 'Account List', accts : accounts });
+		});
 	});	
 	
 	app.post('/profile/delete/', checkUser, getUser, loginUser, function(req, res){
