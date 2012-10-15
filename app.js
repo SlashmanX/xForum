@@ -47,37 +47,36 @@ socket.sockets.on('connection', function(client){
 		if(hs.sessionID){
 			SM.getUserIDFromSession(hs.sessionID.slice(2), function(e, a) {
 				if(a) {
-					SM.setLastReadTime(JSON.parse(a.session).user._id, data.topic, function(e, o) {
-					});
+					SM.setLastReadTime(JSON.parse(a.session).user._id, data.topic, function(){});
 				}
 			});
 		}
-	})
+	});
 	
 	client.on('getTitleFromURL', function(url, callback) {
 		func.getTitleFromURL(url, function(title) {
 			callback(title);
 		})
-	})
+	});
 	
 	client.on('getEmbedCode', function(url, callback) {
 		func.getEmbedCode(url, function(err, result) {
 			console.log(result);
 			callback(err, result);
 		})
-	})
+	});
 	
 	client.on('getCategoryDetails', function(data, callback) {
 		CM.getDetails(data.id, function(e, cat) {
 			callback(cat);
 		})
-	})
+	});
 	
 	client.on('getForumDetails', function(data, callback) {
 		FM.getDetails(data.id, function(e, forum) {
 			callback(forum);
 		})
-	})
+	});
 	
 	client.on('disconnect', function(){
 		client.leave(hs.sessionID);
