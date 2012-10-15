@@ -91,6 +91,10 @@ jQuery(document).ready(function() {
 	$('.topic-posts-jpages').jPages(jPagesOptions)
 	$('abbr.timeago').timeago();
 	
+	socket.on('editedPost', function(newPost){
+		$('section#post-'+ newPost._id).find('.post-body').html(newPost.body).effect('highlight', {}, 1000);
+	})
+	
 	socket.on('newPost', function(post) {
 		if(post.topic._id == $('.topicid').val())
 		{
