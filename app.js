@@ -5,9 +5,7 @@ var	connect			=	require('connect');
 var SM 				=	require('./server/modules/socket-manager');
 var CM 				=	require('./server/modules/category-manager');
 var FM 				=	require('./server/modules/forum-manager');
-var	jsdom			=	require('jsdom');
 var	func			=	require('./server/controllers/func.js');
-var oembed			=	require('oembed');
 
 var app				=	express();
 
@@ -38,7 +36,7 @@ socket.set('authorization', function (data, accept) {
        return accept('No cookie transmitted.', false);
     }
     // accept the incoming connection
-    accept(null, true);
+    return accept(null, true);
 });
 socket.set('log level', 1);
 socket.sockets.on('connection', function(client){
