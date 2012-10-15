@@ -41,7 +41,7 @@ FM.list				=	function(callback)
 
 FM.listBySlug		=	function(data, callback)
 {
-	Forum.findOne({slug: data.slug}).populate('topics', null, null, {sort: [['_id', 'desc']] } ).populate('parent').populate('children').exec(function(e, forum) {
+	Forum.findOne({slug: data.slug}).populate('topics', null, null, {sort: [['lastPost', 'desc']] } ).populate('parent').populate('children').exec(function(e, forum) {
 		if (e) callback(e)
 		else {
 			forum = forum.toObject();
