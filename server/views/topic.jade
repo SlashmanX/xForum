@@ -22,7 +22,7 @@ block content
 					.row.post-details
 						.span2.no-margin
 							i.icon-user
-							span.post-username= post.author.username
+							span.post-username(id= 'post-'+post._id + '-user-'+ post.author._id)= post.author.username
 						.span10
 							small Posted 
 								abbr.timeago(title=post.postedOn) #{post.postedOn}

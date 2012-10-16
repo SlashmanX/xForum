@@ -12,7 +12,8 @@ jQuery(document).ready(function() {
 		$('.cancel-edit').trigger('click');
 		var postID = $(this).parentsUntil('section').parent().attr('id').replace('post-', '');
 	    var theDiv = $(this).parentsUntil('section').parent().find('.post-body');
-	    var editableText = $("<div class = 'editing-post'><form method = 'post' action = '/post/edit/"+postID+"/' id = 'edit-post-form'><textarea style = 'width: "+ theDiv.width() +"px; height: "+ theDiv.height()+"px' name = 'edited-text'>"+ theDiv.html() +"</textarea><div class = 'topic-post-actions'><button class = 'btn btn-danger cancel-edit'>Cancel</button><button class = 'btn btn-primary save-edit' type = 'submit'>Save</button></div></form>");
+		var theAuthor = $(this).parentsUntil('section').parent().find('.post-username').attr('id').split('-').pop();
+	    var editableText = $("<div class = 'editing-post'><form method = 'post' action = '/post/edit/"+postID+"/' id = 'edit-post-form'><input id = 'edit-post-seq' name = 'edit-post-seq' type= 'hidden' value = '"+ theAuthor+"'/><textarea style = 'width: "+ theDiv.width() +"px; height: "+ theDiv.height()+"px' name = 'edited-text'>"+ theDiv.html() +"</textarea><div class = 'topic-post-actions'><button class = 'btn btn-danger cancel-edit'>Cancel</button><button class = 'btn btn-primary save-edit' type = 'submit'>Save</button></div></form>");
 		theDiv.after("<div class = 'hide before-post-edit'>"+theDiv.html()+"</div>");
 	    editableText.val(theDiv.html());
 	    $(theDiv).replaceWith(editableText);
@@ -30,15 +31,8 @@ jQuery(document).ready(function() {
 		$(this).parentsUntil('section').parent().find("iframe.wysihtml5-sandbox, input[name='_wysihtml5_mode']").remove();
 		$(this).parentsUntil('section').parent().find('.editing-post').replaceWith("<div class = 'post-body'>"+oldPost +"</div>");
 	});
-
-	/*function editableTextBlurred() {
-	    var html = $(this).val();
-	    var viewableText = $("<div>");
-	    viewableText.html(html);
-	    $(this).replaceWith(viewableText);
-	    // setup the click event for this new div
-	    viewableText.click(divClicked);
-	}*/
+	
+	
 	var pageUrl = document.location.pathname;
 	var curPage = 1;
 	var matches = pageUrl.match(/\/page\/(.*)\/$/);
@@ -84,7 +78,17 @@ jQuery(document).ready(function() {
 				$('#edit-post-form').parentsUntil('section').parent().find('.before-post-edit').remove();
 				$('#edit-post-form').parentsUntil('section').parent().find("iframe.wysihtml5-sandbox, input[name='_wysihtml5_mode']").remove();
 				$('#edit-post-form').parentsUntil('section').parent().find('.editing-post').replaceWith("<div class = 'post-body'>"+newHTML +"</div>");
-		     }
+				$('body').bar({
+					message : 'Your changes have been saved!'
+				});
+		     },
+		
+			error: function(jqXHR, textStatus, errorThrown) {
+				$('.cancel-edit').trigger('click');
+				$('body').bar({
+					message : 'You do not have permission to do that.'
+				});
+			}
 		});
 	});
 	
