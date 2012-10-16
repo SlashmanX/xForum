@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
 		var postID = $(this).parentsUntil('section').parent().attr('id').replace('post-', '');
 	    var theDiv = $(this).parentsUntil('section').parent().find('.post-body');
 		var theAuthor = $(this).parentsUntil('section').parent().find('.post-username').attr('id').split('-').pop();
-	    var editableText = $("<div class = 'editing-post'><form method = 'post' action = '/post/edit/"+postID+"/' id = 'edit-post-form'><input id = 'edit-post-seq' name = 'edit-post-seq' type= 'hidden' value = '"+ theAuthor+"'/><textarea style = 'width: "+ theDiv.width() +"px; height: "+ theDiv.height()+"px' name = 'edited-text'>"+ theDiv.html() +"</textarea><div class = 'topic-post-actions'><button class = 'btn btn-danger cancel-edit'>Cancel</button><button class = 'btn btn-primary save-edit' type = 'submit'>Save</button></div></form>");
+	    var editableText = $("<div class = 'editing-post'><form method = 'post' action = '/post/edit/"+postID+"/' id = 'edit-post-form'><input id = 'edit-post-seq' name = 'edit-post-seq' type= 'hidden' value = '"+ theAuthor+"'/><textarea style = 'width: "+ theDiv.width() +"px; height: "+ theDiv.height()+"px' name = 'edited-text' required>"+ theDiv.html() +"</textarea><div class = 'topic-post-actions'><button class = 'btn btn-danger cancel-edit'>Cancel</button><button class = 'btn btn-primary save-edit' type = 'submit'>Save</button></div></form>");
 		theDiv.after("<div class = 'hide before-post-edit'>"+theDiv.html()+"</div>");
 	    editableText.val(theDiv.html());
 	    $(theDiv).replaceWith(editableText);
