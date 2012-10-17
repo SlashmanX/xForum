@@ -44,9 +44,6 @@ block content
 								button.btn.reply-post(type='button')
 									i.icon-comment
 									| Reply
-								button.btn.multi-quote-post(type='button')
-									i.icon-comments
-									| Multi-Quote
 								if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_EDIT_OWN_POSTS)) || (user.role && user.role.permissions.CAN_EDIT_OTHER_POSTS) 	
 									button.btn.edit-post(type='button')
 										i.icon-edit
