@@ -13,6 +13,8 @@ var	functions	=	require('../shared/functions.js');
 var	moment		=	require('moment');
 var	mongoose	=	require('mongoose');
 var	async		=	require('async');
+
+
 mongoose.connect('localhost', 'xForum');
 
 module.exports = function(app, socket) {
@@ -119,7 +121,7 @@ module.exports = function(app, socket) {
 		})
 	});
 	
-	app.get('/forum/:slug/', checkUser, getUser, loginUser, function(req, res) {
+	app.get('/forum/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
 		FM.listBySlug({slug: req.param('slug'), user_id: req.session.user._id}, function(e, forum) {
 			if(e) {
 				console.error('Error getting forum '+ slug + ': '+ e);

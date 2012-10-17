@@ -5,17 +5,43 @@ jQuery(document).ready(function() {
 			var thisTopic = $('div#topic-'+ post.topic.slug);
 			thisTopic.find('.topic-replies').html(post.topic.replies.length);
 			thisTopic.find('.topic-last-poster').html(post.author.username);
-			thisTopic.find('.topic-status').html('<i class = "icon-folder-close"></i>');
+			thisTopic.find('.topic-status').html('<i class = "icon-folder-close"></i>')
+            $('.forum-topics').prepend(thisTopic);
 			thisTopic.effect('highlight', {}, 1000);
+
+            $('.forum-topics-jpages').jPages('destroy');
+            $('.forum-topics-jpages').jPages(jPagesOptions);
 		}
 	});
+
+    var pageUrl = document.location.pathname;
+    var curPage = 1;
+    var matches = pageUrl.match(/\/page\/(.*)\/$/);
+    if (matches) {
+        curPage = matches[1];
+    }
+
+    pageUrl = pageUrl.replace(/\/page\/(.*)\/$/, '/');
+
+    var jPagesOptions = {
+        containerID: 'forum-topics-paginate',
+        perPage : 5,
+        startPage: curPage,
+        first: '«',
+        last: '»',
+        previous : '‹',
+        next : '›',
+        minHeight: 'true',
+        callback    : function( pages, items ){
+            $('html').animate({scrollTop:0}, 'slow');//IE, FF
+            $('body').animate({scrollTop:0}, 'slow');//WebKit
+            curPage = pages.current;
+            $('#forum-topics-paginate').css('min-height', '');
+            window.history.pushState(null, 'Page', pageUrl +'page/'+ pages.current+'/');
+        }
+    };
 	
-	$('.forum-topics-jpages').jPages({
-		containerID: 'forum-topics-paginate',
-		perPage : 10,
-		previous : 'Previous',
-		next : 'Next'
-	})
+	$('.forum-topics-jpages').jPages(jPagesOptions);
 	
 	socket.on('newTopic', function(topic) {
 		
@@ -25,6 +51,9 @@ jQuery(document).ready(function() {
 			
 			$('li.category-nav').after("<li class = 'forum-nav' id = 'nav-topic-"+ topic.slug+"'><a href = '/topic/"+ topic.slug +"/'><i class = 'icon-chevron-right'></i> "+ topic.title +"</a></li>");
 			$('ul.bs-docs-sidenav').find('li#nav-topic-'+ topic.slug).effect('highlight', {}, 1000);
+
+            $('.forum-topics-jpages').jPages('destroy');
+            $('.forum-topics-jpages').jPages(jPagesOptions);
 		}
 	})
 });
