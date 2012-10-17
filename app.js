@@ -84,6 +84,6 @@ socket.sockets.on('connection', function(client){
 
 });
 
-function getNumOnline(){
+/*function getNumOnline(){
 	return socket.sockets.clients().length;
-}
+}*/

@@ -24,7 +24,7 @@ module.exports = function(app, socket) {
 	      return res.render('login', { title: 'Hello - Please Login To Your Account' });
 	   }
 
-	   next();
+	   return next();
 	};
 
 	// Second Middleware
@@ -39,7 +39,7 @@ module.exports = function(app, socket) {
 			next();
 		});
 
-	}
+	};
 
 	// Third middleware
 
@@ -63,7 +63,7 @@ module.exports = function(app, socket) {
 		else
 			res.render('404', { title: 'Page Not Found'});
 			
-	}
+	};
 	
 	app.post('/login/', function(req, res){
 		if (req.param('email') != null){
@@ -111,13 +111,13 @@ module.exports = function(app, socket) {
 			}
 			res.render('category', { title : category.name +' | xForum', category : category });
 		})
-	})
+	});
 	
 	app.get('/create/:what/', checkUser, getUser, loginUser, function(req, res){
 		CM.listAll( function(e, categories){
 			res.render('create', { title : 'Create New '+ req.param('what').capitalize() +' | xForum', categories : categories, what: req.param('what'), parent: req.param('pid')})
 		})
-	})
+	});
 	
 	app.get('/forum/:slug/', checkUser, getUser, loginUser, function(req, res) {
 		FM.listBySlug({slug: req.param('slug'), user_id: req.session.user._id}, function(e, forum) {
@@ -152,7 +152,7 @@ module.exports = function(app, socket) {
 	});
 	
 	app.post('/post/edit/:postid/', checkUser, getUser, loginUser, function(req, res) {
-		/*TODO: Check if user has permission to edit this post*/
+		// TODO: Check if user has permission to edit this post
 		var originalAuthor = req.param('edit-post-seq');
 		var who = req.session.user;
 		if( (originalAuthor == who._id && who.role.permissions.CAN_EDIT_OWN_POSTS) || (who.role.permissions.CAN_EDIT_OTHER_POSTS) ) {
@@ -169,7 +169,7 @@ module.exports = function(app, socket) {
 		else {
 			res.send('error', 403);
 		}
-	})
+	});
 	
 	app.post('/topic/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
 		PM.create({
@@ -189,13 +189,13 @@ module.exports = function(app, socket) {
 		ADMIN.getDashboardStats(function (stats) {
 			res.render('admin/dashboard', {title : 'Dashboard | xForum Admin', stats: stats});
 		})
-	})
+	});
 	
 	app.get('/admin/roles/add/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		RM.getNewRoleForm(function(form) {
 			res.render('admin/role', {title : 'Add New Role | xForum Admin', form: form});
 		})
-	})
+	});
 	
 	app.post('/admin/roles/add/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		
@@ -218,7 +218,7 @@ module.exports = function(app, socket) {
 				res.render('admin/category', {title: 'Categories | xForum Admin', roles: roles, categories: cats})
 			});
 		});
-	})
+	});
 	
 	app.post('/admin/categories/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		if(req.param('catId') == '') { // Not updating
@@ -254,7 +254,7 @@ module.exports = function(app, socket) {
 					res.send('ok', 200);
 			});
 		}
-	})
+	});
 	
 	app.get('/admin/forums/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		RM.getRoles(function(roles) {
@@ -264,8 +264,8 @@ module.exports = function(app, socket) {
 				});
 			})
 		});
-	})
-	
+	});
+
 	app.post('/admin/forums/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		if(req.param('fId') == '') { // Not updating
 			if(req.param('name')) {
@@ -302,11 +302,11 @@ module.exports = function(app, socket) {
 					res.send('ok', 200);
 			});
 		}
-	})
+	});
 	
 	app.post('/create/topic/', checkUser, getUser, loginUser, function(req, res){
 		
-		/* TODO: Check if user has permission to create topic here */
+		// TODO: Check if user has permission to create topic here
 		TM.create({
 			title : req.param('title'),
 			desc: req.param('desc'),
@@ -323,7 +323,7 @@ module.exports = function(app, socket) {
 					res.send('/topic/'+o.slug+'/', 200);
 				}
 		})
-	})
+	});
 	
 	app.get('/profile/',checkUser, getUser, loginUser, function(req, res) {
 		res.render('profile', {
