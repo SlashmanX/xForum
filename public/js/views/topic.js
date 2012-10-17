@@ -24,6 +24,14 @@ jQuery(document).ready(function() {
 			scripts: 'http://platform.twitter.com/widgets.js'
 		});
 	});
+
+    $('.reply-post').on('click', function(e) {
+        e.preventDefault();
+        var thePost = $(this).parentsUntil('section').parent().find('.post-body').html();
+        var theAuthor = $(this).parentsUntil('section').parent().find('.post-username').text();
+
+        $('#reply-post').html("<blockquote>"+ thePost +" <br /><cite>Posted by "+ theAuthor +"</cite></blockquote><br/><br/>").focus();
+    });
 	
 	$('body').on('click', '.cancel-edit', function(e) {
 		e.preventDefault();
