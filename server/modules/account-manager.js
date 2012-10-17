@@ -5,7 +5,14 @@ var	bcrypt		=	require('bcrypt');
 module.exports = AM;
 
 // logging in //
-
+/**
+ * Tries to login the user based on the provided username and password
+ * Returns user object if successful, null object otherwise
+ *
+ * @param  {String} username
+ * @param  {String} password
+ * @param  {Function} callback A function to be called after login has been attempted
+ */
 AM.autoLogin = function(username, password, callback)
 {
 	User.findOne({username:username}).populate('role').exec(function(e, o) {
