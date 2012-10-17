@@ -41,7 +41,7 @@ Required Modules
 * npm install less-middleware
 * npm install mongodb
 * npm install connect-mongodb
-* npm install bcrypt *** - you may need to install OpenSSL and Python (if you don't have them already), more information is available at [the bcrypt repository](https://github.com/ncb000gt/node.bcrypt.js/#dependencies) ***
+* npm install bcrypt **- you may need to install OpenSSL and Python (if you don't have them already), more information is available at [the bcrypt repository](https://github.com/ncb000gt/node.bcrypt.js/#dependencies)**
 * npm install async
 * npm install jade
 * npm install cookie
