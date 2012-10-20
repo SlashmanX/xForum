@@ -7364,11 +7364,12 @@ wysihtml5.Commands = Base.extend(
   wysihtml5.commands.insertHTML = {
     exec: function(composer, command, html) {
       if (composer.commands.support(command)) {
-        composer.doc.execCommand(command, false, html);
+        composer.doc.execCommand(command, false, html+"<br />");
       } else {
-        composer.selection.insertHTML(html);
+        composer.selection.insertHTML(html+"<br />");
       }
 		composer.iframe.contentWindow.twttr.widgets.load();
+        setTimeout(composer.selection.setAfter(composer.element.lastChild), 1000);
     },
 
     state: function() {
