@@ -1,11 +1,9 @@
 jQuery(document).ready(function() {
 	var tc = new TopicController();
-	$('#reply-post').one('focus', function(){
-		$(this).wysihtml5({
+	$('#reply-post').wysihtml5({
 			stylesheets: ['/css/editor.min.css'],
 			scripts: 'http://platform.twitter.com/widgets.js'
 		});
-	});
 	
 	$('.edit-post').on('click', function(e) {
 		e.preventDefault();
@@ -30,7 +28,7 @@ jQuery(document).ready(function() {
         var thePost = $(this).parentsUntil('section').parent().find('.post-body').html();
         var theAuthor = $(this).parentsUntil('section').parent().find('.post-username').text();
 
-        $('#reply-post').html("<blockquote>"+ thePost +" <br /><cite>Posted by "+ theAuthor +"</cite></blockquote><br/><br/>").focus();
+        $('#reply-post').data('wysihtml5').editor.setValue("<blockquote>"+ thePost +" <br /><cite>Posted by "+ theAuthor +"</cite></blockquote><br /><br />").focus(true);
     });
 	
 	$('body').on('click', '.cancel-edit', function(e) {

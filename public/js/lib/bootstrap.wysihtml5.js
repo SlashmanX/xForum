@@ -134,6 +134,7 @@
                 "h1": {},
                 "h2": {},
                 "blockquote": {},
+                "cite": {},
                 "u": 1,
                 "img": {
                     "check_attributes": {
