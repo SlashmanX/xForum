@@ -1,27 +1,10 @@
 {
   "name": "xForum",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "express": {
       "version": "3.0.0rc3",
       "dependencies": {
-        "connect": {
-          "version": "2.4.3",
-          "dependencies": {
-            "qs": {
-              "version": "0.4.2"
-            },
-            "formidable": {
-              "version": "1.0.11"
-            },
-            "bytes": {
-              "version": "0.1.0"
-            },
-            "pause": {
-              "version": "0.0.1"
-            }
-          }
-        },
         "commander": {
           "version": "0.6.1"
         },
@@ -30,9 +13,6 @@
         },
         "mkdirp": {
           "version": "0.3.3"
-        },
-        "cookie": {
-          "version": "0.0.4"
         },
         "crc": {
           "version": "0.2.0"
@@ -119,54 +99,8 @@
         }
       }
     },
-    "connect": {
-      "version": "2.4.3",
-      "dependencies": {
-        "qs": {
-          "version": "0.4.2"
-        },
-        "formidable": {
-          "version": "1.0.11"
-        },
-        "crc": {
-          "version": "0.2.0"
-        },
-        "cookie": {
-          "version": "0.0.4"
-        },
-        "bytes": {
-          "version": "0.1.0"
-        },
-        "send": {
-          "version": "0.0.3",
-          "dependencies": {
-            "mime": {
-              "version": "1.2.6"
-            },
-            "range-parser": {
-              "version": "0.0.4"
-            }
-          }
-        },
-        "fresh": {
-          "version": "0.1.0"
-        },
-        "pause": {
-          "version": "0.0.1"
-        },
-        "debug": {
-          "version": "0.7.0"
-        }
-      }
-    },
-    "cookie": {
-      "version": "0.0.4"
-    },
     "async": {
       "version": "0.1.22"
-    },
-    "bufferjs": {
-      "version": "1.1.0"
     },
     "bcrypt": {
       "version": "0.7.2",
@@ -199,6 +133,14 @@
     "moment": {
       "version": "1.7.0"
     },
+    "mongodb": {
+      "version": "1.1.4",
+      "dependencies": {
+        "bson": {
+          "version": "0.1.1"
+        }
+      }
+    },
     "mongoose": {
       "version": "3.1.0",
       "dependencies": {
@@ -218,14 +160,116 @@
         }
       }
     },
+    "connect": {
+      "version": "2.4.3",
+      "dependencies": {
+        "qs": {
+          "version": "0.4.2"
+        },
+        "formidable": {
+          "version": "1.0.11"
+        },
+        "crc": {
+          "version": "0.2.0"
+        },
+        "bytes": {
+          "version": "0.1.0"
+        },
+        "send": {
+          "version": "0.0.3",
+          "dependencies": {
+            "mime": {
+              "version": "1.2.6"
+            },
+            "range-parser": {
+              "version": "0.0.4"
+            }
+          }
+        },
+        "fresh": {
+          "version": "0.1.0"
+        },
+        "pause": {
+          "version": "0.0.1"
+        },
+        "debug": {
+          "version": "0.7.0"
+        }
+      }
+    },
+    "cookie": {
+      "version": "0.0.4"
+    },
+    "forms-mongoose": {
+      "version": "0.0.4",
+      "dependencies": {
+        "forms": {
+          "version": "0.1.0",
+          "dependencies": {
+            "async": {
+              "version": "0.1.0"
+            }
+          }
+        },
+        "underscore": {
+          "version": "1.3.3"
+        }
+      }
+    },
+    "jsdom": {
+      "version": "0.2.18",
+      "dependencies": {
+        "htmlparser": {
+          "version": "1.7.6"
+        },
+        "cssom": {
+          "version": "0.2.5"
+        },
+        "cssstyle": {
+          "version": "0.2.3"
+        },
+        "contextify": {
+          "version": "0.1.3",
+          "dependencies": {
+            "bindings": {
+              "version": "1.0.0"
+            }
+          }
+        }
+      }
+    },
+    "oembed": {
+      "version": "0.1.0",
+      "dependencies": {
+        "htmlparser": {
+          "version": "1.7.6"
+        }
+      }
+    },
     "less": {
       "version": "1.3.0"
     },
-    "mongodb": {
-      "version": "1.1.4",
+    "request": {
+      "version": "2.11.4",
       "dependencies": {
-        "bson": {
-          "version": "0.1.1"
+        "form-data": {
+          "version": "0.0.3",
+          "dependencies": {
+            "combined-stream": {
+              "version": "0.0.3",
+              "dependencies": {
+                "delayed-stream": {
+                  "version": "0.0.5"
+                }
+              }
+            },
+            "async": {
+              "version": "0.1.9"
+            }
+          }
+        },
+        "mime": {
+          "version": "1.2.7"
         }
       }
     }

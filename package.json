@@ -15,5 +15,9 @@
 	, "mongoose" : ">=3.0.0"
 	, "connect" : "*"
 	, "cookie"	: "*"
+    , "forms-mongoose" : "*"
+    , "jsdom" : "*"
+    , "oembed" : "*"
+
   }
 }
