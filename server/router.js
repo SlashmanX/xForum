@@ -97,7 +97,7 @@ module.exports = function(app, socket) {
 	// logged-in user homepage //
 	
 	app.get('/', checkUser, getUser, loginUser, function(req, res) {
-		CM.listHomePage(req.session.user._id, function(e, categories){
+		CM.listHomePage(req.session.user, function(e, categories){
 			if(e) {
 				console.error('Error getting categories: '+ e);
 			}
@@ -122,24 +122,27 @@ module.exports = function(app, socket) {
 	});
 	
 	app.get('/forum/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
-		FM.listBySlug({slug: req.param('slug'), user_id: req.session.user._id}, function(e, forum) {
-			if(e) {
-				console.error('Error getting forum '+ slug + ': '+ e);
+		FM.listBySlug({slug: req.param('slug'), user: req.session.user}, function(e, forum) {
+			if(e || !forum) {
+				console.error('Error getting forum '+ req.param('slug') + ': '+ e);
+                res.render('404', { title: 'Page Not Found'});
 			}
-			var tLength = forum.topics.length;
-			var count = 0;
-			async.whilst(
-				function () { return count < tLength;}, 
-				function(cb) {
-					TM.checkRead(req.session.user._id, forum.topics[count]._id, function(read){
-						forum.topics[count].isRead = read;
-						count++;
-						cb();
-				});
-			}, 
-			function(err) {
-				res.render('forum', {title : 'Viewing Forum: '+ forum.name +' | xForum', forum: forum});
-			})
+            else{
+                var tLength = forum.topics.length;
+                var count = 0;
+                async.whilst(
+                    function () { return count < tLength;},
+                    function(cb) {
+                        TM.checkRead(req.session.user._id, forum.topics[count]._id, function(read){
+                            forum.topics[count].isRead = read;
+                            count++;
+                            cb();
+                    });
+                },
+                function(err) {
+                    res.render('forum', {title : 'Viewing Forum: '+ forum.name +' | xForum', forum: forum});
+                })
+            }
 			
 		});
 	});
@@ -154,7 +157,6 @@ module.exports = function(app, socket) {
 	});
 	
 	app.post('/post/edit/:postid/', checkUser, getUser, loginUser, function(req, res) {
-		// TODO: Check if user has permission to edit this post
 		var originalAuthor = req.param('edit-post-seq');
 		var who = req.session.user;
 		if( (originalAuthor == who._id && who.role.permissions.CAN_EDIT_OWN_POSTS) || (who.role.permissions.CAN_EDIT_OTHER_POSTS) ) {

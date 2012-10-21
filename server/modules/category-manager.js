@@ -17,9 +17,9 @@ CM.update	=	function(newData, callback)
 	Category.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc}}, callback);
 };
 
-CM.listHomePage		=	function(user_id, callback)
+CM.listHomePage		=	function(user, callback)
 {
-	Category.find().populate('forums', null, null, {sort: [['order', 'ascending'], '_id', 'ascending']}).populate('forums.topics').sort({order: 1, _id: 1}).exec(function(e, categories) {
+	Category.find().populate('forums', null, {visibleTo: user.role._id}, {sort: [['order', 'ascending'], '_id', 'ascending']}).populate('forums.topics').sort({order: 1, _id: 1}).exec(function(e, categories) {
 		if (e) {
 			callback(e);
 		}
@@ -49,7 +49,7 @@ CM.listHomePage		=	function(user_id, callback)
 							async.whilst(
 								function() { return tCount < tLength },
 								function(cbTopic) {
-									TM.checkRead(user_id, categories[cCount].forums[fCount].topics[tCount], function(read){
+									TM.checkRead(user._id, categories[cCount].forums[fCount].topics[tCount], function(read){
 										if(read) topicsRead++;
 										tCount++;
 										cbTopic();

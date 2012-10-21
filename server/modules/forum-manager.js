@@ -41,9 +41,9 @@ FM.list				=	function(callback)
 
 FM.listBySlug		=	function(data, callback)
 {
-	Forum.findOne({slug: data.slug}).populate('topics', null, null, {sort: [['lastPost', 'desc']] } ).populate('parent').populate('children').exec(function(e, forum) {
+	Forum.findOne({slug: data.slug, visibleTo: data.user.role._id}).populate('topics', null, null, {sort: [['lastPost', 'desc']] } ).populate('parent').populate('children').exec(function(e, forum) {
 		if (e) callback(e)
-		else {
+		else if(forum) {
 			forum = forum.toObject();
 			var tLength = forum.topics.length;
 			var tCount = 0;
@@ -51,7 +51,7 @@ FM.listBySlug		=	function(data, callback)
 			async.whilst(
 				function() { return tCount < tLength },
 				function(cbTopic) {
-					TM.checkRead(data.user_id, forum.topics[tCount], function(read){
+					TM.checkRead(data.user._id, forum.topics[tCount], function(read){
 						if(read) forum.topics[tCount].isRead = true;
 						tCount++;
 						cbTopic();
@@ -61,6 +61,9 @@ FM.listBySlug		=	function(data, callback)
 					callback(null, forum);
 				})
 		}
+        else {
+            callback(null, null);
+        }
 	});
 }
 
