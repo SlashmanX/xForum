@@ -20,6 +20,12 @@ RM.getRoles = function(callback) {
 		callback(roles);
 	})
 }
+
+RM.getRolePermissions = function(id, callback) {
+    Role.findOne({_id: id}, 'permissions').exec(function(err, perms) {
+        callback(err, perms);
+    })
+}
 RM.create = function(data, callback) {
 	new Role(data).save(callback('ok'));
 }

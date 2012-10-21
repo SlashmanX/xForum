@@ -122,6 +122,9 @@ module.exports = function(app, socket) {
 	});
 	
 	app.get('/forum/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
+        var userRole = req.session.user.role;
+
+
 		FM.listBySlug({slug: req.param('slug'), user: req.session.user}, function(e, forum) {
 			if(e || !forum) {
 				console.error('Error getting forum '+ req.param('slug') + ': '+ e);
@@ -140,7 +143,18 @@ module.exports = function(app, socket) {
                     });
                 },
                 function(err) {
-                    res.render('forum', {title : 'Viewing Forum: '+ forum.name +' | xForum', forum: forum});
+                    var forumId = forum._id;
+                    //Role is not global and it's not applicable here
+                    if(userRole.applicableAreas.length && userRole.applicableAreas.indexOf(forumId) == -1)
+                    {
+                        RM.getRolePermissions(userRole.defaultRole, function(err, perms){
+                            res.locals.udata.role.permissions = perms.permissions;
+                            res.render('forum', {title : 'Viewing Forum: '+ forum.name +' | xForum', forum: forum});
+                        })
+                    }
+                    else {
+                        res.render('forum', {title : 'Viewing Forum: '+ forum.name +' | xForum', forum: forum});
+                    }
                 })
             }
 			
@@ -236,18 +250,13 @@ module.exports = function(app, socket) {
     });
 
     app.post('/admin/users/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
-        console.log(req.param('userId'));
-        console.log(req.param('username'));
-        console.log(req.param('role'));
         AM.update({
             id: req.param('userId'),
             username: req.param('username'),
             role: req.param('role')
         }, function (err, o) {
-            console.log(err);
             if(!err)
             {
-                console.log(o);
                 res.send(o, 200);
             }
         });
