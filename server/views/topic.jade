@@ -40,6 +40,8 @@ block content
 								button.btn.btn-info.pm-user(type='button')
 									i.icon-envelope
 									| PM
+							else
+								| &nbsp;
 						.span10
 							span.topic-post-actions
 								if(user.role && user.role.permissions.CAN_POST)
