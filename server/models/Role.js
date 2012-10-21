@@ -15,6 +15,7 @@ var	roleSchema = new Schema({
 		CAN_DELETE_OWN_POSTS: {type: Boolean, required: true, forms: { all: {} },default: false},
 		CAN_DELETE_OTHERS_POSTS: {type: Boolean, required: true, forms: { all: {} },default: false},
 		CAN_DELETE_TOPICS: {type: Boolean, required: true, forms: { all: {} },default: false},
+        CAN_PM: {type: Boolean, required: true, forms: { all: {} },default: false}
 	},
 	applicableAreas: [{type: ObjectId, ref: 'Forum'}],
 	defaultRole: {type: ObjectId, ref: 'Role'}

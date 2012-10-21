@@ -145,6 +145,7 @@ module.exports = function(app, socket) {
                 function(err) {
                     var forumId = forum._id;
                     //Role is not global and it's not applicable here
+                    // TODO: Move this out middleware
                     if(userRole.applicableAreas.length && userRole.applicableAreas.indexOf(forumId) == -1)
                     {
                         RM.getRolePermissions(userRole.defaultRole, function(err, perms){
@@ -168,7 +169,18 @@ module.exports = function(app, socket) {
                 res.render('404', { title: 'Page Not Found'});
 			}
             else {
-			    res.render('topic', {title : 'Viewing Topic: '+ topic.title +' | xForum', topic: topic});
+                var forumId = topic.forum._id;
+                var userRole = req.session.user.role;
+                if(userRole.applicableAreas.length && userRole.applicableAreas.indexOf(forumId) == -1)
+                {
+                    RM.getRolePermissions(userRole.defaultRole, function(err, perms){
+                        res.locals.udata.role.permissions = perms.permissions;
+                        res.render('topic', {title : 'Viewing Topic: '+ topic.title +' | xForum', topic: topic});
+                    })
+                }
+                else {
+                    res.render('topic', {title : 'Viewing Topic: '+ topic.title +' | xForum', topic: topic});
+                }
             }
 		});
 	});

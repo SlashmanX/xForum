@@ -36,14 +36,16 @@ block content
 								!{post.body}
 					.row.post-actions
 						.span2.no-margin.topic-user-actions
-							button.btn.btn-info.pm-user(type='button')
-								i.icon-envelope
-								| PM
+							if(user.role && user.role.permissions.CAN_PM)
+								button.btn.btn-info.pm-user(type='button')
+									i.icon-envelope
+									| PM
 						.span10
 							span.topic-post-actions
-								button.btn.reply-post(type='button')
-									i.icon-comment
-									| Reply
+								if(user.role && user.role.permissions.CAN_POST)
+									button.btn.reply-post(type='button')
+										i.icon-comment
+										| Reply
 								if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_EDIT_OWN_POSTS)) || (user.role && user.role.permissions.CAN_EDIT_OTHER_POSTS) 	
 									button.btn.edit-post(type='button')
 										i.icon-edit
