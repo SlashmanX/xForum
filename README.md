@@ -2,7 +2,7 @@ XForum
 ======
 A real-time forum system created using Node.js, Socket.io and MongooseJS
 
-Up-to-date demo at http://xforum.slashmanx.com
+Up-to-date demo at http://xforum.slashmanx.com. Simply login as 'admin' with password 'admin1'.
 
 Current Version: v0.0.2 (Released 21st Oct 2012)
 ================================================
