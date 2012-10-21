@@ -49,18 +49,24 @@ TM.checkRead		=	function(uid, tid, callback)
 	});
 };
 
-TM.getTopic			=	function(slug, callback)
+TM.getTopic			=	function(data, callback)
 {
 	var	PM			=	new require('./post-manager.js');
-	Topic.findOne({slug: slug}).populate('forum').populate('post').populate('replies').exec(function(e, topic) {
-		PM.getTopic(topic._id, function(err, p) {
-			if (err) callback(err)
-			else {
-				var tmp = topic.toJSON();
-				tmp.posts = p;
-				callback(null, tmp);
-			}
-		})
+	Topic.findOne({slug: data.slug}).populate('forum', null, {visibleTo: data.user.role._id}).populate('post').populate('replies').exec(function(e, topic) {
+        if(topic && topic.forum) {
+            console.log(topic);
+            PM.getTopic(topic._id, function(err, p) {
+                if (err) callback(err)
+                else {
+                    var tmp = topic.toJSON();
+                    tmp.posts = p;
+                    callback(null, tmp);
+                }
+            })
+        }
+        else {
+            callback(null, null);
+        }
 	});
 }
 

@@ -148,11 +148,14 @@ module.exports = function(app, socket) {
 	});
 	
 	app.get('/topic/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
-		TM.getTopic(req.param('slug'), function(e, topic) {
-			if(e) {
-				console.error('Error getting topic '+ slug + ': '+ e);
+		TM.getTopic({slug: req.param('slug'), user: req.session.user}, function(e, topic) {
+			if(e || !topic) {
+				console.error('Error getting topic '+ req.param('slug') + ': '+ e);
+                res.render('404', { title: 'Page Not Found'});
 			}
-			res.render('topic', {title : 'Viewing Topic: '+ topic.title +' | xForum', topic: topic});
+            else {
+			    res.render('topic', {title : 'Viewing Topic: '+ topic.title +' | xForum', topic: topic});
+            }
 		});
 	});
 	
