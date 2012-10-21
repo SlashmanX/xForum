@@ -7,8 +7,6 @@ div.navbar.navbar-fixed-top
 					a(href='/') Home
 				li
 					a(href='/members/') Members
-				li
-					a(href='/profile/') Profile
 				if (user.role && user.role.permissions.CAN_ACCESS_CONTROL_PANEL)
 					li
 						a(href='/admin/') Admin
