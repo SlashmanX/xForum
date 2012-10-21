@@ -6,7 +6,7 @@ var _windowInnerHeight = 0,
 	
 $(document).mouseup(function (e)
 {
-    var container = $('.m-sidebar-collapsed');
+    var container = $('.sidebar-collapsed');
 
     if (container.has(e.target).length === 0)
     {
@@ -15,7 +15,7 @@ $(document).mouseup(function (e)
 				_this.data({isShow: false});
 			}
 		});
-		$('.m-sidebar-collapsed').fadeOut();
+		$('.sidebar-collapsed').fadeOut();
     }
 });
 
@@ -50,7 +50,7 @@ $(document).ready(function(){
 				_this.data({isShow: false});
 			}
 		});
-		$('.m-sidebar-collapsed').fadeOut();
+		$('.sidebar-collapsed').fadeOut();
 
 		_this.data({isShow: true});
 

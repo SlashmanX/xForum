@@ -20,17 +20,17 @@ html
 		
 		link(rel='stylesheet', href='/css/admin.min.css')
 	body
-		.navbar.navbar-fixed-top.m-header
-			.navbar-inner.m-inner
+		.navbar.navbar-fixed-top.header
+			.navbar-inner.inner
 				.container-fluid
-					a.brand.m-brand(href='./index.html') Admin
+					a.brand(href='./index.html') Admin
 					button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
 						span.icon-bar
 						span.icon-bar
 						span.icon-bar
 					.nav-collapse.collapse
 						.pull-right.btn-group
-							a.btn.btn-danger.admin-notification 6
+							a.btn.admin-notification 0
 							a.btn.dropdown-toggle(data-toggle='dropdown', href='#')
 								i.icon-user
 								| !{user.username}
@@ -49,12 +49,12 @@ html
 									a(href='login.html')
 										i.icon-off
 										| Logout
-		.m-top
+		.admin-dummy-top
 		aside.sidebar
 			ul.nav.nav-tabs.nav-stacked
 				li#sidebar-home
 					a(href='/admin/')
-						span.badge.badge-important.m-badge-notification 6
+						span.badge.badge-important.badge-notification 0
 						i.icon-home
 						| Home
 						
@@ -90,7 +90,7 @@ html
 							.bubble-arrow
 							
 				li#sidebar-users
-					a(href='/users/')
+					a(href='/admin/users/')
 						i.icon-user
 						| Users
 
@@ -112,13 +112,13 @@ html
 						i.icon-th-large
 						| More
 							
-		.m-sidebar-collapsed#sidebar-more-links
+		.sidebar-collapsed#sidebar-more-links
 			ul.nav.nav-pills
 			
 			.arrow-border
 				.arrow-inner
 				
-		.m-sidebar-collapsed#sidebar-roles-links
+		.sidebar-collapsed#sidebar-roles-links
 			ul.nav.nav-pills
 				li#sidebar-roles-add
 					a(href='/admin/roles/add/')

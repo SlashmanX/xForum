@@ -8,6 +8,8 @@ private/
 
 public/css/*.css
 
+public/css/*.min.css
+
 Ideas.md
 
 logs/mongodb.log

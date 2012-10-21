@@ -4,6 +4,7 @@ var	io				=	require('socket.io');
 var	connect			=	require('connect');
 var SM 				=	require('./server/modules/socket-manager');
 var CM 				=	require('./server/modules/category-manager');
+var AM              =   require('./server/modules/account-manager');
 var FM 				=	require('./server/modules/forum-manager');
 var	func			=	require('./server/controllers/func.js');
 
@@ -18,9 +19,6 @@ server.listen(3000);
 var	socket			=	io.listen(server);
 require('./server/router')(app, socket);
 
-/*func.getTitleFromURL('http://xforum.slashmanx.com', function(title) {
-	console.log(title)
-})*/
 socket.set('authorization', function (data, accept) {
     // check if there's a cookie header
     if (data.headers.cookie) {
@@ -71,6 +69,12 @@ socket.sockets.on('connection', function(client){
 			callback(cat);
 		})
 	});
+
+    client.on('getUserDetails', function(data, callback) {
+        AM.findById(data.id, function(err, user){
+            callback(user);
+        });
+    })
 	
 	client.on('getForumDetails', function(data, callback) {
 		FM.getDetails(data.id, function(e, forum) {

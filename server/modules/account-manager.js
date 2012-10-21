@@ -1,6 +1,8 @@
 var	User		=	require('../models/User.js');
 var	AM			=	{}; 
 var	bcrypt		=	require('bcrypt');
+var	mongoose	=	require('mongoose');
+var	ObjectId	=	mongoose.Types.ObjectId;
 
 module.exports = AM;
 
@@ -65,20 +67,8 @@ AM.signup = function(newData, callback)
 };
 
 AM.update = function(newData, callback) 
-{		
-	User.findOne({username:newData.username}, function(e, o){
-		o.realName 	= newData.realName;
-		o.email 	= newData.email;
-		o.location 	= newData.location;
-		if (newData.password === ''){
-			new User(o).save(callback(o));
-		}	else{
-			AM.saltAndHash(newData.password, function(hash){
-				o.password = hash;
-				new User(o).save(callback(o));
-			});
-		}
-	});
+{
+    User.findByIdAndUpdate(newData.id, {$set: {username: newData.username, role: new ObjectId(newData.role + '')}}, callback);
 }
 
 AM.saltAndHash = function(pass, callback)
@@ -124,7 +114,7 @@ AM.delAllRecords = function(id, callback)
 
 AM.findById = function(id, callback) 
 {
-	User.findOne({_id: this.getObjectId(id)}, 
+	User.findOne({_id: id},
 		function(e, res) {
 		if (e) callback(e)
 		else callback(null, res)

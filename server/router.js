@@ -226,6 +226,32 @@ module.exports = function(app, socket) {
 			});
 		});
 	});
+
+    app.get('/admin/users/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
+        RM.getRoles(function(roles) {
+            AM.list(function(e, users) {
+                res.render('admin/users', {title: 'Users | xForum Admin', roles: roles, users: users})
+            });
+        });
+    });
+
+    app.post('/admin/users/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
+        console.log(req.param('userId'));
+        console.log(req.param('username'));
+        console.log(req.param('role'));
+        AM.update({
+            id: req.param('userId'),
+            username: req.param('username'),
+            role: req.param('role')
+        }, function (err, o) {
+            console.log(err);
+            if(!err)
+            {
+                console.log(o);
+                res.send(o, 200);
+            }
+        });
+    });
 	
 	app.post('/admin/categories/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
 		if(req.param('catId') == '') { // Not updating
