@@ -1,15 +1,12 @@
-
-/**
- * Node.js Login Boilerplate
- * Author : Stephen Braitsch
- * More Info : http://bit.ly/LsODY8
- */
-
 var	express			=	require('express');
 var	http			=	require('http');
 var	io				=	require('socket.io');
 var	connect			=	require('connect');
 var SM 				=	require('./server/modules/socket-manager');
+var CM 				=	require('./server/modules/category-manager');
+var AM              =   require('./server/modules/account-manager');
+var FM 				=	require('./server/modules/forum-manager');
+var	func			=	require('./server/controllers/func.js');
 
 var app				=	express();
 
@@ -21,7 +18,6 @@ var	server			=	http.createServer(app);
 server.listen(3000);
 var	socket			=	io.listen(server);
 require('./server/router')(app, socket);
-
 
 socket.set('authorization', function (data, accept) {
     // check if there's a cookie header
@@ -38,7 +34,7 @@ socket.set('authorization', function (data, accept) {
        return accept('No cookie transmitted.', false);
     }
     // accept the incoming connection
-    accept(null, true);
+    return accept(null, true);
 });
 socket.set('log level', 1);
 socket.sockets.on('connection', function(client){
@@ -46,21 +42,52 @@ socket.sockets.on('connection', function(client){
 	client.join(hs.sessionID);
 
 	client.on('leavingTopic', function(data){
-		console.log('left topic: '+ data.topic);
-		/* Insert function to access the express_session table for hs.sessionID to get user ID */
-		SM.getUserIDFromSession(hs.sessionID.slice(2), function(e, a) {
-			if(a) {
-				SM.setLastReadTime(JSON.parse(a.session).user._id, data.topic, function(e, o) {
-				});
-			}
-		});
-	})
+		if(hs.sessionID){
+			SM.getUserIDFromSession(hs.sessionID.slice(2), function(e, a) {
+				if(a) {
+					SM.setLastReadTime(JSON.parse(a.session).user._id, data.topic, function(){});
+				}
+			});
+		}
+	});
+	
+	client.on('getTitleFromURL', function(url, callback) {
+		func.getTitleFromURL(url, function(title) {
+			callback(title);
+		})
+	});
+	
+	client.on('getEmbedCode', function(url, callback) {
+		func.getEmbedCode(url, function(err, result) {
+			console.log(result);
+			callback(err, result);
+		})
+	});
+	
+	client.on('getCategoryDetails', function(data, callback) {
+		CM.getDetails(data.id, function(e, cat) {
+			callback(cat);
+		})
+	});
+
+    client.on('getUserDetails', function(data, callback) {
+        AM.findById(data.id, function(err, user){
+            callback(user);
+        });
+    })
+	
+	client.on('getForumDetails', function(data, callback) {
+		FM.getDetails(data.id, function(e, forum) {
+			callback(forum);
+		})
+	});
+	
 	client.on('disconnect', function(){
 		client.leave(hs.sessionID);
 	});
 
 });
 
-function getNumOnline(){
+/*function getNumOnline(){
 	return socket.sockets.clients().length;
-}
+}*/

@@ -1,6 +1,16 @@
 extends layout
 
 block content
+	mixin actions
+		.row.actions
+			.span6.no-margin.pagination
+				ul.forum-topics-jpages
+		
+			.span3.no-margin.action-buttons
+				if(user.role && user.role.permissions.CAN_CREATE_TOPIC)
+					a(href='/create/topic/?pid='+ forum._id).btn.action-button
+						i.icon-comments-alt
+						| New Topic
 	.span3.bs-docs-sidebar
 		ul.nav.nav-list.bs-docs-sidenav
 			li.category-nav
@@ -13,25 +23,23 @@ block content
 						
 	.span9.forum.xforum
 		.forum-table
-			.row-fluid.action-buttons
-				.span9
-					a(href='/create/topic/?pid='+ forum._id).btn.action-button New Topic
-			.row-fluid(id = 'forum-' + forum.slug).display-head
+			mixin actions
+			.row(id = 'forum-' + forum.slug).display-head
 				a(href= '/forum/'+ forum.slug+'/').display-title= forum.name
 				span.display-desc= forum.desc
-			.row-fluid.display-headings
+			.row.display-headings
 				.span9
 					.span1 Status
 					.span3 Topic
 					.span1 Views
 					.span1 Replies
 					.span2 Last Poster
-			section.forum-topics
+			section.forum-topics#forum-topics-paginate
 				each topic in forum.topics
-					.row-fluid.display-row(id = 'topic-' + topic.slug)
+					.row.display-row(id = 'topic-' + topic.slug)
 						.span9
 							.span1 
-								if forum.isRead
+								if topic.isRead
 									i.icon-folder-open
 								else
 									i.icon-folder-close
@@ -43,6 +51,8 @@ block content
 							.span2.topic-last-poster SlashmanX
 
 		input(type='hidden', value=forum._id)#forumid
+		
+		mixin actions
 	
 block append scripts
 	script(src='/js/views/forum.js')

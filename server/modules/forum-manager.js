@@ -1,8 +1,8 @@
 var	Topic		=	require('../models/Topic.js');
 var	Forum		=	require('../models/Forum.js');
 var	Category	=	require('../models/Category.js');
-var	CM			=	require('./category-manager.js');
-
+var	async		=	require('async');
+var	TM			=	require('./topic-manager.js');
 var	FM			=	{};
 
 module.exports	=	FM;
@@ -11,13 +11,12 @@ module.exports	=	FM;
 
 FM.create			=	function(newData, callback) 
 {
-	console.log(newData.category)
 	f = new Forum(newData);
-	f.save(function () {
-		Category.findByIdAndUpdate(newData.category, {$push : { forums : f._id }}, function(err, c) {
-			callback('ok');
+	f.save(function (err, forum) {
+		Category.findByIdAndUpdate(newData.category, {$push : { forums : f._id }}, function(err, cat) {
+			callback(err, forum);
 		});
-	});
+	})
 };
 FM.createSubForum	=	function(newData, callback) 
 {
@@ -40,12 +39,31 @@ FM.list				=	function(callback)
 	});
 }
 
-FM.listBySlug		=	function(slug, callback)
+FM.listBySlug		=	function(data, callback)
 {
-	Forum.findOne({slug: slug}).populate('topics', null, null, {sort: [['_id', 'desc']] } ).populate('parent').populate('children').exec(function(e, res) {
-		console.log(e);
+	Forum.findOne({slug: data.slug, visibleTo: data.user.role._id}).populate('topics', null, null, {sort: [['lastPost', 'desc']] } ).populate('parent').populate('children').exec(function(e, forum) {
 		if (e) callback(e)
-		else callback(null, res.toObject())
+		else if(forum) {
+			forum = forum.toObject();
+			var tLength = forum.topics.length;
+			var tCount = 0;
+			
+			async.whilst(
+				function() { return tCount < tLength },
+				function(cbTopic) {
+					TM.checkRead(data.user._id, forum.topics[tCount], function(read){
+						if(read) forum.topics[tCount].isRead = true;
+						tCount++;
+						cbTopic();
+					})
+				},
+				function(err) {
+					callback(null, forum);
+				})
+		}
+        else {
+            callback(null, null);
+        }
 	});
 }
 
@@ -56,6 +74,55 @@ FM.getIDFromSlug	=	function(slug, callback)
 	})
 }
 
+FM.update	=	function(newData, callback) 
+{
+	Forum.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc, category: newData.category}}, {new: false}, function(err, f) {
+		Category.findByIdAndUpdate(f.category, {$pull : {forums: f._id}}, function(err, c){
+			Category.findByIdAndUpdate(newData.category, {$push : {forums: newData.id}}, callback);
+		});
+	});
+};
+
+FM.reorder	=	function(newOrder, callback) {
+	var oLength = newOrder.length;
+	var oCount = 0;
+	
+	async.whilst(
+		function() { return oCount < oLength },
+		function(cb) {
+			var id = newOrder[oCount].id;
+			var order = newOrder[oCount].order
+			if(id != 'tbdCategory') {
+				Forum.findByIdAndUpdate(id, {$set: {order: order}}, function() {
+					oCount++;
+					cb();
+				});
+			}
+			else {
+				oCount++;
+				cb();
+			}
+		},
+		function(err) {
+			callback(err);
+		})
+}
+
+FM.listAll	=	function(callback)
+{
+	Forum.find().populate('category').sort({order: 1, _id: 1}).exec(function(e, res) {
+		if (e) callback(e)
+		else callback(null, res)
+	});
+}
+
+FM.getDetails	=	function(id, callback)
+{
+	Forum.findById(id).populate('category').exec(function(e, res) {
+		if (e) callback(e)
+		else callback(null, res)
+	});
+}
 FM.delAllRecords = function() 
 {
 	Forum.remove({}, function() {}); // reset accounts collection for testing //

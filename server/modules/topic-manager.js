@@ -3,15 +3,12 @@ var	Forum		=	require('../models/Forum.js');
 var	Post		=	require('../models/Post.js');
 var	Category	=	require('../models/Category.js');
 var	UTF			=	require('../models/UserTopicRead.js');
-var	CM			=	require('./category-manager.js');
-var	FM			=	require('./forum-manager.js');
-var	PM			=	require('./post-manager.js');
+var SM			=	require('../modules/socket-manager.js');
 var	mongoose	=	require('mongoose');
 var	moment		=	require('moment');
 var	ObjectId	=	mongoose.Types.ObjectId;
 
 var	TM			=	{};
-module.exports	=	TM;
 
 // record insertion, update & deletion methods //
 
@@ -19,13 +16,14 @@ TM.create			=	function(newData, callback)
 {
 	newData.post = null;
 	t = new Topic(newData);
-	p = new Post({author: newData.author, topic: t._id, body: newData.body});
+	p = new Post({author: newData.author, postedOn: newData.createdOn, topic: t._id, body: newData.body});
 	p.save(function(err, thepost) {
+		t.post = thepost._id;
+		t.markModified('post');
 		t.save(function (e, topic) {
-			topic.post = new ObjectId(thepost._id + '');
-			topic.save(function(err, thetopic) {
-				Forum.findByIdAndUpdate(newData.forum, {$push : { topics : thetopic._id }}, function(err, f) {
-					callback(thetopic);
+			Forum.findByIdAndUpdate(new ObjectId(newData.forum + ''), {$push : { topics : topic._id }}, function(err, f) {
+				SM.setLastReadTime(newData.author, topic._id, function(e, o) {
+					callback(topic);
 				});
 			});
 		});
@@ -51,17 +49,24 @@ TM.checkRead		=	function(uid, tid, callback)
 	});
 };
 
-TM.getTopic			=	function(slug, callback)
+TM.getTopic			=	function(data, callback)
 {
-	Topic.findOne({slug: slug}).populate('forum').populate('post').populate('replies').exec(function(e, topic) {
-		PM.getTopic(topic._id, function(err, p) {
-			if (err) callback(err)
-			else {
-				var tmp = topic.toJSON();
-				tmp.posts = p;
-				callback(null, tmp);
-			}
-		})
+	var	PM			=	new require('./post-manager.js');
+	Topic.findOne({slug: data.slug}).populate('forum', null, {visibleTo: data.user.role._id}).populate('post').populate('replies').exec(function(e, topic) {
+        if(topic && topic.forum) {
+            console.log(topic);
+            PM.getTopic(topic._id, function(err, p) {
+                if (err) callback(err)
+                else {
+                    var tmp = topic.toJSON();
+                    tmp.posts = p;
+                    callback(null, tmp);
+                }
+            })
+        }
+        else {
+            callback(null, null);
+        }
 	});
 }
 
@@ -76,3 +81,5 @@ TM.delAllRecords = function()
 {
 	Topic.remove({}, function() {}); // reset accounts collection for testing //
 }
+
+module.exports	=	TM;

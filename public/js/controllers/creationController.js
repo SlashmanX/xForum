@@ -1,7 +1,7 @@
 
 function CreationController()
 {	
-	// Uncomment when subforum spport has been added
+	// Uncomment when subforum support has been added
 	/*var subForumList = [];
 	 $('#forum-list option').each(function () {
 		var cat = $(this).attr('class').replace('sub-', '');
@@ -22,13 +22,15 @@ function CreationController()
 	
 	$('#cat-list').trigger('change');*/
 // bind event listeners to button clicks //
+// redirect to homepage on new account creation, add short delay so user can read alert window //	
 	var that = this;	
 }
-CreationController.prototype.onUpdateSuccess = function()
+CreationController.prototype.onUpdateSuccess = function(slug)
 {
-	$('.modal-alert').modal({ show : false, keyboard : true, backdrop : true });				
+	/*$('.modal-alert').modal({ show : false, keyboard : true, backdrop : true });				
 	$('.modal-alert .modal-header h3').text('Success!');
 	$('.modal-alert .modal-body p').html('Your thing has been added.'); 				
 	$('.modal-alert').modal('show');
-	$('.modal-alert button').off('click');
+	$('.modal-alert button').off('click');*/
+	setTimeout(function(){window.location.href = slug;}, 300);
 }

@@ -1,16 +1,25 @@
+node_modules/*
 
-node_modules/
+!node_modules/forms-mongoose/
 
 private/
 
+.idea/
+
+public/css/*.css
+
+public/css/*.min.css
+
+Ideas.md
+
+logs/mongodb.log
+
 .foreverignore
+
+.nodemonignore
 
 .DS_Store
 
 xForum.tmproj
-
-logs/mongodb.log
-
-public/css/style.min.css
 
 xForum.komodoproject

@@ -1,14 +1,23 @@
 var	User		=	require('../models/User.js');
 var	AM			=	{}; 
 var	bcrypt		=	require('bcrypt');
+var	mongoose	=	require('mongoose');
+var	ObjectId	=	mongoose.Types.ObjectId;
 
 module.exports = AM;
 
 // logging in //
-
+/**
+ * Tries to login the user based on the provided username and password
+ * Returns user object if successful, null object otherwise
+ *
+ * @param  {String} username
+ * @param  {String} password
+ * @param  {Function} callback A function to be called after login has been attempted
+ */
 AM.autoLogin = function(username, password, callback)
 {
-	User.findOne({username:username}, function(e, o) {
+	User.findOne({username:username}).populate('role').exec(function(e, o) {
 		if (o) {
 			(o.password === password) ? callback(o) : callback(null);
 		}	else{
@@ -19,7 +28,7 @@ AM.autoLogin = function(username, password, callback)
 
 AM.manualLogin = function(username, password, callback)
 {
-	User.findOne({username:username}, function(e, o) {
+	User.findOne({username:username}).populate('role').exec(function(e, o) {
 		if (o == null){
 			callback('user-not-found');
 		}	else{
@@ -58,20 +67,8 @@ AM.signup = function(newData, callback)
 };
 
 AM.update = function(newData, callback) 
-{		
-	User.findOne({username:newData.username}, function(e, o){
-		o.realName 	= newData.realName;
-		o.email 	= newData.email;
-		o.location 	= newData.location;
-		if (newData.password === ''){
-			new User(o).save(callback(o));
-		}	else{
-			AM.saltAndHash(newData.password, function(hash){
-				o.password = hash;
-				new User(o).save(callback(o));
-			});
-		}
-	});
+{
+    User.findByIdAndUpdate(newData.id, {$set: {username: newData.username, role: new ObjectId(newData.role + '')}}, callback);
 }
 
 AM.saltAndHash = function(pass, callback)
@@ -117,7 +114,7 @@ AM.delAllRecords = function(id, callback)
 
 AM.findById = function(id, callback) 
 {
-	User.findOne({_id: this.getObjectId(id)}, 
+	User.findOne({_id: id},
 		function(e, res) {
 		if (e) callback(e)
 		else callback(null, res)

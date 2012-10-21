@@ -1,45 +1,80 @@
 extends layout
 
 block content
-	.span12.topic
-		.row-fluid
-			.span12
-				h2 
-					span.topic-title= topic.title
-					span.topic-subtitle= topic.desc
-		section.posts
+	mixin actions
+		.row.actions
+			.span9.no-margin.pagination
+				ul.topic-posts-jpages
+	
+			.span3.action-buttons
+				if(user.role && user.role.permissions.CAN_POST)
+					a(href='#').btn.btn-primary.action-button
+						i.icon-comment-alt
+						| Add Reply
+	.topic-view.xforum
+		mixin actions
+		.row.display-head
+				span.display-title #{topic.title}
+				span.display-subtitle= topic.desc
+		section.posts#topic-posts
 			each post in topic.posts
-				section.post(id = 'post-'+ post._id)
-					.row-fluid
-						.span10.offset2
+				section.topic-post(id = 'post-'+ post._id)
+					.row.post-details
+						.span2.no-margin
+							i.icon-user
+							span.post-username(id= 'post-'+post._id + '-user-'+ post.author._id)= post.author.username
+						.span10
 							small Posted 
 								abbr.timeago(title=post.postedOn) #{post.postedOn}
-					.row-fluid
-						.span2
+					.row
+						.span2.no-margin
 							ul.user-details
-								li.user-name= post.author.username
 								li.user-avatar
 									img(src="http://placehold.it/140x140").img-polaroid
 						.span10
-							.post-body= post.body
-					.row-fluid
-						.span12.post-actions
-							span.pull-right
-								button.btn(type='button')
-									i.icon-comment
-									| Reply
-		.row-fluid
-			.span12.reply-to-post
-				h3 Add Reply
+							.post-body
+								!{post.body}
+					.row.post-actions
+						.span2.no-margin.topic-user-actions
+							if(user.role && user.role.permissions.CAN_PM)
+								button.btn.btn-info.pm-user(type='button')
+									i.icon-envelope
+									| PM
+						.span10
+							span.topic-post-actions
+								if(user.role && user.role.permissions.CAN_POST)
+									button.btn.reply-post(type='button')
+										i.icon-comment
+										| Reply
+								if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_EDIT_OWN_POSTS)) || (user.role && user.role.permissions.CAN_EDIT_OTHER_POSTS) 	
+									button.btn.edit-post(type='button')
+										i.icon-edit
+										| Edit
+								if user.username != post.author.username
+									button.btn.btn-warning.report-post(type='button')
+										i.icon-legal
+										| Report
+								if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_DELETE_OWN_POSTS)) || (user.role && user.role.permissions.CAN_DELETE_OTHER_POSTS) 	
+									button.btn.btn-danger.delete-post(type='button')
+										i.icon-trash
+										| Delete
+									
+		mixin actions
+		if(user.role && user.role.permissions.CAN_POST)
+			.row.display-head
+				span.display-title Add Reply
+			section.row.topic-post-reply
 				form( method="post")#reply-form
 					input.topicid(type='hidden', name = 'topic', value = topic._id)
-					
-					textarea(name = 'body').span12
-					
+			
+					textarea#reply-post(name = 'reply-post', rows='10', required).span12
+			
 					span.pull-right
 						button.btn.btn-primary(type='submit') Post
 				
 	
 block append scripts
+	script
+		var me = !{JSON.stringify(user)}
 	script(src='/js/views/topic.js')
 	script(src='/js/controllers/topicController.js')

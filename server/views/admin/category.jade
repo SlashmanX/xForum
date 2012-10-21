@@ -1,0 +1,46 @@
+extends admin_layout
+block header
+	| Categories
+block content
+	form.form-horizontal#addCategory.admin-form(method= 'POST')
+		fieldset
+			legend Manage Categories
+			
+			a(href='#')#newCategory.hide New		
+			.span5
+				input(type='hidden', value = '')#catId
+				input(type='hidden')#orderChanged
+				.control-group
+					label.control-label(for='name') Name
+					.controls
+						input#name.span3(type='text', name = 'name')
+					
+				.control-group
+					label.control-label(for='desc') Description
+					.controls
+						input#desc.span3(type='text', name = 'desc')
+					
+				.control-group
+					label.control-label(for='visibleTo') Visible To
+					.controls
+						select(name='visibleTo', multiple = 'multiple').span3.no-margin#visibleTo
+							each role in roles
+								option(value= role.id)= role.name
+								
+			.span5
+				.control-group
+					label.control-label(for='order') Order
+					.controls
+						ul.span4#categoryOrder.sortableList
+							each cat in categories
+								li.existingCategory.catHeader(id=cat._id)= cat.name
+								
+		.row.span11.no-margin			
+			.form-actions
+				button(type='submit').form-action-btn.btn.btn-primary Create
+				button(type='button').form-action-btn.btn Cancel
+									
+									
+block append scripts
+	script(src='/js/views/admin/category.js')
+	script(src='/js/controllers/admin/categoryController.js')

@@ -1,0 +1,38 @@
+extends admin_layout
+block header
+	| Users
+block content
+	form.form-horizontal#updateUser.admin-form(method= 'POST')
+		fieldset
+			legend Manage Users
+			.span5
+				input(type='hidden', value = '')#userId
+				.control-group
+					label.control-label(for='name') Username
+					.controls
+						input#username.span3(type='text', name = 'username')
+
+				.control-group
+					label.control-label(for='role') Role
+					.controls
+						select(name='role').span3.no-margin#role
+							each role in roles
+								option(value= role.id)= role.name
+
+			.span5
+				.control-group
+					label.control-label(for='users') User
+					.controls
+						select(name='selectedUser').span4.no-margin#userSelect
+							each user in users
+								option(value=user._id)= user.username
+
+		.row.span11.no-margin
+			.form-actions
+				button(type='submit').form-action-btn.btn.btn-primary Update
+				button(type='button').form-action-btn.btn Cancel
+
+
+block append scripts
+	script(src='/js/views/admin/users.js')
+	script(src='/js/controllers/admin/usersController.js')

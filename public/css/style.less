@@ -1,6 +1,8 @@
 @import './less/lib/bootstrap.less';
 @import './less/lib/responsive.less';
-
+@import './less/lib/select2.less';
+@import './less/lib/text-editor.less';
+@import './less/lib/jbar.less';
 .raiseText() {
 	color: grey;
 	text-shadow: -1px 1px 0 white;
@@ -14,7 +16,16 @@ body {
 #four04 {
 	padding:20px;
 }
-
+.pagination {
+	margin: 0px;
+}
+blockquote {
+	border-left: 3px solid lightBlue;
+	padding-left: 5px;
+}
+i.toolbar-icon {
+	margin-right: 0px !important;
+}
 .display-head {
 	a {
 		text-shadow: 0 1px 0 rgba(0,0,0,.15);
@@ -43,17 +54,40 @@ body {
 		border: 1px solid @grayLighter;
 		border-top: none;
 	}
-	
-	.action-buttons {
+	.actions {
+		border-radius: 5px;
+		border: 1px solid #CCC;
+		background: #EEE;
+		padding: 5px;
+		margin-bottom: 15px;
 		.span9 {
 			margin-left: -15px;
 		}
-		border: none;
+		.action-buttons {
+			margin-top: 5px;
+		}
 		.action-button {
 			.pull-right;
-		}	
-	}	
+		}
+	}
+	
+	.actions:last-child {
+		margin-top: 15px;
+	}
+	
 }
+
+.new-topic-form {
+	section {
+		background: @white;
+		margin-left: 0px;
+	}
+	
+	.display-head {
+		font-size: 24px;
+	}
+}
+
 
 .sidenav-badge {
 	.badge;
@@ -83,7 +117,6 @@ body {
 }
 
 .home-categories {
-	.well;
 	
 	.home-category {
 		margin-bottom: 20px;
@@ -92,48 +125,102 @@ body {
 
 }
 .forum {
-	.well;
 }
-.topic {
-	.well;
-	
-	.post {
-		margin-top: 5px;
-	}
-	
-	ul.user-details {
-		list-style: none;
-		text-align: center;
+.topic-view {
+	.display-head {
+		border: 1px solid @grayLight;
 		
-		li {
-			padding: 5px;
+		.display-title {
+			font-size: 20px;
+			margin-right: 15px;
 		}
 		
-		li.user-name {
-			font-weight: bold;
+		.display-subtitle {
+			font-size: 14px;
 		}
 	}
-	.post-body {
-		border-left: 1px solid #E5E5E5;
-		padding: 10px;
+	
+	section.topic-post-reply {
+		background: white;
+		border: 1px solid @grayLight;
+		border-top: 0px;
+		margin-bottom: 10px;
+	}
+	
+	section.topic-post:first-child {
+		border-top: 0px;
+	}
+	
+	section.topic-post:last-child {
+		margin-bottom: 15px;
+	}
+	
+	.topic-post {
+		background: white;
 		margin-bottom: 5px;
-		min-height: 200px;
-	}
-	
-	.topic-subtitle {
-		margin-left: 10px;
-		font-size: 0.6em;
-		font-weight: normal;
-	}
-	
-	.post-actions {
-		border-top: 1px groove #EEE;
-		padding: 10px;
-		padding-left: 0;
-		padding-right: 10px;
-		background-color: @grayLighter;
+		border: 1px solid @grayLight;
+		.post-details {
+			padding-top:5px;
+			padding-bottom:5px;
+			background: @grayLighter;
+			border-bottom: 1px solid @grayLight;
+		}
+
+		.row {
+			padding-left: 10px;
+			padding-right: 0px;
+		}
+
+		.post {
+			margin-top: 5px;
+		}
+
+		ul.user-details {
+			list-style: none;
+			text-align: center;
+
+			li {
+				padding: 5px;
+			}
+
+			li.user-name {
+				font-weight: bold;
+			}
+		}
+		.post-body {
+			border-left: 1px solid #E5E5E5;
+			padding: 10px;
+			margin-bottom: 5px;
+			min-height: 200px;
+		}
+
+		.topic-subtitle {
+			margin-left: 10px;
+			font-size: 0.6em;
+			font-weight: normal;
+		}
+		
+		.topic-post-actions {
+			.pull-right;
+			
+			.btn {
+				margin-left: 5px;
+			}
+		}
+
+		.post-actions {
+			//border-top: 1px groove #EEE;
+			padding: 10px;
+			padding-left: 0;
+			padding-right: 10px;
+			//background-color: @grayLighter;
+			.btn {
+				margin-left: 5px;
+			}
+		}
 	}
 }
+
 
 #account-form-container{
 	width: 460px;
@@ -166,6 +253,7 @@ body {
 		float:left;
 		margin-left:10px;
 	}
+	
 }
 #country-list{
 	width: 280px;
@@ -223,7 +311,7 @@ body {
 	margin-left: 0;
 	border: 1px solid #CCC;
 }
-.form-horizontal .control-label{
+/*.form-horizontal .control-label{
 	width: 80px;
 }
 .form-horizontal .controls {
@@ -231,16 +319,13 @@ body {
 }
 .form-horizontal .form-actions {
 	padding: 17px 0 0 270px;
-}
+}*/
 label {
 	.raiseText();
 }
 .subheading{
 	.raiseText();
 	margin-top:3px;
-}
-button i {
-	padding-left:8px;
 }
 
 .cat-affix {

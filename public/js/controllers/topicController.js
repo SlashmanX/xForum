@@ -6,5 +6,8 @@ function TopicController()
 }
 TopicController.prototype.onPostSuccess = function(pid)
 {
-	$('textarea[name="body"]').val('');
+	$('textarea#reply-post').data("wysihtml5").editor.clear();
+	$('body').bar({
+		message : 'Your reply has been posted!'
+	});
 };
