@@ -57,7 +57,6 @@ AM.signup = function(newData, callback)
 				}	else{
 					AM.saltAndHash(newData.password, function(hash){
 						newData.password = hash;
-						console.log(newData);
 						new User(newData).save(callback(null));
 					});
 				}

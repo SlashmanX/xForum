@@ -5,6 +5,7 @@ var TM = require('./modules/topic-manager');
 var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
 var RM = require('./modules/role-manager');
+var Settings = require('./modules/settings-manager');
 
 var ADMIN = require('./modules/admin-manager');
 
@@ -66,6 +67,56 @@ module.exports = function(app, socket) {
 			res.render('404', { title: 'Page Not Found'});
 			
 	};
+
+    app.get('/install/', function(req, res){
+        res.render('install', {title: 'Installing xForum'});
+    });
+
+    app.post('/install/', function(req, res){
+        RM.create({ "name" : "Guest"}, function(err, guest){
+            if(guest) {
+                RM.create({ "name" : "Member",
+                    "defaultRole" : guest._id,
+                    "permissions" : {
+                        "CAN_DELETE_OWN_POSTS" : true,
+                        "CAN_EDIT_OWN_POSTS" : true,
+                        "CAN_POST" : true,
+                        "CAN_CREATE_TOPIC" : true
+                    }
+                }, function(err, member){
+                    Settings.add({
+                        dbName: 'defaultRole',
+                        displayName: 'Default Role',
+                        description: 'The role to which users will be assigned on registration',
+                        value: member._id
+                    }, function(){});
+
+                    RM.create({ "name" : "Administrator",
+                        "defaultRole" : member._id,
+                        "permissions" : { "CAN_DELETE_TOPICS" : true,
+                            "CAN_DELETE_OTHERS_POSTS" : true,
+                            "CAN_DELETE_OWN_POSTS" : true,
+                            "CAN_EDIT_OTHERS_POSTS" : true,
+                            "CAN_EDIT_OWN_POSTS" : true,
+                            "CAN_POST" : true,
+                            "CAN_CREATE_TOPIC" : true,
+                            "CAN_CREATE_FORUM" : true,
+                            "CAN_CREATE_CATEGORY" : true,
+                            "CAN_ACCESS_CONTROL_PANEL" : true
+                        }
+                    }, function(err, admin){
+                        AM.signup({ username: req.param('username'),
+                            password: req.param('password'),
+                            role: admin._id
+                        }, function(err){
+                            if(!err)
+                                res.send('ok', 200);
+                        })
+                    })
+                })
+            }
+        })
+    })
 	
 	app.post('/login/', function(req, res){
 		if (req.param('email') != null){
@@ -421,19 +472,24 @@ module.exports = function(app, socket) {
 	});
 	
 	app.post('/signup/', function(req, res){
-		AM.signup({
-			realName	: req.param('name'),
-			email		: req.param('email'),
-			username	: req.param('user'),
-			password	: req.param('pass'),
-			location	: req.param('country')
-		}, function(e, o){
-			if (e){
-				res.send(e, 400);
-			}	else{
-				res.send('ok', 200);
-			}
-		});
+        var theRole;
+        Settings.getSettings(function(settings){
+            theRole = settings.defaultRole;
+            AM.signup({
+                realName	: req.param('name'),
+                email		: req.param('email'),
+                username	: req.param('user'),
+                password	: req.param('pass'),
+                location	: req.param('country'),
+                role        : theRole
+            }, function(e, o){
+                if (e){
+                    res.send(e, 400);
+                }	else{
+                    res.send('ok', 200);
+                }
+            });
+        });
 	});
 
 // password reset //

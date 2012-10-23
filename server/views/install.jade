@@ -1,0 +1,36 @@
+- user = typeof(udata) != 'undefined' ? udata : {}
+!!!
+html
+	head
+		title= title
+
+		script(src="/js/lib/jquery-1.8.0.min.js")
+		script(src="/js/lib/jquery-ui-1.8.23.custom.min.js")
+		script(src="/js/lib/bootstrap.min.js")
+		script(src="/js/lib/jquery.form.js")
+		script(src="/js/lib/jquery.bar.js")
+		script(src="/js/views/install.js")
+		script(src="/js/controllers/installController.js")
+
+
+		link(rel='stylesheet', href='/css/style.min.css')
+	body
+		.container
+			.row
+				#install-container
+					form( method="post", action='/install/')#install-form.well.span4
+						h1 Welcome to xForum!
+						p.subheading Create your Admin account then click 'Install'
+
+						label Username
+						input(type="text", name="username", id='user-tf').span4.required
+
+						label Password
+						input(type="password", name="password", id='pass-tf').span4.required
+
+						button(type="submit", data-loading-text="Please Wait...")#btn-install.btn.btn-primary
+							i.icon-magic.icon-white
+							| Install
+
+		include modals/alert
+		include modals/confirm

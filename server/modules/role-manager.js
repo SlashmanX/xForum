@@ -27,5 +27,7 @@ RM.getRolePermissions = function(id, callback) {
     })
 }
 RM.create = function(data, callback) {
-	new Role(data).save(callback('ok'));
+	new Role(data).save(function(err, role){
+        callback(err, role);
+    });
 }
