@@ -4,13 +4,14 @@ A real-time forum system created using Node.js, Socket.io and MongooseJS
 
 Up-to-date demo at http://xforum.slashmanx.com. Simply login as 'admin' with password 'admin1'.
 
-Current Version: v0.0.2 (Released 21st Oct 2012)
+Current Version: v0.0.2a (Released 23rd Oct 2012)
 ================================================
 
 ### WORK IN PROGRESS!
 
-Features So Far (v0.0.2)
+Features So Far (v0.0.2a)
 ------------------------
+* Install script
 * Role based access per forum (Administrators, moderators etc.)
 * Topic/Forum pagination
 * WYSIWYG text editor
@@ -36,7 +37,7 @@ Coming Soon
 
 Note regarding install
 =====================
-* Please look at [this issue](https://github.com/SlashmanX/xForum/issues/20) which will contain information on how to get this set up on your server. The only issue you should have is with roles not being prefilled in the database. This will be sorted in the v0.0.3 release
+* Run `npm install` and then navigate to `yourhost.com:3000/install/` to create your admin account and setup the forum
 
 * You must use the custom version of forms-mongoose included in the node_modules folder as I have made a vast number of changes to it.
 
