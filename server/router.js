@@ -239,7 +239,7 @@ module.exports = function(app, socket) {
 	app.post('/post/edit/:postid/', checkUser, getUser, loginUser, function(req, res) {
 		var originalAuthor = req.param('edit-post-seq');
 		var who = req.session.user;
-		if( (originalAuthor == who._id && who.role.permissions.CAN_EDIT_OWN_POSTS) || (who.role.permissions.CAN_EDIT_OTHER_POSTS) ) {
+		if( (originalAuthor == who._id && who.role.permissions.CAN_EDIT_OWN_POSTS) || (who.role.permissions.CAN_EDIT_OTHERS_POSTS) ) {
 			PM.update({
 				id: req.param('postid'),
 				post: req.param('edited-text')
