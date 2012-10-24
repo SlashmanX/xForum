@@ -14,8 +14,8 @@ block content
 						li.forum-nav
 							a(href="/forum/" + forum.slug+"/")
 								i.icon-chevron-right
-								| !{forum.name}
 								span.sidenav-badge= forum.unRead
+								| !{forum.name}
 
 	.span9.home-categories.xforum
 		for cat in categories
