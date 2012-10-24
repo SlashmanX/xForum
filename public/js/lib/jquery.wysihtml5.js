@@ -8117,8 +8117,8 @@ wysihtml5.views.View = Base.extend(
       this._initUndoManager();
 
       // Simulate html5 autofocus on contentEditable element
-      if (this.textarea.element.hasAttribute("autofocus") || document.querySelector(":focus") == this.textarea.element) {
-        setTimeout(function() { that.focus(); }, 100);
+      if (this.textarea.element.hasAttribute("autofocus")) {
+        setTimeout(function() { that.focus(true); }, 100);
       }
 
       wysihtml5.quirks.insertLineBreakOnReturn(this);
