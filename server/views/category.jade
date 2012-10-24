@@ -1,13 +1,6 @@
 extends layout
 
 block content
-	mixin actions
-		.row.actions
-			.span3.offset5.action-buttons
-				if(user.role && user.role.permissions.CAN_CREATE_FORUM)
-					a(href='/create/forum/?pid='+ category._id).btn.action-button
-						i.icon-inbox
-						| New Forum
 	.span3.bs-docs-sidebar
 		ul.nav.nav-list.bs-docs-sidenav
 			li.category-nav
@@ -23,7 +16,6 @@ block content
 						| !{forum.name}
 	.span9.home-categories.xforum
 		.home-category
-			mixin actions
 			.row(id = 'cat-' + category.slug).display-head
 				a(href= '/category/'+ category.slug+'/').display-title #{category.name}
 			.row.display-headings
@@ -45,8 +37,6 @@ block content
 									a(href = '/forum/'+forum.slug+'/') #{forum.name}
 									p.help-block.display-subtitle= forum.desc
 								.span1.home-category-num-topics= forum.topics.length
-
-			mixin actions
 	
 block append scripts
 	script(src='/js/views/home.js')
