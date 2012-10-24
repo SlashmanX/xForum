@@ -7368,7 +7368,7 @@ wysihtml5.Commands = Base.extend(
       } else {
         composer.selection.insertHTML(html+"<br />");
       }
-		composer.iframe.contentWindow.twttr.widgets.load();
+		//composer.iframe.contentWindow.twttr.widgets.load();
         setTimeout(composer.selection.setAfter(composer.element.lastChild), 1000);
     },
 
