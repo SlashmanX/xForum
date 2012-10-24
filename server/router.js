@@ -378,7 +378,7 @@ module.exports = function(app, socket) {
 					name: req.param('name'),
 					desc: req.param('desc'),
 					slug: functions.slugify(req.param('name')),
-					visibleTo: req.param('visibleTo'),
+					visibleTo: req.param('visibleTo', []),
 					order: req.param('fOrder'),
 					category: req.param('category')
 				}, function(err, o) {
@@ -395,7 +395,7 @@ module.exports = function(app, socket) {
 				name: req.param('name'),
 				desc: req.param('desc'),
 				category: req.param('category'),
-				visibleTo: req.param('visibleTo')
+				visibleTo: req.param('visibleTo', [])
 			}, function(err, o) {
 				if(!err)
 					res.send('ok', 200);

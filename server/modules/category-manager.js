@@ -19,7 +19,7 @@ CM.update	=	function(newData, callback)
 
 CM.listHomePage		=	function(user, callback)
 {
-	Category.find().populate('forums', null, {visibleTo: user.role._id}, {sort: [['order', 'ascending'], '_id', 'ascending']}).populate('forums.topics').sort({order: 1, _id: 1}).exec(function(e, categories) {
+	Category.find().populate('forums', null, {$or : [{visibleTo: user.role._id}, {visibleTo : [] }]}, {sort: [['order', 'ascending'], '_id', 'ascending']}).populate('forums.topics').sort({order: 1, _id: 1}).exec(function(e, categories) {
 		if (e) {
 			callback(e);
 		}

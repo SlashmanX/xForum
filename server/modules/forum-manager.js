@@ -41,7 +41,7 @@ FM.list				=	function(callback)
 
 FM.listBySlug		=	function(data, callback)
 {
-	Forum.findOne({slug: data.slug, visibleTo: data.user.role._id}).populate('topics', null, null, {sort: [['lastPost', 'desc']] } ).populate('parent').populate('children').exec(function(e, forum) {
+	Forum.findOne({slug: data.slug, $or : [{visibleTo: data.user.role._id}, {visibleTo : [] }]}).populate('topics', null, null, {sort: [['lastPost', 'desc']] } ).populate('parent').populate('children').exec(function(e, forum) {
 		if (e) callback(e)
 		else if(forum) {
 			forum = forum.toObject();
@@ -76,7 +76,9 @@ FM.getIDFromSlug	=	function(slug, callback)
 
 FM.update	=	function(newData, callback) 
 {
+    console.log(newData);
 	Forum.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc, category: newData.category}}, {new: false}, function(err, f) {
+        console.log(err);
 		Category.findByIdAndUpdate(f.category, {$pull : {forums: f._id}}, function(err, c){
 			Category.findByIdAndUpdate(newData.category, {$push : {forums: newData.id}}, callback);
 		});
