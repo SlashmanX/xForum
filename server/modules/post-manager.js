@@ -16,14 +16,38 @@ module.exports	=	PM;
 
 PM.create			=	function(newData, callback) 
 {
-	p = new Post(newData);
-	p.save(function(err, thepost) {
-		Topic.findByIdAndUpdate(newData.topic, {lastPost: moment().format(), $push : { replies : thepost._id }}, function(err, t) {
-			Post.findById(p._id).populate('author').populate('topic').exec(function (err, cbPost) {
-				callback(cbPost);
-			});
-		});
-	});
+    // TODO : Check if previous post in this topic was by the same author, and within the past 10 mins (settings)
+    Topic.findById(newData.topic).populate('replies', 'author', null, {sort: {postedOn: -1}, limit: 1}).exec(function(err, t) {
+        tmp = t.toObject();
+        if(""+tmp.replies[0].author == ""+newData.author)
+        {
+            t.lastPost = moment().format();
+            t.markModified('lastPost');
+            t.save();
+            Post.findById(t.replies[0]).exec(function(perr, p) {
+                p.body = p.body + "<br/><br/>"+ newData.body;
+                p.postedOn = moment().format();
+                p.markModified('body');
+                p.markModified('postedOn');
+                p.save(function(nerr, post){
+                    Post.findById(post._id).populate('author').populate('topic').exec(function (err, cbPost) {
+                        callback(cbPost, true);
+                    });
+                })
+            });
+        }
+        else {
+            console.log('not merging');
+            p = new Post(newData);
+            p.save(function(err, thepost) {
+                Topic.findByIdAndUpdate(newData.topic, {lastPost: moment().format(), $push : { replies : thepost._id }}, function(err, t) {
+                    Post.findById(p._id).populate('author').populate('topic').exec(function (err, cbPost) {
+                        callback(cbPost);
+                    });
+                });
+            });
+        }
+    });
 };
 PM.update			=	function(data, callback) {
 	Post.findByIdAndUpdate(data.id, {body: data.post}).exec(function(err, post) {

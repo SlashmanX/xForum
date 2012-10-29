@@ -261,10 +261,13 @@ module.exports = function(app, socket) {
 			topic: req.param('topic'),
 			body: req.param('reply-post'),
 			postedOn: moment().format()
-		}, function(o){
+		}, function(o, edited){
 				if(o) {
 					res.send(o._id, 200);
-					socket.sockets.emit('newPost', o);
+                    if(!edited)
+					    socket.sockets.emit('newPost', o);
+                    else
+                        socket.sockets.emit('editedPost', o);
 				}
 			});
 	});

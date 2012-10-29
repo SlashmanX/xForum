@@ -54,7 +54,6 @@ TM.getTopic			=	function(data, callback)
 	var	PM			=	new require('./post-manager.js');
 	Topic.findOne({slug: data.slug}).populate('forum', null, {$or : [{visibleTo: data.user.role._id}, {visibleTo : [] }]}).populate('post').populate('replies').exec(function(e, topic) {
         if(topic && topic.forum) {
-            console.log(topic);
             PM.getTopic(topic._id, function(err, p) {
                 if (err) callback(err)
                 else {
