@@ -189,9 +189,6 @@
                     editor.on(eventName, options.events[eventName]);
                 }
             }
-
-			editor.focus();
-
             return editor;
         },
 
@@ -354,7 +351,6 @@
 		initInsertMedia: function(toolbar) {
             var self = this;
             var insertMediaModal = toolbar.find('.bootstrap-wysihtml5-insert-media-modal');
-			console.log(insertMediaModal);
             var urlInput = insertMediaModal.find('.bootstrap-wysihtml5-insert-media-url');
             var insertButton = insertMediaModal.find('a.btn-primary');
             var initialValue = urlInput.val();
@@ -390,14 +386,13 @@
             });
 
             toolbar.find('a[data-wysihtml5-command=insertMedia]').click(function() {
-				console.log('clicked');
                 insertMediaModal.modal('show');
                 insertMediaModal.on('click.dismiss.modal', '[data-dismiss="modal"]', function(e) {
 					e.stopPropagation();
 				});
                 return false;
             });
-        },
+        }
 
     };
 

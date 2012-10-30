@@ -7917,7 +7917,6 @@ wysihtml5.views.View = Base.extend(
     if (this.element.ownerDocument.querySelector(":focus") === this.element) {
       return;
     }
-    
     try { this.element.focus(); } catch(e) {}
   },
   
@@ -8117,7 +8116,7 @@ wysihtml5.views.View = Base.extend(
       this._initUndoManager();
 
       // Simulate html5 autofocus on contentEditable element
-      if (this.textarea.element.hasAttribute("autofocus")) {
+      if (this.textarea.element.hasAttribute("autofocus") || document.querySelector(":focus") == this.textarea.element) {
         setTimeout(function() { that.focus(true); }, 100);
       }
 
