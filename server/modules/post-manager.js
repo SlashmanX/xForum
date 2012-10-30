@@ -37,7 +37,6 @@ PM.create			=	function(newData, callback)
             });
         }
         else {
-            console.log('not merging');
             p = new Post(newData);
             p.save(function(err, thepost) {
                 Topic.findByIdAndUpdate(newData.topic, {lastPost: moment().format(), $push : { replies : thepost._id }}, function(err, t) {
@@ -56,6 +55,21 @@ PM.update			=	function(data, callback) {
 		else
 			callback(post);
 	})
+};
+
+PM.delete           =   function(id, callback) {
+    Post.findByIdAndRemove(id).populate('topic').exec(function(err, p) {
+        p = p.toObject();
+        p.topic.replies.splice(p.topic.replies.indexOf(id));
+        if(err)
+            callback(err);
+        else
+        {
+            Topic.findByIdAndUpdate(p.topic._id, { $pull : { 'replies' :p._id } }, function(terr, t){
+                callback(terr, p);
+            });
+        }
+    });
 }
 PM.getTopic			=	function(tid, callback)
 {

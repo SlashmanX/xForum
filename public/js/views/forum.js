@@ -14,6 +14,13 @@ jQuery(document).ready(function() {
 		}
 	});
 
+    socket.on('deletedPost', function(post) {
+        if(post.topic.forum == $('#forumid').val())
+        {
+            var thisTopic = $('div#topic-'+ post.topic.slug);
+            thisTopic.find('.topic-replies').html(post.topic.replies.length).effect('highlight', {}, 1000);
+        }
+    });
     var pageUrl = document.location.pathname;
     var curPage = 1;
     var matches = pageUrl.match(/\/page\/(.*)\/$/);

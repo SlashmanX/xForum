@@ -4,6 +4,30 @@ jQuery(document).ready(function() {
 			stylesheets: ['/css/editor.min.css'],
 			scripts: 'http://platform.twitter.com/widgets.js'
 		});
+
+    $('.delete-post').on('click', function(e) {
+        e.preventDefault();
+        var postID = $(this).parentsUntil('section').parent().attr('id').replace('post-', '');
+        var theAuthor = $(this).parentsUntil('section').parent().find('.post-username').attr('id').split('-').pop();
+
+        $.ajax({
+            type: "POST",
+            url: "/delete/post/" + postID +"/",
+            data: {"delete-post-seq": theAuthor},
+            success: function() {
+                $('body').bar({
+                    message : 'This post has been deleted.'
+                });
+            },
+
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('body').bar({
+                    message : 'Error deleting post.'
+                });
+            }
+        });
+
+    });
 	
 	$('.edit-post').on('click', function(e) {
 		e.preventDefault();
@@ -60,6 +84,7 @@ jQuery(document).ready(function() {
 			$('html').animate({scrollTop:0}, 'slow');//IE, FF
 			$('body').animate({scrollTop:0}, 'slow');//WebKit
 			curPage = pages.current;
+            console.log(curPage);
 			$('#topic-posts').css('min-height', '');
 			window.history.pushState(null, 'Page', pageUrl +'page/'+ pages.current+'/');
 		}
@@ -99,10 +124,20 @@ jQuery(document).ready(function() {
 	
 	$('.topic-posts-jpages').jPages(jPagesOptions)
 	$('abbr.timeago').timeago();
+
+    socket.on('deletedPost', function(deletedPost){
+        $('section#post-'+ deletedPost._id).effect('highlight', {mode: 'hide', color: "#CC0033"}, 1000);
+        setTimeout(function() {
+            $('section#post-'+ deletedPost._id).remove();
+            $('.topic-posts-jpages').jPages('destroy');
+            $('.topic-posts-jpages').jPages(jPagesOptions);
+            $('#topic-posts').css('min-height', '');
+        }, 1000);
+    });
 	
 	socket.on('editedPost', function(newPost){
 		$('section#post-'+ newPost._id).find('.post-body').html(newPost.body).effect('highlight', {}, 1000);
-	})
+	});
 	
 	socket.on('newPost', function(post) {
 		if(post.topic._id == $('.topicid').val())

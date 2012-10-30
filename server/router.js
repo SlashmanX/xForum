@@ -235,6 +235,25 @@ module.exports = function(app, socket) {
             }
 		});
 	});
+
+    app.post('/delete/post/:postid/', checkUser, getUser, loginUser, function(req, res) {
+        var originalAuthor = req.param('delete-post-seq');
+        var who = req.session.user;
+        if( (originalAuthor == who._id && who.role.permissions.CAN_DELETE_OWN_POSTS) || (who.role.permissions.CAN_DELETE_OTHERS_POSTS) ) {
+            PM.delete(req.param('postid'), function(err, p){
+                if(!err) {
+                    res.send('ok', 200);
+                    socket.sockets.emit('deletedPost', p);
+                }
+                else {
+                    res.send('err', 500);
+                }
+            });
+        }
+        else {
+            res.send('error', 403);
+        }
+    });
 	
 	app.post('/post/edit/:postid/', checkUser, getUser, loginUser, function(req, res) {
 		var originalAuthor = req.param('edit-post-seq');
