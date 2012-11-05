@@ -2,7 +2,7 @@
 $(document).ready(function(){
 
 	var hc = new ProfileController();
-	var av = new AccountValidator();
+	/*var av = new AccountValidator();
 	
 	$('#account-form').ajaxForm({
 		beforeSubmit : function(formData, jqForm, options){
@@ -24,9 +24,14 @@ $(document).ready(function(){
 			    av.showInvalidUserName();
 			}
 		}
-	});
-	$('#name-tf').focus();
-	$('#github-banner').css('top', '41px');
+	});*/
+
+    $('#verify-email-form').ajaxForm({
+        success	: function(responseText, status, xhr, $form){
+            if (status == 'success') hc.onVerifySentSuccess();
+        }
+    });
+	$('#email-tf').focus();
 
 // customize the account settings form //
 	

@@ -17,7 +17,7 @@ html
 			script(src="/socket.io/socket.io.js")
 			script(src="/js/app.js")
 			script(src="/js/controllers/appController.js")
-		
+
 		
 		link(rel='stylesheet', href='/css/style.min.css')
 		link(rel='stylesheet', href='/css/animate.min.css')
@@ -26,6 +26,11 @@ html
 			include navbar
 		.container
 			.row
+				if(!user.emailVerified)
+					.alert.fade.in
+						button(type="button", data-dismiss="alert").close &times;
+						strong Warning!&nbsp;
+						| You have not verified your email yet. You will have limited access to these forums until you do. <a href = '/profile/verify/'>Verify Now</a>.
 				block content
 				
 		block footer-scripts

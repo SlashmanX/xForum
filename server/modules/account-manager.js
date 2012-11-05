@@ -65,6 +65,11 @@ AM.signup = function(newData, callback)
 	});
 };
 
+AM.verifyEmail = function(newData, callback)
+{
+    User.findByIdAndUpdate(newData.id, {$set: {emailVerified: true}}, callback);
+}
+
 AM.update = function(newData, callback) 
 {
     User.findByIdAndUpdate(newData.id, {$set: {username: newData.username, role: new ObjectId(newData.role + '')}}, callback);

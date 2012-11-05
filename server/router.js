@@ -6,6 +6,7 @@ var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
 var RM = require('./modules/role-manager');
 var Settings = require('./modules/settings-manager');
+var Email = require('./modules/email-dispatcher.js');
 
 var ADMIN = require('./modules/admin-manager');
 
@@ -75,45 +76,50 @@ module.exports = function(app, socket) {
     app.post('/install/', function(req, res){
         RM.create({ "name" : "Guest"}, function(err, guest){
             if(guest) {
-                RM.create({ "name" : "Member",
-                    "defaultRole" : guest._id,
-                    "permissions" : {
-                        "CAN_DELETE_OWN_POSTS" : true,
-                        "CAN_EDIT_OWN_POSTS" : true,
-                        "CAN_POST" : true,
-                        "CAN_CREATE_TOPIC" : true
-                    }
-                }, function(err, member){
-                    Settings.add({
-                        dbName: 'defaultRole',
-                        displayName: 'Default Role',
-                        description: 'The role to which users will be assigned on registration',
-                        value: member._id
-                    }, function(){});
+                RM.create({ "name" : "Unverified",
+                    "defaultRole" : guest._id
+                }, function(err, unverified){
+                    RM.create({ "name" : "Member",
+                            "defaultRole" : guest._id,
+                            "permissions" : {
+                                "CAN_DELETE_OWN_POSTS" : true,
+                                "CAN_EDIT_OWN_POSTS" : true,
+                                "CAN_POST" : true,
+                                "CAN_CREATE_TOPIC" : true
+                            }
+                        },
+                        function(err, member){
+                            Settings.add({
+                                dbName: 'defaultRole',
+                                displayName: 'Default Role',
+                                description: 'The role to which users will be assigned on registration',
+                                value: unverified._id
+                            }, function(){});
 
-                    RM.create({ "name" : "Administrator",
-                        "defaultRole" : member._id,
-                        "permissions" : { "CAN_DELETE_TOPICS" : true,
-                            "CAN_DELETE_OTHERS_POSTS" : true,
-                            "CAN_DELETE_OWN_POSTS" : true,
-                            "CAN_EDIT_OTHERS_POSTS" : true,
-                            "CAN_EDIT_OWN_POSTS" : true,
-                            "CAN_POST" : true,
-                            "CAN_CREATE_TOPIC" : true,
-                            "CAN_CREATE_FORUM" : true,
-                            "CAN_CREATE_CATEGORY" : true,
-                            "CAN_ACCESS_CONTROL_PANEL" : true
-                        }
-                    }, function(err, admin){
-                        AM.signup({ username: req.param('username'),
-                            password: req.param('password'),
-                            role: admin._id
-                        }, function(err){
-                            if(!err)
-                                res.send('ok', 200);
-                        })
-                    })
-                })
+                            RM.create({ "name" : "Administrator",
+                                "defaultRole" : member._id,
+                                "permissions" : { "CAN_DELETE_TOPICS" : true,
+                                    "CAN_DELETE_OTHERS_POSTS" : true,
+                                    "CAN_DELETE_OWN_POSTS" : true,
+                                    "CAN_EDIT_OTHERS_POSTS" : true,
+                                    "CAN_EDIT_OWN_POSTS" : true,
+                                    "CAN_POST" : true,
+                                    "CAN_CREATE_TOPIC" : true,
+                                    "CAN_CREATE_FORUM" : true,
+                                    "CAN_CREATE_CATEGORY" : true,
+                                    "CAN_ACCESS_CONTROL_PANEL" : true
+                                }
+                            }, function(err, admin){
+                                AM.signup({ username: req.param('username'),
+                                    password: req.param('password'),
+                                    role: admin._id
+                                }, function(err){
+                                    if(!err)
+                                        res.send('ok', 200);
+                                })
+                            })
+                        });
+                });
             }
         })
     })
@@ -452,14 +458,49 @@ module.exports = function(app, socket) {
 		})
 	});
 	
-	app.get('/profile/',checkUser, getUser, loginUser, function(req, res) {
-		res.render('profile', {
-				title : 'Update Your Profile',
-				countries : CT
-		});
+	app.get('/profile/:what/',checkUser, getUser, loginUser, function(req, res) {
+        if(!req.param('token'))
+        {
+            res.render('profile', {
+                title : 'Update Your Profile',
+                countries : CT,
+                what: req.param('what')
+            });
+        }
+        else
+        {
+            Email.verifyEmail({token: req.param('token'), user: req.session.user}, function(err, o){
+                if(!err)
+                {
+                    AM.verifyEmail({id: req.session.user._id}, function(uerr, u){
+                        if(!uerr){
+                            res.redirect('/');
+                        }
+                    })
+                }
+            })
+        }
 	});
+
+    app.post('/profile/verify/', checkUser, getUser, loginUser, function(req, res) {
+        var email = req.param('email');
+        if(email == req.session.user.email)
+        {
+            Email.send(req.session.user, function(err, o){
+                if(!err)
+                {
+                    res.send('ok', 200);
+                }
+            })
+        }
+        else
+        {
+            // TODO: Update users email address then send
+        }
+
+    })
 	
-	app.post('/profile/', checkUser, getUser, loginUser, function(req, res){
+	app.post('/profile/edit/', checkUser, getUser, loginUser, function(req, res){
 		if (req.param('user') != undefined) {
 			AM.update({
 				username 	: req.param('user'),

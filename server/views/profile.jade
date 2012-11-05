@@ -1,7 +1,24 @@
 extends layout
 
-block content		
-	include account
+block content
+	case what
+		when 'edit'
+			include account
+		when 'verify'
+			#account-form-container
+				form( method="post")#verify-email-form.form-horizontal.well.span6
+					h1
+					p#sub1.subheading Please confirm your email before verifying.
+					hr
+					fieldset
+						#email-cg.control-group
+							label.control-label(for='email-tf') Email
+							.controls
+								input#email-tf.input-xlarge(type='text', name='email', value= user.email)
+						.form-actions
+							button(type='submit').btn.btn-primary.pull-right Verify
+							button(type='button').btn Cancel
+
 
 block append scripts
 	script(src='/js/views/profile.js')

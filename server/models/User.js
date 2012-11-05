@@ -8,7 +8,8 @@ var	userSchema = new Schema({
 	realName: String,
 	email: String,
 	role: {type: ObjectId, ref: 'Role'},
-	location: String
+	location: String,
+    emailVerified: {type: Boolean, default: false}
 });
 
 module.exports = mongoose.model('User', userSchema);

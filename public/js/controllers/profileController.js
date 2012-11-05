@@ -57,11 +57,11 @@ function ProfileController()
 	}
 }
 
-ProfileController.prototype.onUpdateSuccess = function()
+ProfileController.prototype.onVerifySentSuccess = function()
 {
 	$('.modal-alert').modal({ show : false, keyboard : true, backdrop : true });				
 	$('.modal-alert .modal-header h3').text('Success!');
-	$('.modal-alert .modal-body p').html('Your account has been updated.'); 				
+	$('.modal-alert .modal-body p').html('A verification email has been sent to your account. Please click the link provided in that email to verify your account.');
 	$('.modal-alert').modal('show');
 	$('.modal-alert button').off('click');
 }
