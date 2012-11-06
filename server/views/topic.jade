@@ -30,7 +30,10 @@ block content
 						.span2.no-margin
 							ul.user-details
 								li.user-avatar
-									img(src="http://placehold.it/140x140").img-polaroid
+									if(!post.author.avatar)
+										img(data-src="holder.js/120x120/text:"+post.author.username).img-polaroid
+									else
+										img(src=post.author.avatar).img-polaroid
 						.span10
 							.post-body
 								!{post.body}
@@ -69,7 +72,7 @@ block content
 				form( method="post")#reply-form
 					input.topicid(type='hidden', name = 'topic', value = topic._id)
 			
-					textarea#reply-post(name = 'reply-post', rows='10', required).span12
+					textarea#reply-post(name = 'reply-post', rows='10').span12
 			
 					span.pull-right
 						button.btn.btn-primary(type='submit') Post
@@ -79,4 +82,5 @@ block append scripts
 	script
 		var me = !{JSON.stringify(user)}
 	script(src='/js/views/topic.js')
+	script(src='/js/lib/holder.js')
 	script(src='/js/controllers/topicController.js')

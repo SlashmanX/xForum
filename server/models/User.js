@@ -9,6 +9,8 @@ var	userSchema = new Schema({
 	email: String,
 	role: {type: ObjectId, ref: 'Role'},
 	location: String,
+    avatar: String,
+    signature: String,
     emailVerified: {type: Boolean, default: false}
 });
 
