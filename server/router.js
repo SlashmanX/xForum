@@ -281,6 +281,7 @@ module.exports = function(app, socket) {
 	});
 	
 	app.post('/topic/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
+        req.sanitize('reply-post').xss();
 		PM.create({
 			author: req.session.user._id,
 			topic: req.param('topic'),

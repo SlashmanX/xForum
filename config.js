@@ -1,4 +1,5 @@
 var	lessMiddleware	=	require('less-middleware');
+var expressValidator = require('express-validator');
 var connect = require('connect')
   , Db = require('mongodb').Db
   , Server = require('mongodb').Server
@@ -13,6 +14,7 @@ module.exports = function(app, exp) {
 		app.set('view engine', 'jade');
 		app.set('view options', { doctype : 'html', pretty : true });
 		app.use(exp.bodyParser());
+        app.use(expressValidator);
 		app.use(exp.cookieParser('I am not wearing any pants'));
 		app.use(exp.session({
 			cookie: {
