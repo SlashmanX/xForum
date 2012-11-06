@@ -503,17 +503,12 @@
     };
 
     Plugin.prototype.updateBtns = function ( nav, page ) {
-        
-		console.log('btns')
-		console.log(page);
-		console.log(this._numPages);
         if ( page == 1 ) {
             nav.first.addClass("disabled");
             nav.previous.addClass("disabled");
         }
 
         if ( page == this._numPages ) {
-			console.log('here');
             nav.next.addClass("disabled");
             nav.last.addClass("disabled");
         }
