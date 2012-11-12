@@ -2,6 +2,14 @@ extends layout
 
 block content
 	mixin actions
+		ul.breadcrumb
+			li
+				a(href="/") Home
+				span.divider /
+			li
+				a(href="/forum/"+topic.forum.slug+"/")=topic.forum.name
+				span.divider /
+			li.active= topic.title
 		.row.actions
 			.span9.no-margin.pagination
 				ul.topic-posts-jpages
