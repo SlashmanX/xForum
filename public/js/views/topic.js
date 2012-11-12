@@ -53,6 +53,14 @@ jQuery(document).ready(function() {
 
         $('#reply-post').data('wysihtml5').editor.setValue("<blockquote>"+ thePost +" <br /><cite>Posted by "+ theAuthor +"</cite></blockquote><br /><br />").focus(true);
     });
+
+    $('.multiquote-post').on('click', function(e) {
+        e.preventDefault();
+        var thePost = $(this).parentsUntil('section').parent().find('.post-body').html();
+        var theAuthor = $(this).parentsUntil('section').parent().find('.post-username').text();
+
+        $('#reply-post').data('wysihtml5').editor.setValue($('#reply-post').data('wysihtml5').editor.getValue() +"<blockquote>"+ thePost +" <br /><cite>Posted by "+ theAuthor +"</cite></blockquote><br /><br />");
+    });
 	
 	$('body').on('click', '.cancel-edit', function(e) {
 		e.preventDefault();
@@ -142,6 +150,7 @@ jQuery(document).ready(function() {
 	socket.on('newPost', function(post) {
 		if(post.topic._id == $('.topicid').val())
 		{
+            var canPost = (user.role && user.role.permissions.CAN_POST);
 			var canEdit = ((me.username == post.author.username) && (me.role && me.role.permissions.CAN_EDIT_OWN_POSTS)) || (me.role && me.role.permissions.CAN_EDIT_OTHERS_POSTS)
 			var canDelete = ((me.username == post.author.username) && (me.role && me.role.permissions.CAN_DELETE_OWN_POSTS)) || (me.role && me.role.permissions.CAN_DELETE_OTHERS_POSTS)
 			var canReport = (me.username != post.author.username)
@@ -151,7 +160,11 @@ jQuery(document).ready(function() {
                 userAvatar = '<img src = "'+post.author.avatar+'" class = "img-polaroid"/>';
 
 			
-			var postHTML = "<section class = 'topic-post' id = 'post-"+ post._id+"'><div class = 'row post-details'><div class = 'span2 no-margin'><i class = 'icon-user'></i><span class = 'post-username'>"+ post.author.username + "</span></div><div class = 'span10'><small>Posted <abbr id = 'timestamp-"+ post._id+"'  class = 'timeago' title = '"+post.postedOn +"'>" +post.postedOn +"</abbr></small></div></div><div class = 'row'><div class = 'span2 no-margin'><ul class = 'user-details'><li class = 'user-avatar'>"+ userAvatar + "</li></ul></div><div class = 'span10'><div class = 'post-body'>"+ post.body +"</div></div></div><div class = 'row post-actions'><div class = 'span2 no-margin topic-user-actions'><button class = 'btn btn-info' type='button'><i class = 'icon-envelope'></i>PM</button></div><div class = 'span10'><span class = 'topic-post-actions'><button class = 'btn reply-post' type='button'><i class = 'icon-comment'></i>Reply</button>";
+			var postHTML = "<section class = 'topic-post' id = 'post-"+ post._id+"'><div class = 'row post-details'><div class = 'span2 no-margin'><i class = 'icon-user'></i><span class = 'post-username'>"+ post.author.username + "</span></div><div class = 'span10'><small>Posted <abbr id = 'timestamp-"+ post._id+"'  class = 'timeago' title = '"+post.postedOn +"'>" +post.postedOn +"</abbr></small></div></div><div class = 'row'><div class = 'span2 no-margin'><ul class = 'user-details'><li class = 'user-avatar'>"+ userAvatar + "</li></ul></div><div class = 'span10'><div class = 'post-body'>"+ post.body +"</div></div></div><div class = 'row post-actions'><div class = 'span2 no-margin topic-user-actions'><button class = 'btn btn-info' type='button'><i class = 'icon-envelope'></i>PM</button></div><div class = 'span10'><span class = 'topic-post-actions'>";
+
+
+            if(canPost)
+                postHTML +="<button class = 'btn reply-post' type='button'><i class = 'icon-comment'></i>Reply</button><button class = 'btn multiquote-post' type='button'><i class = 'icon-comments'></i>Multi Quote</button>";
 			
 			
 			if (canEdit)

@@ -59,6 +59,10 @@ block content
 									button.btn.reply-post(type='button')
 										i.icon-comment
 										| Reply
+								if(user.role && user.role.permissions.CAN_POST)
+									button.btn.multiquote-post(type='button')
+										i.icon-comments
+										| Multi Quote
 								if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_EDIT_OWN_POSTS)) || (user.role && user.role.permissions.CAN_EDIT_OTHERS_POSTS)
 									button.btn.edit-post(type='button')
 										i.icon-edit
