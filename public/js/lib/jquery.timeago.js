@@ -27,6 +27,16 @@
   };
   var $t = $.timeago;
 
+    // destroyed event handler comes from:
+    //  http://stackoverflow.com/questions/2200494/jquery-trigger-event-when-an-element-is-removed-from-the-dom/10172676#10172676
+    jQuery.event.special.timeagodestroyed = {
+        remove: function(o) {
+            if (o.handler) {
+                o.handler($(this))
+            }
+        }
+    };
+
   $.extend($.timeago, {
     settings: {
       refreshMillis: 60000,
@@ -113,10 +123,24 @@
 
     var $s = $t.settings;
     if ($s.refreshMillis > 0) {
-      setInterval(function() { self.each(refresh); }, $s.refreshMillis);
+        var data = self.data('timeago')
+        data.intervalId = setInterval(function() { self.each(refresh); }, $s.refreshMillis);
+        self.data('timeago', data);
+        self.bind('timeagodestroyed', function(element){
+            element.untimeago();
+        });
     }
-    return self;
+      return self;
   };
+
+    $.fn.untimeago = function() {
+        var self = this;
+        var timeagoData = self.data('timeago');
+        if((typeof(timeagoData)!='undefined')&&(typeof(timeagoData.intervalId)!='undefined')){
+            clearInterval(timeagoData.intervalId);
+            self.removeData('timeago');
+        }
+    };
 
   function refresh() {
     var data = prepareData(this);

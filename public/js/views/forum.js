@@ -1,16 +1,22 @@
 jQuery(document).ready(function() {
+    $('abbr.timeago').timeago();
 	socket.on('newPost', function(post) {
 		if(post.topic.forum == $('#forumid').val())
 		{
 			var thisTopic = $('div#topic-'+ post.topic.slug);
 			thisTopic.find('.topic-replies').html(post.topic.replies.length);
-			thisTopic.find('.topic-last-poster').html(post.author.username);
-			thisTopic.find('.topic-status').html('<i class = "icon-folder-close"></i>')
+			thisTopic.find('.topic-last-post-author').html(post.author.username);
+            thisTopic.find('.topic-last-post-time').untimeago();
+            thisTopic.find('.topic-last-post-time').attr('title', post.postedOn).text(post.postedOn).timeago();
+			thisTopic.find('.topic-status').html('<i class = "icon-folder-close"></i>');
             $('.forum-topics').prepend(thisTopic);
-			thisTopic.effect('highlight', {}, 1000);
 
-            $('.forum-topics-jpages').jPages('destroy');
-            $('.forum-topics-jpages').jPages(jPagesOptions);
+
+            thisTopic.effect('highlight', {}, 1000);
+            setTimeout(function(){
+                $('.forum-topics-jpages').jPages('destroy');
+                $('.forum-topics-jpages').jPages(jPagesOptions);
+            }, 1100);
 		}
 	});
 

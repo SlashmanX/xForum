@@ -3,6 +3,7 @@ var	Forum		=	require('../models/Forum.js');
 var	Category	=	require('../models/Category.js');
 var	async		=	require('async');
 var	TM			=	require('./topic-manager.js');
+var	PM			=	require('./post-manager.js');
 var	FM			=	{};
 
 module.exports	=	FM;
@@ -51,11 +52,20 @@ FM.listBySlug		=	function(data, callback)
 			async.whilst(
 				function() { return tCount < tLength },
 				function(cbTopic) {
-					TM.checkRead(data.user._id, forum.topics[tCount], function(read){
-						if(read) forum.topics[tCount].isRead = true;
-						tCount++;
-						cbTopic();
-					})
+                    var pid = forum.topics[tCount].post;
+                    if(forum.topics[tCount].replies.length)
+                    {
+                        pid = forum.topics[tCount].replies[forum.topics[tCount].replies.length - 1];
+                    }
+                    PM.getPostInfo(pid, function(info){
+                        forum.topics[tCount].lastPostInfo = info;
+                        TM.checkRead(data.user._id, forum.topics[tCount], function(read){
+                            if(read) forum.topics[tCount].isRead = true;
+                            tCount++;
+                            cbTopic();
+                        })
+                    })
+
 				},
 				function(err) {
 					callback(null, forum);

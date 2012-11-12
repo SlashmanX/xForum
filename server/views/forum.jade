@@ -33,12 +33,12 @@ block content
 					.span3 Topic
 					.span1 Views
 					.span1 Replies
-					.span2 Last Poster
+					.span2 Last Post
 			section.forum-topics#forum-topics-paginate
 				each topic in forum.topics
 					.row.display-row(id = 'topic-' + topic.slug)
 						.span9
-							.span1 
+							.span1.topic-status
 								if topic.isRead
 									i.icon-folder-open
 								else
@@ -48,7 +48,11 @@ block content
 								p.help-block.display-subtitle= topic.desc
 							.span1= topic.views
 							.span1.topic-replies= topic.replies.length
-							.span2.topic-last-poster SlashmanX
+							.span2.topic-last-post
+								abbr.timeago(title=topic.lastPostInfo.postedOn).topic-last-post-time #{topic.lastPostInfo.postedOn}
+								div
+									strong By:&nbsp;
+									span.topic-last-post-author=topic.lastPostInfo.author.username
 
 		input(type='hidden', value=forum._id)#forumid
 		

@@ -17,14 +17,21 @@ module.exports	=	PM;
 PM.create			=	function(newData, callback) 
 {
     // TODO : Check if previous post in this topic was by the same author, and within the past 10 mins (settings)
-    Topic.findById(newData.topic).populate('replies', 'author', null, {sort: {postedOn: -1}, limit: 1}).exec(function(err, t) {
-        tmp = t.toObject();
-        if(""+tmp.replies[0].author == ""+newData.author)
+    Topic.findById(newData.topic).populate('post', 'author').populate('replies', 'author', null, {sort: {postedOn: -1}, limit: 1}).exec(function(err, t) {
+        var tmp = t.toObject();
+        var prevAuthor = tmp.post.author;
+        var postID = tmp.post;
+        if(tmp.replies.length)
+        {
+            prevAuthor = tmp.replies[0].author;
+            postID = t.replies[0];
+        }
+        if(""+prevAuthor == ""+newData.author)
         {
             t.lastPost = moment().format();
             t.markModified('lastPost');
             t.save();
-            Post.findById(t.replies[0]).exec(function(perr, p) {
+            Post.findById(postID).exec(function(perr, p) {
                 p.body = p.body + "<br/><br/>"+ newData.body;
                 p.postedOn = moment().format();
                 p.markModified('body');
@@ -70,6 +77,12 @@ PM.delete           =   function(id, callback) {
             });
         }
     });
+}
+PM.getPostInfo      =   function(pid, callback)
+{
+    Post.findById(pid).populate('author').exec(function(e, postInfo){
+        callback(postInfo);
+    })
 }
 PM.getTopic			=	function(tid, callback)
 {
