@@ -3,7 +3,7 @@ jQuery(document).ready(function() {
 	$('#reply-post').wysihtml5({
 			stylesheets: ['/css/editor.min.css'],
 			scripts: 'http://platform.twitter.com/widgets.js'
-		});
+	});
 
     $('.delete-post').on('click', function(e) {
         e.preventDefault();
@@ -145,8 +145,13 @@ jQuery(document).ready(function() {
 			var canEdit = ((me.username == post.author.username) && (me.role && me.role.permissions.CAN_EDIT_OWN_POSTS)) || (me.role && me.role.permissions.CAN_EDIT_OTHERS_POSTS)
 			var canDelete = ((me.username == post.author.username) && (me.role && me.role.permissions.CAN_DELETE_OWN_POSTS)) || (me.role && me.role.permissions.CAN_DELETE_OTHERS_POSTS)
 			var canReport = (me.username != post.author.username)
+
+            var userAvatar = '<img data-src="holder.js/120x120/text:'+post.author.username+'" class = "img-polaroid newHolder"/>';
+            if(post.author.avatar)
+                userAvatar = '<img src = "'+post.author.avatar+'" class = "img-polaroid"/>';
+
 			
-			var postHTML = "<section class = 'topic-post' id = 'post-"+ post._id+"'><div class = 'row post-details'><div class = 'span2 no-margin'><i class = 'icon-user'></i><span class = 'post-username'>"+ post.author.username + "</span></div><div class = 'span10'><small>Posted <abbr id = 'timestamp-"+ post._id+"'  class = 'timeago' title = '"+post.postedOn +"'>" +post.postedOn +"</abbr></small></div></div><div class = 'row'><div class = 'span2 no-margin'><ul class = 'user-details'><li class = 'user-avatar'><img src = 'http://placehold.it/140x140' class = 'img-polaroid'></li></ul></div><div class = 'span10'><div class = 'post-body'>"+ post.body +"</div></div></div><div class = 'row post-actions'><div class = 'span2 no-margin topic-user-actions'><button class = 'btn btn-info' type='button'><i class = 'icon-envelope'></i>PM</button></div><div class = 'span10'><span class = 'topic-post-actions'><button class = 'btn reply-post' type='button'><i class = 'icon-comment'></i>Reply</button>";
+			var postHTML = "<section class = 'topic-post' id = 'post-"+ post._id+"'><div class = 'row post-details'><div class = 'span2 no-margin'><i class = 'icon-user'></i><span class = 'post-username'>"+ post.author.username + "</span></div><div class = 'span10'><small>Posted <abbr id = 'timestamp-"+ post._id+"'  class = 'timeago' title = '"+post.postedOn +"'>" +post.postedOn +"</abbr></small></div></div><div class = 'row'><div class = 'span2 no-margin'><ul class = 'user-details'><li class = 'user-avatar'>"+ userAvatar + "</li></ul></div><div class = 'span10'><div class = 'post-body'>"+ post.body +"</div></div></div><div class = 'row post-actions'><div class = 'span2 no-margin topic-user-actions'><button class = 'btn btn-info' type='button'><i class = 'icon-envelope'></i>PM</button></div><div class = 'span10'><span class = 'topic-post-actions'><button class = 'btn reply-post' type='button'><i class = 'icon-comment'></i>Reply</button>";
 			
 			
 			if (canEdit)
@@ -165,6 +170,7 @@ jQuery(document).ready(function() {
 			$('.topic-posts-jpages').jPages('destroy');
 			$('.topic-posts-jpages').jPages(jPagesOptions);
 			$('abbr#timestamp-'+ post._id).timeago();
+            Holder.run({images : '.newHolder'});
 		}
 	});
 });
