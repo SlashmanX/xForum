@@ -144,6 +144,9 @@ module.exports = function(app, socket) {
     })
 	
 	app.post('/login/', function(req, res){
+        req.sanitize('email').xss();
+        req.sanitize('username').xss();
+        req.sanitize('pass').xss();
 		if (req.param('email') != null){
 			AM.getEmail(req.param('email'), function(o){
 				if (o){
@@ -281,6 +284,7 @@ module.exports = function(app, socket) {
     });
 	
 	app.post('/post/edit/:postid/', checkUser, getUser, loginUser, function(req, res) {
+        req.sanitize('edited-text').xss();
 		var originalAuthor = req.param('edit-post-seq');
 		var who = req.session.user;
 		if( (originalAuthor == who._id && who.role.permissions.CAN_EDIT_OWN_POSTS) || (who.role.permissions.CAN_EDIT_OTHERS_POSTS) ) {
@@ -458,7 +462,10 @@ module.exports = function(app, socket) {
 	});
 	
 	app.post('/create/topic/', checkUser, getUser, loginUser, function(req, res){
-		
+
+        req.sanitize('title').xss();
+        req.sanitize('desc').xss();
+        req.sanitize('post').xss();
 		// TODO: Check if user has permission to create topic here
 		TM.create({
 			title : req.param('title'),
@@ -503,6 +510,7 @@ module.exports = function(app, socket) {
 	});
 
     app.post('/profile/verify/', checkUser, getUser, loginUser, function(req, res) {
+        req.sanitize('email').xss();
         var email = req.param('email');
         if(email == req.session.user.email)
         {
@@ -521,6 +529,10 @@ module.exports = function(app, socket) {
     })
 	
 	app.post('/profile/edit/', checkUser, getUser, loginUser, function(req, res){
+        req.sanitize('name').xss();
+        req.sanitize('email').xss();
+        req.sanitize('user').xss();
+        req.sanitize('pass').xss();
 		if (req.param('user') != undefined) {
 			AM.update({
 				username 	: req.param('user'),
@@ -556,6 +568,10 @@ module.exports = function(app, socket) {
 	
 	app.post('/signup/', function(req, res){
         var theRole;
+        req.sanitize('name').xss();
+        req.sanitize('email').xss();
+        req.sanitize('user').xss();
+        req.sanitize('pass').xss();
         Settings.getSettings(function(settings){
             theRole = settings.defaultRole;
             AM.signup({
