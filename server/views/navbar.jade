@@ -10,6 +10,11 @@ div.navbar.navbar-fixed-top
 				if (user.role && user.role.permissions.CAN_ACCESS_CONTROL_PANEL)
 					li
 						a(href='/admin/') Admin
-			button#btn-logout.btn.btn-primary
-				i.icon-lock.icon-white
-				| Sign Out
+			if(user._id)
+				button#btn-logout.btn.btn-primary
+					i.icon-lock.icon-white
+					| Sign Out
+			else
+				a(href='/login/')#btn-login.pull-right.btn.btn-primary
+					i.icon-lock.icon-white
+					| Sign In

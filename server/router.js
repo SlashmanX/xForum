@@ -24,9 +24,9 @@ module.exports = function(app, socket) {
 	// First middleware
 
 	var checkUser = function(req, res, next){
-	   if (req.cookies.username == undefined || req.cookies.pass == undefined){
+	   /*if (req.cookies.username == undefined || req.cookies.pass == undefined){
 	      return res.render('login', { title: 'Hello - Please Login To Your Account' });
-	   }
+	   }*/
 
 	   return next();
 	};
@@ -40,7 +40,23 @@ module.exports = function(app, socket) {
 
 		AM.autoLogin(username, pass, function(o){
 			res.locals.udata = o;
-			next();
+            if(o === null)
+            {
+                RM.getGuestRole(function(guest){
+                    var guest = { username: 'Guest',
+                        name: 'Guest',
+                        role: guest,
+                        emailVerified: true
+                    }
+                    res.locals.udata = guest;
+
+                    next();
+                });
+            }
+            else
+            {
+                next();
+            }
 		});
 
 	};
@@ -49,7 +65,6 @@ module.exports = function(app, socket) {
 
 	var loginUser = function (req, res, next) {
 		var user = res.locals.udata;
-
 		if (user != null) {
 		   req.session.user = user;
 			next();
@@ -122,6 +137,10 @@ module.exports = function(app, socket) {
                 });
             }
         })
+    })
+
+    app.get('/login/', function(req, res){
+        return res.render('login', { title: 'Hello - Please Login To Your Account' });
     })
 	
 	app.post('/login/', function(req, res){

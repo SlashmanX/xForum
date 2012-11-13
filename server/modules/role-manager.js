@@ -15,6 +15,12 @@ RM.getNewRoleForm = function(callback) {
 		});
 	});	
 }
+
+RM.getGuestRole = function(callback) {
+   Role.findOne({name: 'Guest'}).exec(function(e, guest) {
+       callback(guest);
+   })
+}
 RM.getRoles = function(callback) {
 	Role.find({}, 'id name').exec(function(err, roles) {
 		callback(roles);
