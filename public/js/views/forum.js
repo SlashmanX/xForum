@@ -55,6 +55,17 @@ jQuery(document).ready(function() {
     };
 	
 	$('.forum-topics-jpages').jPages(jPagesOptions);
+
+    socket.on('deletedTopic', function(deletedTopic){
+        console.log(deletedTopic);
+        $('div#topic-'+ deletedTopic.slug).effect('highlight', {mode: 'hide', color: "#CC0033"}, 1000);
+        setTimeout(function() {
+            $('div#topic-'+ deletedTopic.slug).remove();
+            $('.forum-topics-jpages').jPages('destroy');
+            $('.forum-topics-jpages').jPages(jPagesOptions);
+            $('#forum-topics-paginate').css('min-height', '');
+        }, 1000);
+    });
 	
 	socket.on('newTopic', function(topic) {
 		
