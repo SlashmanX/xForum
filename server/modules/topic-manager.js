@@ -62,10 +62,26 @@ TM.checkSlugExists  =   function(slug, callback)
     });
 }
 
+TM.delete           =   function(id, callback) {
+    Topic.findByIdAndRemove(id).populate('forum').exec(function(err, t) {
+        t = t.toObject();
+        t.forum.topics.splice(t.forum.topics.indexOf(id));
+        Post.find({topic: t._id}).remove();
+        if(err)
+            callback(err);
+        else
+        {
+            Forum.findByIdAndUpdate(t.forum._id, { $pull : { 'topics' :t._id } }, function(ferr, f){
+                callback(ferr, t);
+            });
+        }
+    });
+}
+
 TM.getTopic			=	function(data, callback)
 {
 	var	PM			=	new require('./post-manager.js');
-	Topic.findOne({slug: data.slug}).populate('forum', null, {$or : [{visibleTo: data.user.role._id}, {visibleTo : [] }]}).populate('post').populate('replies').exec(function(e, topic) {
+	Topic.findOne({slug: data.slug}).populate('forum', null, {$or : [{visibleTo: data.user.role._id}, {visibleTo : [] }]}).exec(function(e, topic) {
         if(topic && topic.forum) {
             PM.getTopic(topic._id, function(err, p) {
                 if (err) callback(err)

@@ -28,6 +28,34 @@ jQuery(document).ready(function() {
         });
 
     });
+
+    $('.delete-topic').on('click', function(e) {
+        e.preventDefault();
+        var topicID = $('input.topicid').val();
+        var theAuthor = $(this).parentsUntil('section').parent().find('.post-username').attr('id').split('-').pop();
+
+        $.ajax({
+            type: "POST",
+            url: "/delete/topic/" + topicID +"/",
+            data: {"delete-topic-seq": theAuthor},
+            success: function() {
+                $('body').bar({
+                    message : 'This topic has been deleted. Redirecting you back to the forum view.'
+                });
+
+                setTimeout(function(){
+                    window.location = $('a.breadcrumb-forum:first').attr('href') ;
+                }, 1000);
+            },
+
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('body').bar({
+                    message : 'Error deleting topic.'
+                });
+            }
+        });
+
+    });
 	
 	$('.edit-post').on('click', function(e) {
 		e.preventDefault();

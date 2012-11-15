@@ -4,10 +4,10 @@ block content
 	mixin actions
 		ul.breadcrumb
 			li
-				a(href="/") Home
+				a(href="/").breadcrumb-home Home
 				span.divider /
 			li
-				a(href="/forum/"+topic.forum.slug+"/")=topic.forum.name
+				a(href="/forum/"+topic.forum.slug+"/").breadcrumb-forum=topic.forum.name
 				span.divider /
 			li.active= topic.title
 		.row.actions
@@ -71,11 +71,15 @@ block content
 									button.btn.btn-warning.report-post(type='button')
 										i.icon-legal
 										| Report
-								if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_DELETE_OWN_POSTS)) || (user.role && user.role.permissions.CAN_DELETE_OTHERS_POSTS)
+								if  (post._id != ''+ topic.post) && (((user.username == post.author.username) && (user.role && user.role.permissions.CAN_DELETE_OWN_POSTS)) || (user.role && user.role.permissions.CAN_DELETE_OTHERS_POSTS))
 									button.btn.btn-danger.delete-post(type='button')
 										i.icon-trash
 										| Delete
-									
+
+								if  (post._id == ''+ topic.post) && (((user.username == post.author.username) && (user.role && user.role.permissions.CAN_DELETE_OWN_TOPICS)) || (user.role && user.role.permissions.CAN_DELETE_OTHERS_TOPICS))
+									button.btn.btn-danger.delete-topic(type='button')
+										i.icon-trash
+										| Delete Topic
 		mixin actions
 		if(user.role && user.role.permissions.CAN_POST)
 			.row.display-head

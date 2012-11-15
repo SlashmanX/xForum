@@ -97,7 +97,6 @@ module.exports = function(app, socket) {
                     RM.create({ "name" : "Member",
                             "defaultRole" : guest._id,
                             "permissions" : {
-                                "CAN_DELETE_OWN_POSTS" : true,
                                 "CAN_EDIT_OWN_POSTS" : true,
                                 "CAN_POST" : true,
                                 "CAN_CREATE_TOPIC" : true
@@ -113,7 +112,8 @@ module.exports = function(app, socket) {
 
                             RM.create({ "name" : "Administrator",
                                 "defaultRole" : member._id,
-                                "permissions" : { "CAN_DELETE_TOPICS" : true,
+                                "permissions" : { "CAN_DELETE_OWN_TOPICS" : true,
+                                    "CAN_DELETE_OTHERS_TOPICS" : true,
                                     "CAN_DELETE_OTHERS_POSTS" : true,
                                     "CAN_DELETE_OWN_POSTS" : true,
                                     "CAN_EDIT_OTHERS_POSTS" : true,
@@ -279,7 +279,26 @@ module.exports = function(app, socket) {
             });
         }
         else {
-            res.send('error', 403);
+            res.send('err', 403);
+        }
+    });
+
+    app.post('/delete/topic/:topicid/', checkUser, getUser, loginUser, function(req, res) {
+        var originalAuthor = req.param('delete-topic-seq');
+        var who = req.session.user;
+        if( (originalAuthor == who._id && who.role.permissions.CAN_DELETE_OWN_TOPICS) || (who.role.permissions.CAN_DELETE_OTHERS_TOPICS) ) {
+            TM.delete(req.param('topicid'), function(err, t){
+                if(!err) {
+                    res.send('ok', 200);
+                    socket.sockets.emit('deletedTopic', t);
+                }
+                else {
+                    res.send('err', 500);
+                }
+            });
+        }
+        else {
+            res.send('err', 403);
         }
     });
 	
