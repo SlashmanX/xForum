@@ -577,6 +577,7 @@ module.exports = function(app, socket) {
                     }, function(o){
                         if(o)
                         {
+                            o.authorname = req.session.user.username;
                             socket.sockets.emit('newTopic', o);
                             res.send('/topic/'+o.slug+'/', 200);
                         }

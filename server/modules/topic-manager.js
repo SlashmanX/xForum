@@ -23,7 +23,7 @@ TM.create			=	function(newData, callback)
 		t.save(function (e, topic) {
 			Forum.findByIdAndUpdate(new ObjectId(newData.forum + ''), {$push : { topics : topic._id }}, function(err, f) {
 				SM.setLastReadTime(newData.author, topic._id, function(e, o) {
-					callback(topic);
+					callback(topic.toObject());
 				});
 			});
 		});

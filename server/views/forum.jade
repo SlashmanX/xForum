@@ -16,7 +16,7 @@ block content
 			li.category-nav
 				a(href='#forum-' + forum.slug)= forum.name
 			each topic in forum.topics
-				li.forum-nav(id='nav-topic'+ topic.slug)
+				li.forum-nav(id='nav-topic-'+ topic.slug)
 					a(href="/topic/" + topic.slug + "/")
 						i.icon-chevron-right
 						| !{topic.title}
