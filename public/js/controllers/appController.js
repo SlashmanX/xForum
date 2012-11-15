@@ -11,7 +11,7 @@ function AppController()
 	{
 		var that = this;
 		$.ajax({
-			url: "/profile/",
+			url: "/profile/edit/",
 			type: "POST",
 			data: {logout : true},
 			success: function(data){
