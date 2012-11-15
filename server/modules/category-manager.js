@@ -14,8 +14,22 @@ CM.create	=	function(newData, callback)
 
 CM.update	=	function(newData, callback) 
 {
-	Category.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc}}, callback);
+	Category.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc, slug: newData.slug}}, callback);
 };
+
+CM.checkSlugExists  =   function(slug, callback)
+{
+    Category.findOne({slug: slug}).exec(function(err, cat) {
+        if(cat)
+        {
+            callback(true);
+        }
+        else
+        {
+            callback(false);
+        }
+    });
+}
 
 CM.listHomePage		=	function(user, callback)
 {

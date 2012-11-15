@@ -84,11 +84,23 @@ FM.getIDFromSlug	=	function(slug, callback)
 	})
 }
 
+FM.checkSlugExists  =   function(slug, callback)
+{
+    Forum.findOne({slug: slug}).exec(function(err, forum) {
+        if(forum)
+        {
+            callback(true);
+        }
+        else
+        {
+            callback(false);
+        }
+    });
+}
+
 FM.update	=	function(newData, callback) 
 {
-    console.log(newData);
-	Forum.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc, category: newData.category}}, {new: false}, function(err, f) {
-        console.log(err);
+	Forum.findByIdAndUpdate(newData.id, {$set: {name: newData.name, visibleTo: newData.visibleTo, desc: newData.desc, category: newData.category, slug: newData.slug}}, {new: false}, function(err, f) {
 		Category.findByIdAndUpdate(f.category, {$pull : {forums: f._id}}, function(err, c){
 			Category.findByIdAndUpdate(newData.category, {$push : {forums: newData.id}}, callback);
 		});

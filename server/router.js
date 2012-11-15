@@ -378,39 +378,67 @@ module.exports = function(app, socket) {
     });
 	
 	app.post('/admin/categories/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
-		if(req.param('catId') == '') { // Not updating
-			if(req.param('name')) {
-				CM.create({
-					name: req.param('name'),
-					desc: req.param('desc'),
-					slug: functions.slugify(req.param('name')),
-					visibleTo: req.param('visibleTo'),
-					order: req.param('catOrder')
-				}, function(err, o) {
-					CM.reorder(JSON.parse(req.param('order')), function(e) {
-						if(!e)
-							res.send(o._id, 200);
-					})
-				});
-			}
-		}
-		else { //updating existing category
-			CM.update({
-				id: req.param('catId'),
-				name: req.param('name'),
-				desc: req.param('desc'),
-				visibleTo: req.param('visibleTo')
-			}, function(err, o) {
-				if(!err)
-					res.send('ok', 200);
-			})
-		}
-		if(req.param('orderChanged')) {
-			CM.reorder(JSON.parse(req.param('order')), function(e) {
-				if(!e)
-					res.send('ok', 200);
-			});
-		}
+        var orig_slug = functions.slugify(req.param('name'));
+        var slug = orig_slug;
+        var unique = false;
+        var i = 0;
+        async.whilst(
+            function() { return !unique },
+            function(cb) {
+                CM.checkSlugExists(slug, function(exists) {
+                    if(!exists)
+                    {
+                        unique = true;
+                    }
+                    else
+                    {
+                        unique = false;
+                        i++;
+                        slug = orig_slug + "-"+i;
+                    }
+                    cb();
+                });
+            },
+            function(err) {
+                if(!err)
+                {
+                    if(req.param('catId') == '') { // Not updating
+                    if(req.param('name')) {
+
+                        CM.create({
+                            name: req.param('name'),
+                            desc: req.param('desc'),
+                            slug: slug,
+                            visibleTo: req.param('visibleTo'),
+                            order: req.param('catOrder')
+                        }, function(err, o) {
+                            CM.reorder(JSON.parse(req.param('order')), function(e) {
+                                if(!e)
+                                    res.send(o._id, 200);
+                            })
+                        });
+                    }
+                }
+                else { //updating existing category
+                    CM.update({
+                        id: req.param('catId'),
+                        name: req.param('name'),
+                        desc: req.param('desc'),
+                        visibleTo: req.param('visibleTo'),
+                        slug: slug
+                    }, function(err, o) {
+                        if(!err)
+                            res.send('ok', 200);
+                    })
+                }
+                    if(req.param('orderChanged')) {
+                        CM.reorder(JSON.parse(req.param('order')), function(e) {
+                            if(!e)
+                                res.send('ok', 200);
+                        });
+                    }
+                }
+            });
 	});
 	
 	app.get('/admin/forums/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
@@ -424,41 +452,68 @@ module.exports = function(app, socket) {
 	});
 
 	app.post('/admin/forums/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
-		if(req.param('fId') == '') { // Not updating
-			if(req.param('name')) {
-				FM.create({
-					name: req.param('name'),
-					desc: req.param('desc'),
-					slug: functions.slugify(req.param('name')),
-					visibleTo: req.param('visibleTo', []),
-					order: req.param('fOrder'),
-					category: req.param('category')
-				}, function(err, o) {
-					FM.reorder(JSON.parse(req.param('order')), function(e) {
-						if(!e)
-							res.send(o._id, 200);
-					})
-				});
-			}
-		}
-		else { //updating existing category
-			FM.update({
-				id: req.param('fId'),
-				name: req.param('name'),
-				desc: req.param('desc'),
-				category: req.param('category'),
-				visibleTo: req.param('visibleTo', [])
-			}, function(err, o) {
-				if(!err)
-					res.send('ok', 200);
-			})
-		}
-		if(req.param('orderChanged')) {
-			FM.reorder(JSON.parse(req.param('order')), function(e) {
-				if(!e)
-					res.send('ok', 200);
-			});
-		}
+        var orig_slug = functions.slugify(req.param('name'));
+        var slug = orig_slug;
+        var unique = false;
+        var i = 0;
+        async.whilst(
+            function() { return !unique },
+            function(cb) {
+                FM.checkSlugExists(slug, function(exists) {
+                    if(!exists)
+                    {
+                        unique = true;
+                    }
+                    else
+                    {
+                        unique = false;
+                        i++;
+                        slug = orig_slug + "-"+i;
+                    }
+                    cb();
+                });
+            },
+            function(err) {
+                if(!err)
+                {
+                    if(req.param('fId') == '') { // Not updating
+                        if(req.param('name')) {
+                            FM.create({
+                                name: req.param('name'),
+                                desc: req.param('desc'),
+                                slug: functions.slugify(req.param('name')),
+                                visibleTo: req.param('visibleTo', []),
+                                order: req.param('fOrder'),
+                                category: req.param('category')
+                            }, function(err, o) {
+                                FM.reorder(JSON.parse(req.param('order')), function(e) {
+                                    if(!e)
+                                        res.send(o._id, 200);
+                                })
+                            });
+                        }
+                    }
+                    else { //updating existing forum
+                        FM.update({
+                            id: req.param('fId'),
+                            name: req.param('name'),
+                            desc: req.param('desc'),
+                            category: req.param('category'),
+                            visibleTo: req.param('visibleTo', []),
+                            slug: slug
+                        }, function(err, o) {
+                            if(!err)
+                                res.send('ok', 200);
+                        })
+                    }
+                    if(req.param('orderChanged')) {
+                        FM.reorder(JSON.parse(req.param('order')), function(e) {
+                            if(!e)
+                                res.send('ok', 200);
+                        });
+                    }
+                }
+            });
 	});
 	
 	app.post('/create/topic/', checkUser, getUser, loginUser, function(req, res){
