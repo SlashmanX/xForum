@@ -144,10 +144,8 @@ module.exports = function(app, socket) {
     })
 	
 	app.post('/login/', function(req, res){
-        req.sanitize('email').xss();
-        req.sanitize('username').xss();
-        req.sanitize('pass').xss();
 		if (req.param('email') != null){
+            req.sanitize('email').xss();
 			AM.getEmail(req.param('email'), function(o){
 				if (o){
 					res.send('ok', 200);
@@ -158,6 +156,8 @@ module.exports = function(app, socket) {
 			});
 		}	else{
 		// attempt manual login //
+            req.sanitize('user').xss();
+            req.sanitize('pass').xss();
 			AM.manualLogin(req.param('user'), req.param('pass'), function(e, o){
 				if (!o){
 					res.send(e, 400);
@@ -631,11 +631,11 @@ module.exports = function(app, socket) {
     })
 	
 	app.post('/profile/edit/', checkUser, getUser, loginUser, function(req, res){
-        req.sanitize('name').xss();
-        req.sanitize('email').xss();
-        req.sanitize('user').xss();
-        req.sanitize('pass').xss();
 		if (req.param('user') != undefined) {
+            req.sanitize('name').xss();
+            req.sanitize('email').xss();
+            req.sanitize('user').xss();
+            req.sanitize('pass').xss();
 			AM.update({
 				username 	: req.param('user'),
 				realName 	: req.param('name'),
