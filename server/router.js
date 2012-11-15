@@ -466,23 +466,51 @@ module.exports = function(app, socket) {
         req.sanitize('title').xss();
         req.sanitize('desc').xss();
         req.sanitize('post').xss();
-		// TODO: Check if user has permission to create topic here
-		TM.create({
-			title : req.param('title'),
-			desc: req.param('desc'),
-			body: req.param('post'),
-			slug: functions.slugify(req.param('title')),
-			forum: req.param('forum'),
-			author: req.session.user._id,
-			createdOn: moment().format(),
-			lastPost: moment().format()
-		}, function(o){
-				if(o)
-				{
-					socket.sockets.emit('newTopic', o);
-					res.send('/topic/'+o.slug+'/', 200);
-				}
-		})
+        var orig_slug = functions.slugify(req.param('title'));
+        var slug = orig_slug;
+        var unique = false;
+        var i = 0;
+        async.whilst(
+            function() { return !unique },
+            function(cb) {
+                TM.checkSlugExists(slug, function(exists) {
+                    if(!exists)
+                    {
+                        unique = true;
+                    }
+                    else
+                    {
+                        unique = false;
+                        i++;
+                        slug = orig_slug + "-"+i;
+                    }
+                    cb();
+                });
+            },
+            function(err) {
+                if(!err)
+                {
+                    // TODO: Check if user has permission to create topic here
+                    TM.create({
+                        title : req.param('title'),
+                        desc: req.param('desc'),
+                        body: req.param('post'),
+                        slug: slug,
+                        forum: req.param('forum'),
+                        author: req.session.user._id,
+                        createdOn: moment().format(),
+                        lastPost: moment().format()
+                    }, function(o){
+                        if(o)
+                        {
+                            socket.sockets.emit('newTopic', o);
+                            res.send('/topic/'+o.slug+'/', 200);
+                        }
+                    })
+                }
+            }
+        )
+
 	});
 	
 	app.get('/profile/:what/',checkUser, getUser, loginUser, function(req, res) {

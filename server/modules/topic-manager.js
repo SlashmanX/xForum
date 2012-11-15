@@ -29,7 +29,6 @@ TM.create			=	function(newData, callback)
 		});
 	});
 };
-
 TM.checkRead		=	function(uid, tid, callback)
 {
 	UTF.findOne({user: uid, topic: tid}).populate('topic').exec(function(e, o) {
@@ -48,6 +47,20 @@ TM.checkRead		=	function(uid, tid, callback)
 		}
 	});
 };
+
+TM.checkSlugExists  =   function(slug, callback)
+{
+    Topic.findOne({slug: slug}).exec(function(err, topic) {
+       if(topic)
+       {
+           callback(true);
+       }
+       else
+       {
+           callback(false);
+       }
+    });
+}
 
 TM.getTopic			=	function(data, callback)
 {
