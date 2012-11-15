@@ -1,17 +1,20 @@
 XForum
 ======
-A real-time forum system created using Node.js, Socket.io and MongooseJS
+A real-time forum system created using Node.js, ExpressJS,  Socket.io and MongooseJS
 
 Up-to-date demo at http://xforum.slashmanx.com. Simply login as 'admin' with password 'admin1'.
 
-Current Version: v0.0.2a (Released 23rd Oct 2012)
+Current Version: v0.0.3 (Released 15th Nov 2012)
 ================================================
+
+
 
 ### WORK IN PROGRESS!
 
-Features So Far (v0.0.2a)
+Features So Far (v0.0.3)
 ------------------------
 * Install script
+* Email validation
 * Role based access per forum (Administrators, moderators etc.)
 * Topic/Forum pagination
 * WYSIWYG text editor
@@ -23,17 +26,21 @@ Features So Far (v0.0.2a)
 * User Registration and Login (encrypted with bcrypt)
 * Styled Twitter Bootstrap layout
 * Google+ style admin panel
+* Guest Access
+* Forum moderation (e.g. ability to delete topics and posts)
 
 Coming Soon
 --------------------
 * Subforum support
 * Private Messaging system
 * imgur uploader - Upload and embed your images into your post without leaving the site
-* Email validation
 * Global & Per User Settings
 * Avatar support
 * Notification system
-* Forum moderation (i.e. ability to delete topics and posts)
+
+Upgrading from 0.0.2
+=====================
+If you are upgrading from an earlier version, it is a good idea for you to empty your database tables and then install as directed below.
 
 Note regarding install
 =====================

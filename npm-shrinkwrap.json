@@ -1,6 +1,6 @@
 {
   "name": "xForum",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "express": {
       "version": "3.0.0rc3",
@@ -243,6 +243,22 @@
       "dependencies": {
         "htmlparser": {
           "version": "1.7.6"
+        }
+      }
+    },
+    "emailjs": {
+      "version": "0.3.3",
+      "dependencies": {
+        "bufferjs": {
+          "version": "1.1.0"
+        }
+      }
+    },
+    "express-validator": {
+      "version": "0.3.0",
+      "dependencies": {
+        "validator": {
+          "version": "0.4.12"
         }
       }
     },
