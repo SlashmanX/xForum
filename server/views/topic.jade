@@ -16,7 +16,7 @@ block content
 	
 			.span3.action-buttons
 				if(user.role && user.role.permissions.CAN_POST)
-					a(href='#').btn.btn-primary.action-button
+					button.btn.btn-primary.action-button.scroll-to-reply
 						i.icon-comment-alt
 						| Add Reply
 	.topic-view.xforum
@@ -91,7 +91,7 @@ block content
 					textarea#reply-post(name = 'reply-post', rows='10').span12
 			
 					span.pull-right
-						button.btn.btn-primary(type='submit') Post
+						button.btn.btn-primary#submit-reply(type='submit') Post
 				
 	
 block append scripts

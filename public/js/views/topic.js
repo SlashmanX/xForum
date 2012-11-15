@@ -1,4 +1,5 @@
 jQuery(document).ready(function() {
+    var iDeleted = false;
 	var tc = new TopicController();
 	$('#reply-post').wysihtml5({
 			stylesheets: ['/css/editor.min.css'],
@@ -39,6 +40,7 @@ jQuery(document).ready(function() {
             url: "/delete/topic/" + topicID +"/",
             data: {"delete-topic-seq": theAuthor},
             success: function() {
+                iDeleted = true;
                 $('body').bar({
                     message : 'This topic has been deleted. Redirecting you back to the forum view.'
                 });
@@ -174,6 +176,18 @@ jQuery(document).ready(function() {
 	socket.on('editedPost', function(newPost){
 		$('section#post-'+ newPost._id).find('.post-body').html(newPost.body).effect('highlight', {}, 1000);
 	});
+
+    socket.on('deletedTopic', function(topic){
+        if(topic._id == $('.topicid').val() && !iDeleted)
+        {
+            $('body').bar({
+                message : 'This topic has been deleted. You cannot reply to it anymore.',
+                time : 10000000000000  // Needs to be 'persistent'
+            });
+            $('#reply-post').data('wysihtml5').editor.disable();
+            $('.topic-view button').attr('disabled', 'disabled').addClass('disabled');
+        }
+    })
 	
 	socket.on('newPost', function(post) {
 		if(post.topic._id == $('.topicid').val())
