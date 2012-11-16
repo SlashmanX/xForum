@@ -34,7 +34,7 @@ EM.drawVerificationEmail = function(o, callback)
 {
     e = new UEV({user: o._id, dateSent: moment().format()});
     e.save(function(err, v){
-        var link = 'http://localhost:3000/profile/verify/?token='+v._id;
+        var link = 'http://xforum.slashmanx.com/profile/verify/?token='+v._id;
         var html = "<html><body>";
         html += "Hi "+o.username+",<br><br>";
         html += "<a href='"+link+"'>Please click here to verify your email</a><br><br>";
