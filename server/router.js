@@ -35,8 +35,8 @@ module.exports = function(app, socket) {
 
 	var getUser = function (req, res, next) {
 
-		var username = req.cookies.username || req.params.username;
-		var pass = req.cookies.pass || req.params.pass;
+		var username = req.cookies.username || req.params.username || '';
+		var pass = req.cookies.pass || req.params.pass || '';
 
 		AM.autoLogin(username, pass, function(o){
 			res.locals.udata = o;
@@ -307,12 +307,15 @@ module.exports = function(app, socket) {
 		var originalAuthor = req.param('edit-post-seq');
 		var who = req.session.user;
 		if( (originalAuthor == who._id && who.role.permissions.CAN_EDIT_OWN_POSTS) || (who.role.permissions.CAN_EDIT_OTHERS_POSTS) ) {
-			PM.update({
+			PM.edit({
 				id: req.param('postid'),
-				post: req.param('edited-text')
+				post: req.param('edited-text'),
+                editor: req.session.user._id
 			}, function(p){
 				if(p) {
 					res.send(p, 200);
+                    p = p.toObject();
+                    p.editHistory[p.editHistory.length -1].editedByUser =  req.session.user.username; // TODO: Needs to be cleaned up
 					socket.sockets.emit('editedPost', p);
 				}
 			});

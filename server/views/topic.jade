@@ -44,7 +44,11 @@ block content
 										img(src=post.author.avatar).img-polaroid
 						.span10
 							.post-body
-								!{post.body}
+								.actual-post
+									!{post.body}
+								if(post.editHistory.length)
+									- var lastEdit = post.editHistory[post.editHistory.length -1]
+									div.edit-box Edited by #{lastEdit.editedBy.username} <abbr class = 'timeago' title=#{lastEdit.dateEdited}> #{lastEdit.dateEdited}</abbr>
 					.row.post-actions
 						.span2.no-margin.topic-user-actions
 							if(user.role && user.role.permissions.CAN_PM)

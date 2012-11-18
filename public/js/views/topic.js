@@ -64,8 +64,10 @@ jQuery(document).ready(function() {
 		$('.cancel-edit').trigger('click');
 		var postID = $(this).parentsUntil('section').parent().attr('id').replace('post-', '');
 	    var theDiv = $(this).parentsUntil('section').parent().find('.post-body');
+        var theHTML = $(this).parentsUntil('section').parent().find('.actual-post').html();
+        console.log(theHTML);
 		var theAuthor = $(this).parentsUntil('section').parent().find('.post-username').attr('id').split('-').pop();
-	    var editableText = $("<div class = 'editing-post'><form method = 'post' action = '/post/edit/"+postID+"/' id = 'edit-post-form'><input id = 'edit-post-seq' name = 'edit-post-seq' type= 'hidden' value = '"+ theAuthor+"'/><textarea style = 'width: "+ theDiv.width() +"px; height: "+ theDiv.height()+"px' name = 'edited-text' autofocus required>"+ theDiv.html() +"</textarea><div class = 'topic-post-actions'><button class = 'btn btn-danger cancel-edit'>Cancel</button><button class = 'btn btn-primary save-edit' type = 'submit'>Save</button></div></form>");
+	    var editableText = $("<div class = 'editing-post'><form method = 'post' action = '/post/edit/"+postID+"/' id = 'edit-post-form'><input id = 'edit-post-seq' name = 'edit-post-seq' type= 'hidden' value = '"+ theAuthor+"'/><textarea style = 'width: "+ theDiv.width() +"px; height: "+ theDiv.height()+"px' name = 'edited-text' autofocus required>"+ theHTML +"</textarea><div class = 'topic-post-actions'><button class = 'btn btn-danger cancel-edit'>Cancel</button><button class = 'btn btn-primary save-edit' type = 'submit'>Save</button></div></form>");
 		theDiv.after("<div class = 'hide before-post-edit'>"+theDiv.html()+"</div>");
 	    editableText.val(theDiv.html());
 	    $(theDiv).replaceWith(editableText);
@@ -174,8 +176,12 @@ jQuery(document).ready(function() {
     });
 	
 	socket.on('editedPost', function(newPost){
-		$('section#post-'+ newPost._id).find('.post-body').html(newPost.body).effect('highlight', {}, 1000);
-	});
+        var lastEdit = newPost.editHistory[newPost.editHistory.length -1]
+        var editHTML = "<div class = 'edit-box'>Edited by "+ lastEdit.editedByUser+"  <abbr class = 'timeago' title='"+lastEdit.dateEdited+"'> "+lastEdit.dateEdited +"</abbr>";
+		$('section#post-'+ newPost._id).find('.post-body').html('<div class = "actual-post">'+newPost.body+'</div>').append(editHTML).effect('highlight', {}, 1000);
+        $('section#post-'+ newPost._id).find('.post-body').find('abbr.timeago').untimeago();
+        $('section#post-'+ newPost._id).find('.post-body').find('abbr.timeago').timeago();
+    });
 
     socket.on('deletedTopic', function(topic){
         if(topic._id == $('.topicid').val() && !iDeleted)
@@ -202,7 +208,7 @@ jQuery(document).ready(function() {
                 userAvatar = '<img src = "'+post.author.avatar+'" class = "img-polaroid"/>';
 
 			
-			var postHTML = "<section class = 'topic-post' id = 'post-"+ post._id+"'><div class = 'row post-details'><div class = 'span2 no-margin'><i class = 'icon-user'></i><span class = 'post-username'>"+ post.author.username + "</span></div><div class = 'span10'><small>Posted <abbr id = 'timestamp-"+ post._id+"'  class = 'timeago' title = '"+post.postedOn +"'>" +post.postedOn +"</abbr></small></div></div><div class = 'row'><div class = 'span2 no-margin'><ul class = 'user-details'><li class = 'user-avatar'>"+ userAvatar + "</li></ul></div><div class = 'span10'><div class = 'post-body'>"+ post.body +"</div></div></div><div class = 'row post-actions'><div class = 'span2 no-margin topic-user-actions'><button class = 'btn btn-info' type='button'><i class = 'icon-envelope'></i>PM</button></div><div class = 'span10'><span class = 'topic-post-actions'>";
+			var postHTML = "<section class = 'topic-post' id = 'post-"+ post._id+"'><div class = 'row post-details'><div class = 'span2 no-margin'><i class = 'icon-user'></i><span class = 'post-username'>"+ post.author.username + "</span></div><div class = 'span10'><small>Posted <abbr id = 'timestamp-"+ post._id+"'  class = 'timeago' title = '"+post.postedOn +"'>" +post.postedOn +"</abbr></small></div></div><div class = 'row'><div class = 'span2 no-margin'><ul class = 'user-details'><li class = 'user-avatar'>"+ userAvatar + "</li></ul></div><div class = 'span10'><div class = 'post-body'><div class = 'actual-post'>"+ post.body +"</div></div></div></div><div class = 'row post-actions'><div class = 'span2 no-margin topic-user-actions'><button class = 'btn btn-info' type='button'><i class = 'icon-envelope'></i>PM</button></div><div class = 'span10'><span class = 'topic-post-actions'>";
 
 
             if(canPost)

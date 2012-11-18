@@ -64,6 +64,23 @@ PM.update			=	function(data, callback) {
 	})
 };
 
+PM.edit			=	function(data, callback) {
+    Post.findOne({_id: data.id}).exec(function(err, post) {
+        if(err)
+            console.log(err);
+        else {
+            post.editHistory.push({editedBy: data.editor, dateEdited: moment().format(), prevBody: post.body, newBody: data.post});
+            post.body = data.post;
+            post.save(function(error, p){
+                if(error) console.log(error);
+                else
+                    callback(p);
+            })
+        }
+
+    })
+};
+
 PM.delete           =   function(id, callback) {
     Post.findByIdAndRemove(id).populate('topic').exec(function(err, p) {
         p = p.toObject();
@@ -86,9 +103,11 @@ PM.getPostInfo      =   function(pid, callback)
 }
 PM.getTopic			=	function(tid, callback)
 {
-	Post.find({topic: tid}).populate('author').sort({postedOn: 1}).exec(function(e, posts) {
+	Post.find({topic: tid}).populate('author').populate('editHistory.editedBy').sort({postedOn: 1}).exec(function(e, posts) {
 		if (e) callback(e)
-		else callback(null, posts)
+		else {
+            callback(null, posts)
+        }
 	});
 }
 
