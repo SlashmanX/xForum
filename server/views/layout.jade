@@ -26,7 +26,7 @@ html
 			include navbar
 		.container
 			.row
-				if(!user.emailVerified)
+				if(user._id && !user.emailVerified)
 					.alert.fade.in
 						button(type="button", data-dismiss="alert").close &times;
 						strong Warning!&nbsp;
