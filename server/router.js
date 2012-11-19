@@ -5,6 +5,7 @@ var TM = require('./modules/topic-manager');
 var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
 var RM = require('./modules/role-manager');
+var DB = require('./modules/db-settings');
 var Settings = require('./modules/settings-manager');
 var Email = require('./modules/email-dispatcher.js');
 
@@ -17,7 +18,7 @@ var	mongoose	=	require('mongoose');
 var	async		=	require('async');
 
 
-mongoose.connect('localhost', 'xForum');
+mongoose.connect(DB.host, DB.database, DB.port, {user: DB.user, pass: DB.password});
 
 module.exports = function(app, socket) {
 	
