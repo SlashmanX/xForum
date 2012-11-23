@@ -176,14 +176,16 @@ module.exports = function(app, socket) {
 	});
 
     app.get('/avatar/', checkUser, getUser, loginUser, function(req, res) {
-        console.log('here');
         res.render('avatar', { title : 'Update Avatar | xForum'});
     });
     app.post('/upload/', checkUser, getUser, loginUser, function(req, res){
         upload.start(req, res, {uploadDir: __dirname + '/../public/uploads/avatars',
             uploadUrl: '/uploads/avatars'}, function(results){
-            console.log(results);
-            res.json(200, results);
+            AM.updateAvatar({id: req.session.user._id, avatar: results[0].url}, function(err, result){
+                if(err) console.log(err);
+                res.json(200, results);
+            })
+
         });
     });
 	// logged-in user homepage //

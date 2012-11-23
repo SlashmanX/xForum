@@ -7,6 +7,12 @@ $(document).ready(function(){
                 'width',
                 progress + '%'
             );
+        },
+
+        completed: function (e, data) {
+            $('body').bar({
+                message : 'Your avatar has been updated.'
+            });
         }
 
     });
