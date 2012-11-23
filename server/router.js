@@ -6,6 +6,7 @@ var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
 var RM = require('./modules/role-manager');
 var DB = require('./modules/db-settings');
+var upload = require('./modules/upload-manager');
 var Settings = require('./modules/settings-manager');
 var Email = require('./modules/email-dispatcher.js');
 
@@ -172,8 +173,19 @@ module.exports = function(app, socket) {
 				}
 			});
 		}
-	});	
-	
+	});
+
+    app.get('/avatar/', checkUser, getUser, loginUser, function(req, res) {
+        console.log('here');
+        res.render('avatar', { title : 'Update Avatar | xForum'});
+    });
+    app.post('/upload/', checkUser, getUser, loginUser, function(req, res){
+        upload.start(req, res, {uploadDir: __dirname + '/../public/uploads/avatars',
+            uploadUrl: '/uploads/avatars'}, function(results){
+            console.log(results);
+            res.json(200, results);
+        });
+    });
 	// logged-in user homepage //
 	
 	app.get('/', checkUser, getUser, loginUser, function(req, res) {
