@@ -12,7 +12,7 @@ upload.start = function (req, res, options, cb) {
         },
         nameCountRegexp = /(?:(?: \(([\d]+)\))?(\.[^.]+))?$/,
         nameCountFunc = function (s, index, ext) {
-            return ' (' + ((parseInt(index, 10) || 0) + 1) + ')' + (ext || '');
+            return '(' + ((parseInt(index, 10) || 0) + 1) + ')' + (ext || '');
         };
 
     options = _.extend({

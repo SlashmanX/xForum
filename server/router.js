@@ -18,6 +18,7 @@ var	moment		=	require('moment');
 var	mongoose	=	require('mongoose');
 var	async		=	require('async');
 
+var fs          =   require('fs');
 
 mongoose.connect(DB.host, DB.database, DB.port, {user: DB.user, pass: DB.password});
 
@@ -151,7 +152,6 @@ module.exports = function(app, socket) {
 			AM.getEmail(req.param('email'), function(o){
 				if (o){
 					res.send('ok', 200);
-					//EM.send(o, function(e, m){ console.log('error : '+e, 'msg : '+m)});	
 				}	else{
 					res.send('email-not-found', 400);
 				}
@@ -181,6 +181,12 @@ module.exports = function(app, socket) {
     app.post('/upload/', checkUser, getUser, loginUser, function(req, res){
         upload.start(req, res, {uploadDir: __dirname + '/../public/uploads/avatars',
             uploadUrl: '/uploads/avatars'}, function(results){
+            var oldAvatar = req.session.user.avatar;
+            if(oldAvatar && oldAvatar.split('/')[2].split(':')[0] == req.host) // Has previously uploaded avatar
+            {
+                var arr = oldAvatar.split('/');
+                fs.unlinkSync(process.cwd() + '/public/uploads/avatars/'+ arr[arr.length - 1]);
+            }
             AM.updateAvatar({id: req.session.user._id, avatar: results[0].url}, function(err, result){
                 if(err) console.log(err);
                 res.json(200, results);
