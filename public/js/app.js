@@ -1,3 +1,5 @@
+window.require = require;
+var browserijade = require('browserijade');
 var url = [location.protocol, '//', location.host].join('');
 var socket;
 $(document).ready(function(){
