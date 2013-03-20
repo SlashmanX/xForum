@@ -10,6 +10,7 @@ var	postSchema = new Schema({
 	topic: {type: ObjectId, ref: 'Topic'},
 	body: String,
 	postedOn: {type: String, default: moment().format()},
+    isSpam : {type: Boolean, default: false},
     editHistory: [{
             editedBy: {type: ObjectId, ref: 'User'},
             dateEdited: {type: String, default: moment().format()},

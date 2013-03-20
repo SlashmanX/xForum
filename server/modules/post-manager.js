@@ -7,6 +7,7 @@ var	FM			=	require('./forum-manager.js');
 var	TM			=	require('./topic-manager.js');
 var	mongoose	=	require('mongoose');
 var	moment		=	require('moment');
+var akismet     =   require('akismet').client({ blog: 'http://xforum.slashmanx.com', apiKey: '0cfa41b5611f' });
 var	ObjectId	=	mongoose.Types.ObjectId;
 
 var	PM			=	{};
@@ -26,6 +27,16 @@ PM.create			=	function(newData, callback)
             prevAuthor = tmp.replies[0].author;
             postID = t.replies[0];
         }
+        akismet.checkSpam({
+            user_ip: '1.1.1.1',
+            comment_author: newData.author,
+            comment_content: newData.body
+        }, function(err, spam) {
+            if(spam)
+                newData.isSpam = true;
+            else
+                newData.isSpam = false;
+        });
         if(""+prevAuthor == ""+newData.author)
         {
             t.lastPost = moment().format();
@@ -103,7 +114,7 @@ PM.getPostInfo      =   function(pid, callback)
 }
 PM.getTopic			=	function(tid, callback)
 {
-	Post.find({topic: tid}).populate('author').populate('editHistory.editedBy').sort({postedOn: 1}).exec(function(e, posts) {
+	Post.find({topic: tid, isSpam: false}).populate('author').populate('editHistory.editedBy').sort({postedOn: 1}).exec(function(e, posts) {
 		if (e) callback(e)
 		else {
             callback(null, posts)
