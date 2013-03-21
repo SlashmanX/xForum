@@ -6,6 +6,35 @@ jQuery(document).ready(function() {
 			scripts: 'http://platform.twitter.com/widgets.js'
 	});
 
+    $('.report-post').on('click', function(e) {
+        e.preventDefault();
+        var postID = $(this).parentsUntil('section').parent().attr('id').replace('post-', '');
+        $('#modal-confirm-header').text('Report Post');
+        $('#modal-confirm-body').html("<label for = 'message'>Reason for Reporting:</label><textarea id = 'report-post-reason' name='message'></textarea> ");
+        $('#modal-confirm-ok').text('Report').addClass('btn-primary');
+        $('#modal-confirm-ok').on('click', function(e){
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/post/report/" + postID +"/",
+                data: {"message": $('#report-post-reason').val()},
+                success: function() {
+                    $('.modal-confirm').modal('hide');
+                    $('body').bar({
+                        message : 'This post has been reported.'
+                    });
+                },
+
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $('body').bar({
+                        message : 'Error reporting post.'
+                    });
+                }
+            });
+        });
+        $('.modal-confirm').modal({show: true});
+    })
+
     $('.delete-post').on('click', function(e) {
         e.preventDefault();
         var postID = $(this).parentsUntil('section').parent().attr('id').replace('post-', '');

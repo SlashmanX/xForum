@@ -43,8 +43,10 @@ PM.create			=	function(newData, callback)
             t.markModified('lastPost');
             t.save();
             Post.findById(postID).exec(function(perr, p) {
+                p.editHistory.push({editedBy: newData.author, dateEdited: moment().format(), prevBody: p.body, newBody: newData.body});
                 p.body = p.body + "<br/><br/>"+ newData.body;
                 p.postedOn = moment().format();
+                p.markModified('editHistory');
                 p.markModified('body');
                 p.markModified('postedOn');
                 p.save(function(nerr, post){
@@ -84,8 +86,9 @@ PM.edit			=	function(data, callback) {
             post.body = data.post;
             post.save(function(error, p){
                 if(error) console.log(error);
-                else
+                else {
                     callback(p);
+                }
             })
         }
 
@@ -114,7 +117,7 @@ PM.getPostInfo      =   function(pid, callback)
 }
 PM.getTopic			=	function(tid, callback)
 {
-	Post.find({topic: tid, isSpam: false}).populate('author').populate('editHistory.editedBy').sort({postedOn: 1}).exec(function(e, posts) {
+	Post.find({topic: tid}).populate('author').populate('editHistory.editedBy').sort({postedOn: 1}).exec(function(e, posts) {
 		if (e) callback(e)
 		else {
             callback(null, posts)
