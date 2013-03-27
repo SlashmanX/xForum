@@ -117,7 +117,7 @@ PM.getPostInfo      =   function(pid, callback)
 }
 PM.getTopic			=	function(tid, callback)
 {
-	Post.find({topic: tid}).populate('author').populate('editHistory.editedBy').where('isSpam', false).sort({postedOn: 1}).exec(function(e, posts) {
+	Post.find({topic: tid}).where('isSpam', {$ne : true}).populate('author').populate('editHistory.editedBy').sort({postedOn: 1}).exec(function(e, posts) {
 		if (e) callback(e)
 		else {
             callback(null, posts)
