@@ -92,6 +92,12 @@ module.exports = function(app, socket) {
     });
 
     app.post('/install/', function(req, res){
+        Settings.add({
+            dbName: 'doublePostsTimeToWait',
+            displayName: 'Time to wait between double posts',
+            description: 'The amount of time (in minutes) after which a double post by a user will register as 2 separate posts',
+            value: 10
+        }, function(){});
         RM.create({ "name" : "Guest"}, function(err, guest){
             if(guest) {
                 RM.create({ "name" : "Unverified",

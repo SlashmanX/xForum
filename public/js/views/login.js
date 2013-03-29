@@ -43,7 +43,7 @@ $(document).ready(function(){
 			ev.showEmailSuccess("Check your email on how to reset your password.");
 		},
 		error : function(){
-			ev.showEmailAlert("I'm Sorry. I could not find that email address");
+			ev.showEmailAlert("I'm sorry. I could not find that email address");
 		}
 	});
 	

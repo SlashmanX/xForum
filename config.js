@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 var	lessMiddleware	=	require('less-middleware');
 var expressValidator = require('express-validator');
 var DB  =   require('./server/modules/db-settings.js');
@@ -7,6 +8,19 @@ var connect = require('connect')
   , server_config = new Server(DB.host, DB.port, {auto_reconnect: true, native_parser: true})
   , db = new Db(DB.database, server_config, {})
   , MongoStore = require('connect-mongodb');
+=======
+var lessMiddleware      =   require('less-middleware');
+var expressValidator    =   require('express-validator');
+var DB                  =   require('./server/modules/db-settings.js');
+var connect             =   require('connect');
+var Db                  =   require('mongodb').Db;
+var Server              =   require('mongodb').Server;
+var server_config       =   new Server(DB.host, DB.port, {auto_reconnect: true, native_parser: true});
+var db                  =   new Db(DB.database, server_config, {});
+var MongoStore          =   require('connect-mongodb');
+var browserify          =   require('browserify');
+var browserijade        =   require('browserijade');
+>>>>>>> Stashed changes
 
 
 module.exports = function(app, exp) {

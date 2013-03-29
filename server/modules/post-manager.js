@@ -17,7 +17,7 @@ module.exports	=	PM;
 PM.create			=	function(newData, callback) 
 {
     // TODO : Check if previous post in this topic was by the same author, and within the past 10 mins (settings)
-    Topic.findById(newData.topic).populate('post', 'author').populate('replies', 'author', null, {sort: {postedOn: -1}, limit: 1}).exec(function(err, t) {
+    Topic.findById(newData.topic).populate('post', 'author').populate('replies', 'author postedOn', null, {sort: {postedOn: -1}, limit: 1}).exec(function(err, t) {
         var tmp = t.toObject();
         var prevAuthor = tmp.post.author;
         var postID = tmp.post;
@@ -25,8 +25,24 @@ PM.create			=	function(newData, callback)
         {
             prevAuthor = tmp.replies[0].author;
             postID = t.replies[0];
+            lastPosted = t.replies[0].postedOn;
         }
+<<<<<<< Updated upstream
         if(""+prevAuthor == ""+newData.author)
+=======
+        akismet.checkSpam({
+            user_ip: '1.1.1.1',
+            comment_author: newData.author,
+            comment_content: newData.body
+        }, function(err, spam) {
+            if(spam)
+                newData.isSpam = true;
+            else
+                newData.isSpam = false;
+        });
+        console.log(moment().diff(lastPosted, 'minutes'));
+        if(""+prevAuthor == ""+newData.author && moment().diff(lastPosted, 'minutes') < 10)
+>>>>>>> Stashed changes
         {
             t.lastPost = moment().format();
             t.markModified('lastPost');
