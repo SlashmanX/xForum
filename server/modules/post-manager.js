@@ -27,9 +27,6 @@ PM.create			=	function(newData, callback)
             postID = t.replies[0];
             lastPosted = t.replies[0].postedOn;
         }
-<<<<<<< Updated upstream
-        if(""+prevAuthor == ""+newData.author)
-=======
         akismet.checkSpam({
             user_ip: '1.1.1.1',
             comment_author: newData.author,
@@ -42,7 +39,6 @@ PM.create			=	function(newData, callback)
         });
         console.log(moment().diff(lastPosted, 'minutes'));
         if(""+prevAuthor == ""+newData.author && moment().diff(lastPosted, 'minutes') < 10)
->>>>>>> Stashed changes
         {
             t.lastPost = moment().format();
             t.markModified('lastPost');
