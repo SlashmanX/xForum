@@ -1,0 +1,39 @@
+if category.forums.length
+	.home-category
+		.row(id = 'cat-' + category.slug).display-head
+			a(href= '/category/'+ category.slug+'/').display-title #{category.name}
+
+		.row.display-headings
+			.span9
+				.span1 Status
+				.span4 Forum
+				.span1 Topics
+				.span2 Last Post
+
+		section.home-category-forums
+			each forum in category.forums
+				if forum.parent == null
+					.row.display-row(id = 'forum-' + forum._id)
+						.span9
+							.span1.forum-read-status
+								if forum.isRead
+									i.icon-folder-open
+								else
+									i.icon-folder-close
+
+							.span4
+								a(href = '/forum/'+ forum.slug +'/') #{forum.name}
+								p.help-block.display-subtitle= forum.desc
+
+							.span1.home-category-num-topics= forum.topics.length
+
+							.span2.topic-last-post
+								if(forum.lastPostTopic)
+									abbr.timeago.home-category-last-post-time(title = forum.lastPostTopic.lastPost)= forum.lastPostTopic.lastPost
+									br
+									b In:&nbsp;
+									a(href = '/topic/'+ forum.lastPostTopic.slug +'/#post-'+ forum.lastPostTopic.replies[0]._id).home-category-last-post-link
+										span.home-category-last-post-topic= forum.lastPostTopic.title
+									br
+									b By:&nbsp;
+									span.home-category-last-post-author= forum.lastPostTopic.replies[0].author.username

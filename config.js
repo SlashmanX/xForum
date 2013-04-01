@@ -15,7 +15,10 @@ module.exports = function(app, exp) {
 		app.set('views', app.root + '/server/views');
 		app.set('view engine', 'jade');
 		app.set('view options', { doctype : 'html', pretty : true });
-		app.use(exp.bodyParser());
+        var bundle = browserify().use(browserijade(app.root + '/server/views/partials'));
+        bundle.addEntry(app.root + '/public/js/app.js');
+        app.use(bundle);
+        app.use(exp.bodyParser());
         app.use(expressValidator);
 		app.use(exp.cookieParser('I am not wearing any pants'));
 		app.use(exp.session({
