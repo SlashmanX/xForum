@@ -5,6 +5,7 @@ var TM = require('./modules/topic-manager');
 var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
 var RM = require('./modules/role-manager');
+var RepM = require('./modules/report-manager');
 var DB = require('./modules/db-settings');
 var upload = require('./modules/upload-manager');
 var Settings = require('./modules/settings-manager');
@@ -358,6 +359,20 @@ module.exports = function(app, socket) {
 			res.send('error', 403);
 		}
 	});
+
+    app.post('/post/report/:postid/', checkUser, getUser, loginUser, function(req, res) {
+        req.sanitize('message').xss();
+        RepM.create({
+            post: req.param('postid'),
+            reportedBy: req.session.user._id,
+            message: req.param('message')
+        }, function(err, o) {
+            if(!err)
+                res.send(o, 200);
+            else
+                res.send('error', 403);
+        });
+    });
 	
 	app.post('/topic/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
         req.sanitize('reply-post').xss();
@@ -371,16 +386,21 @@ module.exports = function(app, socket) {
 					res.send(o._id, 200);
                     if(!edited)
 					    socket.sockets.emit('newPost', o);
-                    else
+                    else {
+                        o = o.toObject();
+                        o.editHistory[o.editHistory.length -1].editedByUser =  req.session.user.username; // TODO: Needs to be cleaned up
                         socket.sockets.emit('editedPost', o);
+                    }
 				}
 			});
 	});
 	
 	app.get('/admin/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
-		ADMIN.getDashboardStats(function (stats) {
-			res.render('admin/dashboard', {title : 'Dashboard | xForum Admin', stats: stats});
-		})
+        ADMIN.getNotifications(function(notifications){
+            ADMIN.getDashboardStats(function (stats) {
+                res.render('admin/dashboard', {title : 'Dashboard | xForum Admin', stats: stats, notifications: notifications});
+            });
+        })
 	});
 	
 	app.get('/admin/roles/add/', checkUser, getUser, loginUser, checkAdmin, function(req, res){

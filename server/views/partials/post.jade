@@ -1,0 +1,58 @@
+section.topic-post(id = 'post-'+ post._id)
+	.row.post-details
+		.span2.no-margin
+			i.icon-user
+			span.post-username(id= 'post-'+post._id + '-user-'+ post.author._id)= post.author.username
+		.span10
+			small Posted&nbsp;
+				abbr(id = 'timestamp-'+ post._id).timeago(title=post.postedOn) #{post.postedOn}
+	.row.post-main
+		.span2.no-margin
+			ul.user-details
+				li.user-avatar
+					if(!post.author.avatar)
+						img(data-src="holder.js/120x120/text:"+post.author.username).img-polaroid
+					else
+						img(src=post.author.avatar).img-polaroid
+		.span10
+			.post-body
+				.actual-post
+					!{post.body}
+				if(post.editHistory.length)
+					- var lastEdit = post.editHistory[post.editHistory.length -1]
+					div.edit-box Edited by #{lastEdit.editedBy.username} <abbr class = 'timeago' title=#{lastEdit.dateEdited}> #{lastEdit.dateEdited}</abbr>
+	.row.post-actions
+		.span2.no-margin.topic-user-actions
+			if(user.role && user.role.permissions.CAN_PM)
+				button.btn.btn-info.pm-user(type='button')
+					i.icon-envelope
+					| PM
+			else
+				| &nbsp;
+		.span10
+			span.topic-post-actions
+				if(user.role && user.role.permissions.CAN_POST)
+					button.btn.reply-post(type='button')
+						i.icon-comment
+						| Reply
+				if(user.role && user.role.permissions.CAN_POST)
+					button.btn.multiquote-post(type='button')
+						i.icon-comments
+						| Multi Quote
+				if  ((user.username == post.author.username) && (user.role && user.role.permissions.CAN_EDIT_OWN_POSTS)) || (user.role && user.role.permissions.CAN_EDIT_OTHERS_POSTS)
+					button.btn.edit-post(type='button')
+						i.icon-edit
+						| Edit
+				if user.username != post.author.username
+					button.btn.btn-warning.report-post(type='button')
+						i.icon-legal
+						| Report
+				if  (post._id != ''+ topic.post) && (((user.username == post.author.username) && (user.role && user.role.permissions.CAN_DELETE_OWN_POSTS)) || (user.role && user.role.permissions.CAN_DELETE_OTHERS_POSTS))
+					button.btn.btn-danger.delete-post(type='button')
+						i.icon-trash
+						| Delete
+
+				if  (post._id == ''+ topic.post) && (((user.username == post.author.username) && (user.role && user.role.permissions.CAN_DELETE_OWN_TOPICS)) || (user.role && user.role.permissions.CAN_DELETE_OTHERS_TOPICS))
+					button.btn.btn-danger.delete-topic(type='button')
+						i.icon-trash
+						| Delete Topic

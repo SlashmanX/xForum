@@ -1,6 +1,7 @@
 var	User		=	require('../models/User.js');
 var Topic		=	require('../models/Topic.js');
 var Post		=	require('../models/Post.js');
+var RepM        =   require('./report-manager');
 var	AM			=	{};
 
 module.exports = AM;
@@ -21,4 +22,12 @@ AM.getDashboardStats = function(callback) {
 		})
 		
 	});
+}
+
+AM.getNotifications = function(callback) {
+    var notifications = {};
+    RepM.getUnseenReports(function(e, reps){
+        notifications.reports = reps;
+        callback(notifications);
+    })
 }

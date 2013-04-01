@@ -16,4 +16,5 @@ block content
 		.widget-header
 			h3 Notifications
 		.widget-body
-			span Coming Soon...
+			each report in notifications.reports
+				span=report.message

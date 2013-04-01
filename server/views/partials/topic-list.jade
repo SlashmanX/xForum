@@ -1,0 +1,23 @@
+.row.display-row(id = 'topic-' + topic.slug)
+	.span9
+		.span1.topic-status
+			if topic.isRead
+				i.icon-folder-open
+			else
+				i.icon-folder-close
+		.span3
+			a(href = '/topic/'+topic.slug+'/') #{topic.title}
+			p.help-block.display-subtitle= topic.desc
+		.span1= topic.views
+		.span1.topic-replies= topic.replies.length
+		.span2.topic-last-post
+			if topic.lastPostInfo
+				abbr.timeago(title=topic.lastPostInfo.postedOn).topic-last-post-time #{topic.lastPostInfo.postedOn}
+			else
+				abbr.timeago(title=topic.lastPost).topic-last-post-time #{topic.lastPost}
+			div
+				strong By:&nbsp;
+				if topic.lastPostInfo
+					span.topic-last-post-author=topic.lastPostInfo.author.username
+				else
+					span.topic-last-post-author=topic.authorname
