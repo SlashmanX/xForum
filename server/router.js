@@ -209,7 +209,7 @@ module.exports = function(app, socket) {
 	// logged-in user homepage //
 	
 	app.get('/', checkUser, getUser, loginUser, function(req, res) {
-		CM.listHomePage(req.session.user, function(e, categories){
+		CM.listHomePage({user: req.session.user}, function(e, categories){
 			if(e) {
 				console.error('Error getting categories: '+ e);
 			}
@@ -219,11 +219,12 @@ module.exports = function(app, socket) {
 	});
 	
 	app.get('/category/:slug/', checkUser, getUser, loginUser, function(req, res) {
-		CM.listOne(req.param('slug'), req.session.user._id, function(e, category){
+		CM.listHomePage({slug: req.param('slug'), user: req.session.user}, function(e, category){
 			if(e) {
 				console.error('Error getting category: '+ e);
 			}
-			res.render('category', { title : category.name +' | xForum', category : category });
+            category = category[0];
+			res.render('category', { title : category.name +' | xForum', category : category});
 		})
 	});
 	

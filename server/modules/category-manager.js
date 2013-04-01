@@ -35,24 +35,27 @@ CM.checkSlugExists  =   function(slug, callback)
     });
 }
 
-CM.listHomePage		=	function(user, callback)
+CM.listHomePage		=	function(data, callback)
 {
+    var user = data.user;
+    var slug = data.slug;
+    var findOpts = {};
+    if(slug)
+        findOpts = {slug: slug};
     var popOpts = {
         path: 'forums',
         match: {$or : [{visibleTo: user.role._id}, {visibleTo : [] }]},
         options: {sort: [['order', 'ascending'], '_id', 'ascending']}
     }
-	Category.find().populate(popOpts).sort({order: 1, _id: 1}).exec(function(e, categories) {
+	Category.find(findOpts).populate(popOpts).sort({order: 1, _id: 1}).exec(function(e, categories) {
 		if (e) {
 			callback(e);
 		}
 		else {
             Topic.populate(categories, {path: 'forums.topics', options: {sort: {lastPost: -1}}}, function(err, c)
             {
-                console.log(err);
                 Post.populate(c, {path: 'forums.topics.replies', options: {sort: {postedOn: -1}}, select: 'author'}, function(err, c)
                 {
-                    console.log(err);
                     User.populate(c, {path: 'forums.topics.replies.author', select: 'username'}, function(err, c)
                     {
                         //Getting readStatus of each forum
