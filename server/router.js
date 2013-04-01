@@ -98,6 +98,12 @@ module.exports = function(app, socket) {
             description: 'The amount of time (in minutes) after which a double post by a user will register as 2 separate posts',
             value: 10
         }, function(){});
+        Settings.add({
+            dbName: 'allowGuestAccess',
+            displayName: 'Allow Guest Access',
+            description: 'Allow guests to view the forum without logging in',
+            value: true
+        }, function(){});
         RM.create({ "name" : "Guest"}, function(err, guest){
             if(guest) {
                 RM.create({ "name" : "Unverified",

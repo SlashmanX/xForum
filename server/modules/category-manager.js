@@ -55,7 +55,6 @@ CM.listHomePage		=	function(user, callback)
                     console.log(err);
                     User.populate(c, {path: 'forums.topics.replies.author', select: 'username'}, function(err, c)
                     {
-                        console.log(err);
                         //Getting readStatus of each forum
                         var cLength = categories.length;
                         var cCount = 0;

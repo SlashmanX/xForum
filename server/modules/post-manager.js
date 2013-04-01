@@ -8,6 +8,8 @@ var	TM			=	require('./topic-manager.js');
 var	mongoose	=	require('mongoose');
 var	moment		=	require('moment');
 var	ObjectId	=	mongoose.Types.ObjectId;
+var akismet     =   require('akismet').client({ blog: 'http://xforum.slashmanx.com', apiKey: '0cfa41b5611f' });
+
 
 var	PM			=	{};
 module.exports	=	PM;

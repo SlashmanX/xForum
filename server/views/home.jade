@@ -34,9 +34,9 @@ block content
 					section.home-category-forums
 						each forum in cat.forums
 							if forum.parent == null
-								.row.display-row(id = 'forum-' + forum.slug)
+								.row.display-row(id = 'forum-' + forum._id)
 									.span9
-										.span1
+										.span1.forum-read-status
 											if forum.isRead
 												i.icon-folder-open
 											else
