@@ -33,6 +33,24 @@ jQuery(document).ready(function() {
             });
         });
         $('.modal-confirm').modal({show: true});
+    });
+
+    $('.post-edit-history').on('click', function(e) {
+
+        console.log('here');
+        e.preventDefault();
+        var postID = $(this).parentsUntil('section').parent().attr('id').replace('post-', '');
+        $('#modal-confirm-header').text('Post History');
+        socket.emit('getPostEditHistory', {id: postID}, function(err, history) {
+            $('#modal-confirm-body').html("");
+            var editHtml = "";
+            for(var h in history) {
+                editHtml += "<h4>On "+ history[h].dateEdited +" "+ history[h].editedBy.username +" changed this post to: </h4><p> "+ history[h].newBody +"</p><hr />";
+            }
+            $('#modal-confirm-body').html(editHtml);
+            $('#modal-confirm-ok').text('Close').addClass('btn-primary');
+            $('.modal-confirm').modal({show: true});
+        });
     })
 
     $('.delete-post').on('click', function(e) {

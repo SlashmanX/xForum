@@ -43,6 +43,10 @@ section.topic-post(id = 'post-'+ post._id)
 					button.btn.edit-post(type='button')
 						i.icon-edit
 						| Edit
+				if  (((user.username == post.author.username) && (user.role && user.role.permissions.CAN_EDIT_OWN_POSTS)) || (user.role && user.role.permissions.CAN_EDIT_OTHERS_POSTS)) && post.editHistory.length > 0
+					button.btn.post-edit-history(type='button')
+						i.icon-briefcase
+						| View Edit History
 				if user.username != post.author.username
 					button.btn.btn-warning.report-post(type='button')
 						i.icon-legal

@@ -115,6 +115,13 @@ PM.getPostInfo      =   function(pid, callback)
         callback(postInfo);
     })
 }
+PM.getPostEditHistory      =   function(pid, callback)
+{
+    Post.findById(pid).select('editHistory').populate('editHistory.editedBy').exec(function(e, postInfo){
+        if(e) callback(e)
+        else callback(null, postInfo.editHistory);
+    })
+}
 PM.getTopic			=	function(tid, callback)
 {
 	Post.find({topic: tid}).populate('author').populate('editHistory.editedBy').sort({postedOn: 1}).exec(function(e, posts) {
