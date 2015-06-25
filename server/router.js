@@ -5,6 +5,9 @@ var TM = require('./modules/topic-manager');
 var PM = require('./modules/post-manager');
 var CT = require('./modules/country-list');
 var RM = require('./modules/role-manager');
+var RepM = require('./modules/report-manager');
+var DB = require('./modules/db-settings');
+var upload = require('./modules/upload-manager');
 var Settings = require('./modules/settings-manager');
 var Email = require('./modules/email-dispatcher.js');
 
@@ -16,8 +19,9 @@ var	moment		=	require('moment');
 var	mongoose	=	require('mongoose');
 var	async		=	require('async');
 
+var fs          =   require('fs');
 
-mongoose.connect('localhost', 'xForum');
+mongoose.connect(DB.host, DB.database, DB.port, {user: DB.user, pass: DB.password});
 
 module.exports = function(app, socket) {
 	
@@ -35,8 +39,8 @@ module.exports = function(app, socket) {
 
 	var getUser = function (req, res, next) {
 
-		var username = req.cookies.username || req.params.username;
-		var pass = req.cookies.pass || req.params.pass;
+		var username = req.cookies.username || req.params.username || '';
+		var pass = req.cookies.pass || req.params.pass || '';
 
 		AM.autoLogin(username, pass, function(o){
 			res.locals.udata = o;
@@ -89,6 +93,18 @@ module.exports = function(app, socket) {
     });
 
     app.post('/install/', function(req, res){
+        Settings.add({
+            dbName: 'doublePostsTimeToWait',
+            displayName: 'Time to wait between double posts',
+            description: 'The amount of time (in minutes) after which a double post by a user will register as 2 separate posts',
+            value: 10
+        }, function(){});
+        Settings.add({
+            dbName: 'allowGuestAccess',
+            displayName: 'Allow Guest Access',
+            description: 'Allow guests to view the forum without logging in',
+            value: true
+        }, function(){});
         RM.create({ "name" : "Guest"}, function(err, guest){
             if(guest) {
                 RM.create({ "name" : "Unverified",
@@ -149,7 +165,6 @@ module.exports = function(app, socket) {
 			AM.getEmail(req.param('email'), function(o){
 				if (o){
 					res.send('ok', 200);
-					//EM.send(o, function(e, m){ console.log('error : '+e, 'msg : '+m)});	
 				}	else{
 					res.send('email-not-found', 400);
 				}
@@ -171,12 +186,31 @@ module.exports = function(app, socket) {
 				}
 			});
 		}
-	});	
-	
+	});
+
+    app.get('/avatar/', checkUser, getUser, loginUser, function(req, res) {
+        res.render('avatar', { title : 'Update Avatar | xForum'});
+    });
+    app.post('/upload/', checkUser, getUser, loginUser, function(req, res){
+        upload.start(req, res, {uploadDir: __dirname + '/../public/uploads/avatars',
+            uploadUrl: '/uploads/avatars'}, function(results){
+            var oldAvatar = req.session.user.avatar;
+            if(oldAvatar && oldAvatar.split('/')[2].split(':')[0] == req.host) // Has previously uploaded avatar
+            {
+                var arr = oldAvatar.split('/');
+                fs.unlinkSync(process.cwd() + '/public/uploads/avatars/'+ arr[arr.length - 1]);
+            }
+            AM.updateAvatar({id: req.session.user._id, avatar: results[0].url}, function(err, result){
+                if(err) console.log(err);
+                res.json(200, results);
+            })
+
+        });
+    });
 	// logged-in user homepage //
 	
 	app.get('/', checkUser, getUser, loginUser, function(req, res) {
-		CM.listHomePage(req.session.user, function(e, categories){
+		CM.listHomePage({user: req.session.user}, function(e, categories){
 			if(e) {
 				console.error('Error getting categories: '+ e);
 			}
@@ -186,11 +220,12 @@ module.exports = function(app, socket) {
 	});
 	
 	app.get('/category/:slug/', checkUser, getUser, loginUser, function(req, res) {
-		CM.listOne(req.param('slug'), req.session.user._id, function(e, category){
+		CM.listHomePage({slug: req.param('slug'), user: req.session.user}, function(e, category){
 			if(e) {
 				console.error('Error getting category: '+ e);
 			}
-			res.render('category', { title : category.name +' | xForum', category : category });
+            category = category[0];
+			res.render('category', { title : category.name +' | xForum', category : category});
 		})
 	});
 	
@@ -307,12 +342,15 @@ module.exports = function(app, socket) {
 		var originalAuthor = req.param('edit-post-seq');
 		var who = req.session.user;
 		if( (originalAuthor == who._id && who.role.permissions.CAN_EDIT_OWN_POSTS) || (who.role.permissions.CAN_EDIT_OTHERS_POSTS) ) {
-			PM.update({
+			PM.edit({
 				id: req.param('postid'),
-				post: req.param('edited-text')
+				post: req.param('edited-text'),
+                editor: req.session.user._id
 			}, function(p){
 				if(p) {
 					res.send(p, 200);
+                    p = p.toObject();
+                    p.editHistory[p.editHistory.length -1].editedByUser =  req.session.user.username; // TODO: Needs to be cleaned up
 					socket.sockets.emit('editedPost', p);
 				}
 			});
@@ -321,6 +359,20 @@ module.exports = function(app, socket) {
 			res.send('error', 403);
 		}
 	});
+
+    app.post('/post/report/:postid/', checkUser, getUser, loginUser, function(req, res) {
+        req.sanitize('message').xss();
+        RepM.create({
+            post: req.param('postid'),
+            reportedBy: req.session.user._id,
+            message: req.param('message')
+        }, function(err, o) {
+            if(!err)
+                res.send(o, 200);
+            else
+                res.send('error', 403);
+        });
+    });
 	
 	app.post('/topic/:slug/:page?/:pagenum?/', checkUser, getUser, loginUser, function(req, res) {
         req.sanitize('reply-post').xss();
@@ -334,16 +386,21 @@ module.exports = function(app, socket) {
 					res.send(o._id, 200);
                     if(!edited)
 					    socket.sockets.emit('newPost', o);
-                    else
+                    else {
+                        o = o.toObject();
+                        o.editHistory[o.editHistory.length -1].editedByUser =  req.session.user.username; // TODO: Needs to be cleaned up
                         socket.sockets.emit('editedPost', o);
+                    }
 				}
 			});
 	});
 	
 	app.get('/admin/', checkUser, getUser, loginUser, checkAdmin, function(req, res){
-		ADMIN.getDashboardStats(function (stats) {
-			res.render('admin/dashboard', {title : 'Dashboard | xForum Admin', stats: stats});
-		})
+        ADMIN.getNotifications(function(notifications){
+            ADMIN.getDashboardStats(function (stats) {
+                res.render('admin/dashboard', {title : 'Dashboard | xForum Admin', stats: stats, notifications: notifications});
+            });
+        })
 	});
 	
 	app.get('/admin/roles/add/', checkUser, getUser, loginUser, checkAdmin, function(req, res){

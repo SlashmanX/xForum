@@ -1,0 +1,106 @@
+extends layout
+
+block content
+	form#fileupload(action="/upload/", method="POST", enctype="multipart/form-data")
+		.row.fileupload-buttonbar
+			.span7
+				//The fileinput-button span is used to style the file input field as button
+				span.btn.btn-success.fileinput-button
+					i.icon-plus.icon-white
+					span Add files...
+					input#fileuploadform(type="file", name="files[]", data-url="/upload/")
+				button.btn.btn-primary.start(type='submit')
+					i.icon-upload.icon-white
+					span Start upload
+				button.btn.btn-warning.cancel(type='reset')
+					i.icon-ban-circle.icon-white
+					span Cancel upload
+				button.btn.btn-danger.delete(type='button')
+					i.icon-trash.icon-white
+					span Delete
+				input.toggle(type='checkbox')
+				//The global progress information
+			.span5.fileupload-progress.fade
+				//The global progress bar
+				.progress.progress-success.progress-striped.active(role='progressbar', aria-valuemin='0', aria-valuemax='100')
+					.bar(style='width: 0%;')
+				//The extended global progress information
+				.progress-extended  
+		//The loading indicator is shown during file processing
+		.fileupload-loading
+		br
+		//The table listing the files available for upload/download
+		table.table.table-striped(role='presentation')
+			tbody.files(data-toggle='modal-gallery', data-target='#modal-gallery')
+
+	script#template-upload(type='text/x-tmpl').
+		{% for (var i=0, file; file=o.files[i]; i++) { %}
+			<tr class="template-upload fade">
+				<td class="preview"><span class="fade"></span></td>
+				<td class="name"><span>{%=file.name%}</span></td>
+				<td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+				{% if (file.error) { %}
+					<td class="error" colspan="2"><span class="label label-important">Error</span> {%=file.error%}</td>
+				{% } else if (o.files.valid && !i) { %}
+					<td>
+						<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar" style="width:0%;"></div></div>
+					</td>
+					<td class="start">{% if (!o.options.autoUpload) { %}
+						<button class="btn btn-primary">
+							<i class="icon-upload icon-white"></i>
+							<span>Start</span>
+						</button>
+				{% } %}</td>
+				{% } else { %}
+					<td colspan="2"></td>
+				{% } %}
+				<td class="cancel">{% if (!i) { %}
+					<button class="btn btn-warning">
+						<i class="icon-ban-circle icon-white"></i>
+						<span>Cancel</span>
+						</button>
+				{% } %}</td>
+			</tr>
+		{% } %}
+
+	// The template to display files available for download
+	script#template-download(type='text/x-tmpl').
+		{% for (var i=0, file; file=o.files[i]; i++) { %}
+			<tr class="template-download fade">
+				{% if (file.error) { %}
+					<td></td>
+					<td class="name"><span>{%=file.name%}</span></td>
+					<td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+					<td class="error" colspan="2"><span class="label label-important">Error</span> {%=file.error%}</td>
+				{% } else { %}
+					<td class="preview">{% if (file.thumbnail_url) { %}
+						<a href="{%=file.url%}" title="{%=file.name%}" rel="gallery" download="{%=file.name%}"><img src="{%=file.thumbnail_url%}"></a>
+					{% } %}</td>
+					<td class="name">
+						<a href="{%=file.url%}" title="{%=file.name%}" rel="{%=file.thumbnail_url&&'gallery'%}" download="{%=file.name%}">{%=file.name%}</a>
+					</td>
+					<td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+					<td colspan="2"></td>
+				{% } %}
+				<td class="delete">
+					<button class="btn btn-danger" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}"{% if (file.delete_with_credentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+						<i class="icon-trash icon-white"></i>
+						<span>Delete</span>
+					</button>
+					<input type="checkbox" name="delete" value="1">
+				</td>
+			</tr>
+		{% } %}
+
+block append scripts
+	script(src="/js/lib/jquery.ui.widget.js")
+	script(src="http://blueimp.github.com/JavaScript-Templates/tmpl.min.js")
+	script(src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js")
+	script(src="/js/lib/jquery.iframe-transport.js")
+	script(src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js")
+	script(src="http://blueimp.github.com/JavaScript-Canvas-to-Blob/canvas-to-blob.min.js")
+	script(src="/js/lib/jquery.fileupload.js")
+	script(src="/js/lib/jquery.fileupload-fp.js")
+	script(src="/js/lib/jquery.fileupload-ui.js")
+	script(src='/js/views/avatar.js')
+	script(src='/js/controllers/avatarController.js')

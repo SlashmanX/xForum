@@ -26,6 +26,11 @@ AM.autoLogin = function(username, password, callback)
 	});
 };
 
+AM.updateAvatar = function(data, callback)
+{
+    User.findByIdAndUpdate(data.id, {$set: {avatar: data.avatar}}, callback);
+}
+
 AM.manualLogin = function(username, password, callback)
 {
 	User.findOne({username:username}).populate('role').exec(function(e, o) {

@@ -70,7 +70,8 @@ jQuery(document).ready(function() {
 	socket.on('newTopic', function(topic) {
 		if(topic.forum == ''+$('#forumid').val())
 		{
-			$('section.forum-topics').prepend("<div class = 'row display-row forum-topic' id = 'topic-" + topic.slug +"'><div class = 'span9'><div class = 'span1 topic-status'><i class = 'icon-folder-close'></i></div><div class = 'span3'><a href = '/topic/"+ topic.slug +"'>"+ topic.title +"</a><p class = 'help-block forum-topic-subtitle'>"+ topic.desc +"</p></div><div class = 'span1'>0</div><div class = 'span1 topic-replies'>0</div><div class = 'span2 topic-last-post'><abbr class = 'timeago topic-last-post-time'  title = '"+topic.lastPost+"'>"+topic.lastPost+"</abbr><div><strong>By: </strong><span class = 'topic-last-post-author'>"+topic.authorname+"</span></div></div></div>").find("div#topic-" + topic.slug).effect('highlight', {}, 1000).find('abbr.timeago').timeago();
+            var newPost = browserijade("topic-list", {topic: topic});
+			$('section.forum-topics').prepend(newPost).find("div#topic-" + topic.slug).effect('highlight', {}, 1000).find('abbr.timeago').timeago();
 			
 			$('li.category-nav').after("<li class = 'forum-nav' id = 'nav-topic-"+ topic.slug+"'><a href = '/topic/"+ topic.slug +"/'><i class = 'icon-chevron-right'></i> "+ topic.title +"</a></li>");
 			$('ul.bs-docs-sidenav').find('li#nav-topic-'+ topic.slug).effect('highlight', {}, 1000);

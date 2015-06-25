@@ -19,7 +19,9 @@ TM.create			=	function(newData, callback)
 	p = new Post({author: newData.author, postedOn: newData.createdOn, topic: t._id, body: newData.body});
 	p.save(function(err, thepost) {
 		t.post = thepost._id;
+        t.replies = [thepost._id];
 		t.markModified('post');
+        t.markModified('replies');
 		t.save(function (e, topic) {
 			Forum.findByIdAndUpdate(new ObjectId(newData.forum + ''), {$push : { topics : topic._id }}, function(err, f) {
 				SM.setLastReadTime(newData.author, topic._id, function(e, o) {

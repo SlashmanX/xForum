@@ -8,6 +8,8 @@ var	TM			=	require('./topic-manager.js');
 var	mongoose	=	require('mongoose');
 var	moment		=	require('moment');
 var	ObjectId	=	mongoose.Types.ObjectId;
+var akismet     =   require('akismet').client({ blog: 'http://xforum.slashmanx.com', apiKey: '0cfa41b5611f' });
+
 
 var	PM			=	{};
 module.exports	=	PM;
@@ -17,7 +19,7 @@ module.exports	=	PM;
 PM.create			=	function(newData, callback) 
 {
     // TODO : Check if previous post in this topic was by the same author, and within the past 10 mins (settings)
-    Topic.findById(newData.topic).populate('post', 'author').populate('replies', 'author', null, {sort: {postedOn: -1}, limit: 1}).exec(function(err, t) {
+    Topic.findById(newData.topic).populate('post', 'author').populate('replies', 'author postedOn', null, {sort: {postedOn: -1}, limit: 1}).exec(function(err, t) {
         var tmp = t.toObject();
         var prevAuthor = tmp.post.author;
         var postID = tmp.post;
@@ -25,8 +27,20 @@ PM.create			=	function(newData, callback)
         {
             prevAuthor = tmp.replies[0].author;
             postID = t.replies[0];
+            lastPosted = t.replies[0].postedOn;
         }
-        if(""+prevAuthor == ""+newData.author)
+        akismet.checkSpam({
+            user_ip: '1.1.1.1',
+            comment_author: newData.author,
+            comment_content: newData.body
+        }, function(err, spam) {
+            if(spam)
+                newData.isSpam = true;
+            else
+                newData.isSpam = false;
+        });
+        console.log(moment().diff(lastPosted, 'minutes'));
+        if(""+prevAuthor == ""+newData.author && moment().diff(lastPosted, 'minutes') < 10)
         {
             t.lastPost = moment().format();
             t.markModified('lastPost');
@@ -64,6 +78,23 @@ PM.update			=	function(data, callback) {
 	})
 };
 
+PM.edit			=	function(data, callback) {
+    Post.findOne({_id: data.id}).exec(function(err, post) {
+        if(err)
+            console.log(err);
+        else {
+            post.editHistory.push({editedBy: data.editor, dateEdited: moment().format(), prevBody: post.body, newBody: data.post});
+            post.body = data.post;
+            post.save(function(error, p){
+                if(error) console.log(error);
+                else
+                    callback(p);
+            })
+        }
+
+    })
+};
+
 PM.delete           =   function(id, callback) {
     Post.findByIdAndRemove(id).populate('topic').exec(function(err, p) {
         p = p.toObject();
@@ -84,11 +115,20 @@ PM.getPostInfo      =   function(pid, callback)
         callback(postInfo);
     })
 }
+PM.getPostEditHistory      =   function(pid, callback)
+{
+    Post.findById(pid).select('editHistory').populate('editHistory.editedBy').exec(function(e, postInfo){
+        if(e) callback(e)
+        else callback(null, postInfo.editHistory);
+    })
+}
 PM.getTopic			=	function(tid, callback)
 {
-	Post.find({topic: tid}).populate('author').sort({postedOn: 1}).exec(function(e, posts) {
+	Post.find({topic: tid}).populate('author').populate('editHistory.editedBy').sort({postedOn: 1}).exec(function(e, posts) {
 		if (e) callback(e)
-		else callback(null, posts)
+		else {
+            callback(null, posts)
+        }
 	});
 }
 

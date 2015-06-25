@@ -6,6 +6,7 @@ var SM 				=	require('./server/modules/socket-manager');
 var CM 				=	require('./server/modules/category-manager');
 var AM              =   require('./server/modules/account-manager');
 var FM 				=	require('./server/modules/forum-manager');
+var PM 				=	require('./server/modules/post-manager');
 var	func			=	require('./server/controllers/func.js');
 
 var app				=	express();
@@ -81,6 +82,12 @@ socket.sockets.on('connection', function(client){
 			callback(forum);
 		})
 	});
+
+    client.on('getPostEditHistory', function(data, callback) {
+        PM.getPostEditHistory(data.id, function(e, history) {
+            callback(e, history);
+        });
+    });
 	
 	client.on('disconnect', function(){
 		client.leave(hs.sessionID);

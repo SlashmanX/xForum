@@ -9,7 +9,14 @@ var	postSchema = new Schema({
 	author: {type: ObjectId, ref: 'User'},
 	topic: {type: ObjectId, ref: 'Topic'},
 	body: String,
-	postedOn: {type: String, default: moment().format()}
+	postedOn: {type: String, default: moment().format()},
+    isSpam : {type: Boolean, default: false},
+    editHistory: [{
+            editedBy: {type: ObjectId, ref: 'User'},
+            dateEdited: {type: String, default: moment().format()},
+            prevBody: String,
+            newBody: String
+    }]
 });
 
 module.exports = mongoose.model('Post', postSchema);

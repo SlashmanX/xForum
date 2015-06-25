@@ -23,3 +23,5 @@ logs/mongodb.log
 xForum.tmproj
 
 xForum.komodoproject
+
+public/uploads/*
